@@ -1,11 +1,11 @@
-package com.jinelei.bitterling;
+package com.jinelei.bitterling.web;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-public class App {
+public class WebApplication {
     public static void main(String[] args) {
-        SpringApplication.run(App.class, args);
+        SpringApplication.run(WebApplication.class, args);
     }
 }
