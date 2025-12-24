@@ -3,6 +3,7 @@ package com.jinelei.bitterling.web.domain;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jinelei.bitterling.core.domain.BaseDomain;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -10,15 +11,22 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
+@Schema(title = "书签领域对象", description = "书签领域对象")
 public class BookmarkDomain extends BaseDomain<Long> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(value = { Views.Query.class, Views.Delete.class, Views.Update.class })
+    @Schema(description = "主键ID")
     private Long id;
     @Column(name = "name")
     @JsonView(value = { Views.Query.class, Views.Update.class })
+    @Schema(description = "书签名称")
     private String name;
+    @Column(name = "url")
+    @JsonView(value = { Views.Query.class, Views.Update.class })
+    @Schema(description = "书签地址")
+    private String url;
 
     public Long getId() {
         return id;
@@ -36,12 +44,21 @@ public class BookmarkDomain extends BaseDomain<Long> {
         this.name = name;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
+        result = prime * result + ((url == null) ? 0 : url.hashCode());
         return result;
     }
 
@@ -64,6 +81,11 @@ public class BookmarkDomain extends BaseDomain<Long> {
                 return false;
         } else if (!name.equals(other.name))
             return false;
+        if (url == null) {
+            if (other.url != null)
+                return false;
+        } else if (!url.equals(other.url))
+            return false;
         return true;
     }
 
@@ -84,6 +106,14 @@ public class BookmarkDomain extends BaseDomain<Long> {
 
         public static interface Query {
         }
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
 }
