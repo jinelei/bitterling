@@ -1,0 +1,79 @@
+# ========================== 通用 Java 项目忽略 ==========================
+# 编译生成的字节码文件（.class），Java 编译后产物，无需版本控制
+*.class
+
+# Java 打包产物（JAR/WAR/EAR），构建后生成，可重新构建获得
+*.jar
+*.war
+*.ear
+*.nar
+
+# 日志文件，运行时生成，包含临时日志信息
+*.log
+logs/
+logs/*
+
+# 压缩包文件，通常是手动打包或构建辅助产物
+*.zip
+*.tar
+*.tar.gz
+*.rar
+
+# 本地配置文件（如数据库密码、本地端口等，不对外公开）
+*.properties
+*.xml
+!pom.xml  # 排除 Maven 核心配置文件 pom.xml，必须纳入版本控制
+!src/main/resources/*.xml  # 排除源码目录下的配置文件（如需忽略可删除该行）
+!src/main/resources/*.properties  # 同上，按需调整
+
+# 临时文件
+*.tmp
+*.temp
+tmp/
+temp/
+
+# ========================== Maven 项目专属忽略 ==========================
+# Maven 本地仓库依赖缓存（下载的第三方 Jar 包）
+.m2/
+
+# Maven 构建目录（核心，包含编译产物、打包产物等）
+target/
+
+# Maven 包装器生成的文件（如 mvnw 相关，如需版本控制可删除以下行）
+mvnw
+mvnw.cmd
+.mvn/
+
+# ========================== IntelliJ IDEA 专属忽略 ==========================
+# IDEA 项目配置目录（包含工程结构、运行配置等本地配置）
+.idea/
+
+# IDEA 生成的项目文件
+*.iml
+*.iws
+*.ipr
+out/  # IDEA 编译输出目录（部分工程会生成，与 target 功能类似）
+
+# ========================== Visual Studio Code (VS Code) 专属忽略 ==========================
+# VS Code 工作区配置目录（包含插件配置、用户设置等本地信息）
+.vscode/
+
+# VS Code Java 插件生成的配置文件
+.settings/
+.classpath
+.project
+.factorypath
+.springBeans
+.sts4-cache/
+
+# ========================== 其他通用忽略 ==========================
+# 操作系统临时文件
+.DS_Store  # Mac OS
+Thumbs.db  # Windows
+Desktop.ini # Windows
+
+# 编辑器备份文件
+*.bak
+*.swp
+*.swo
+*~
