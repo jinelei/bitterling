@@ -13,8 +13,12 @@ import com.jinelei.bitterling.core.controller.BaseController;
 import com.jinelei.bitterling.core.service.BaseService;
 import com.jinelei.bitterling.web.domain.BookmarkDomain;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+
 @RestController
 @RequestMapping("/bookmark")
+@Tag(name = "书签管理", description = "书签相关接口")	
 public class BookmarkController extends BaseController<BookmarkDomain, Long> {
 
     public BookmarkController(BaseService<BookmarkDomain, Long> service) {
@@ -22,6 +26,7 @@ public class BookmarkController extends BaseController<BookmarkDomain, Long> {
     }
 
     @PostMapping("create")
+    @Operation(summary = "新增书签", description = "新增书签")
     public String create(@RequestBody @JsonView(BookmarkDomain.Views.Create.class) BookmarkDomain req) {
         log.info("req: {}", req);
         this.service.save(req);
@@ -29,6 +34,7 @@ public class BookmarkController extends BaseController<BookmarkDomain, Long> {
     }
 
     @PostMapping("update")
+    @Operation(summary = "更新书签", description = "根据id更新书签")
     public String update(@RequestBody @JsonView(BookmarkDomain.Views.Update.class) BookmarkDomain req) {
         log.info("req: {}", req);
         this.service.save(req);
@@ -36,6 +42,7 @@ public class BookmarkController extends BaseController<BookmarkDomain, Long> {
     }
 
     @PostMapping("delete")
+    @Operation(summary = "删除书签", description = "根据id删除书签")
     public String delete(@RequestBody @JsonView(BookmarkDomain.Views.Delete.class) BookmarkDomain req) {
         log.info("req: {}", req);
         Long id = Optional.ofNullable(req).map(i -> i.getId())
@@ -45,6 +52,7 @@ public class BookmarkController extends BaseController<BookmarkDomain, Long> {
     }
 
     @PostMapping("list")
+    @Operation(summary = "查询书签列表", description = "查询书签列表")
     public String list(@RequestBody @JsonView(BookmarkDomain.Views.Query.class) BookmarkDomain req) {
         log.info("req: {}", req);
         this.service.findAll();

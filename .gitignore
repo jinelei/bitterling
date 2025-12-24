@@ -78,3 +78,5 @@ Desktop.ini # Windows
 *.swp
 *.swo
 *~
+
+web/data/bitterling_db.mv.db
