@@ -23,6 +23,7 @@ logs/*
 *.properties
 *.xml
 !pom.xml  # 排除 Maven 核心配置文件 pom.xml，必须纳入版本控制
+!**/pom.xml  # 排除 Maven 核心配置文件 pom.xml，必须纳入版本控制
 !src/main/resources/*.xml  # 排除源码目录下的配置文件（如需忽略可删除该行）
 !src/main/resources/*.properties  # 同上，按需调整
 
