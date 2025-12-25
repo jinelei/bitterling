@@ -1,5 +1,6 @@
 package com.jinelei.bitterling.core.service;
 
+import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
@@ -11,6 +12,9 @@ import org.springframework.util.CollectionUtils;
 import com.jinelei.bitterling.core.domain.BaseDomain;
 import com.jinelei.bitterling.core.repository.BaseRepository;
 
+/**
+ * 基础服务
+ */
 public abstract class BaseService<ENT extends BaseDomain<ID>, ID> {
     protected final BaseRepository<ENT, ID> repository;
     protected final Logger log;
@@ -123,10 +127,11 @@ public abstract class BaseService<ENT extends BaseDomain<ID>, ID> {
      * 
      * @return 实体类简单名称（如User、Order）
      */
+    @SuppressWarnings("unchecked")
     private String getEntityClassSimpleName() {
         // 通过泛型推断获取实体类类型
-        Class<ENT> entityClass = (Class<ENT>) ((java.lang.reflect.ParameterizedType) getClass().getGenericSuperclass())
+        Class<ENT> clazz = (Class<ENT>) ((ParameterizedType) getClass().getGenericSuperclass())
                 .getActualTypeArguments()[0];
-        return entityClass.getSimpleName();
+        return clazz.getSimpleName();
     }
 }

@@ -1,5 +1,8 @@
 package com.jinelei.bitterling.core.domain;
 
+/**
+ * 基础领域对象
+ */
 public abstract class BaseDomain<ID> {
     /**
      * 获取ID

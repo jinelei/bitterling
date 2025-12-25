@@ -6,6 +6,9 @@ import org.slf4j.LoggerFactory;
 import com.jinelei.bitterling.core.domain.BaseDomain;
 import com.jinelei.bitterling.core.service.BaseService;
 
+/**
+ * 基础控制器
+ */
 public abstract class BaseController<ENT extends BaseDomain<ID>, ID> {
     protected final BaseService<ENT, ID> service;
     protected final Logger log;

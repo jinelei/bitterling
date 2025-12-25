@@ -20,11 +20,11 @@ public class BookmarkDomain extends BaseDomain<Long> {
     @Schema(description = "主键ID")
     private Long id;
     @Column(name = "name")
-    @JsonView(value = { Views.Query.class, Views.Update.class })
+    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
     @Schema(description = "书签名称")
     private String name;
     @Column(name = "url")
-    @JsonView(value = { Views.Query.class, Views.Update.class })
+    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
     @Schema(description = "书签地址")
     private String url;
 
@@ -91,7 +91,7 @@ public class BookmarkDomain extends BaseDomain<Long> {
 
     @Override
     public String toString() {
-        return "BookmarkDomain [id=" + id + ", name=" + name + "]";
+        return "BookmarkDomain [id=" + id + ", name=" + name + ", url=" + url + "]";
     }
 
     public static interface Views {
@@ -107,13 +107,4 @@ public class BookmarkDomain extends BaseDomain<Long> {
         public static interface Query {
         }
     }
-
-    public String getUrl() {
-        return url;
-    }
-
-    public void setUrl(String url) {
-        this.url = url;
-    }
-
 }
