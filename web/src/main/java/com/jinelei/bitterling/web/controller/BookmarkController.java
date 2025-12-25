@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jinelei.bitterling.core.controller.BaseController;
-import com.jinelei.bitterling.core.domain.GenericResult;
+import com.jinelei.bitterling.core.domain.response.GenericResult;
 import com.jinelei.bitterling.core.service.BaseService;
 import com.jinelei.bitterling.web.domain.BookmarkDomain;
 

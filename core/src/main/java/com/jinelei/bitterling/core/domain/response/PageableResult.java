@@ -1,14 +1,14 @@
-package com.jinelei.bitterling.core.domain;
+package com.jinelei.bitterling.core.domain.response;
 
 import java.util.Collection;
+
+import com.jinelei.bitterling.core.constant.PageablePropertity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "分页响应对象")
 @SuppressWarnings("rawtypes")
 public class PageableResult<T extends Collection> extends GenericResult<T> {
-    public static final Integer DEFAULT_PAGE_NO = 1;
-    public static final Integer DEFAULT_PAGE_SIZE = 10;
     public static final Integer DEFAULT_TOTAL = 0;
     @Schema(name = "分页页码")
     protected Integer pageNo;
@@ -21,8 +21,8 @@ public class PageableResult<T extends Collection> extends GenericResult<T> {
         PageableResult<T> result = new PageableResult<>();
         result.setCode(CODE_SUCCESS);
         result.setMessage(MESSAGE_SUCCESS);
-        result.setPageNo(DEFAULT_PAGE_NO);
-        result.setPageSize(DEFAULT_PAGE_SIZE);
+        result.setPageNo(PageablePropertity.DEFAULT_PAGE_NO);
+        result.setPageSize(PageablePropertity.DEFAULT_PAGE_SIZE);
         result.setTotal(data instanceof Collection ? data.size() : DEFAULT_TOTAL);
         result.setData(data);
         return result;
@@ -32,8 +32,8 @@ public class PageableResult<T extends Collection> extends GenericResult<T> {
         PageableResult<T> result = new PageableResult<>();
         result.setCode(CODE_SUCCESS);
         result.setMessage(MESSAGE_SUCCESS);
-        result.setPageNo(DEFAULT_PAGE_NO);
-        result.setPageSize(DEFAULT_PAGE_SIZE);
+        result.setPageNo(PageablePropertity.DEFAULT_PAGE_NO);
+        result.setPageSize(PageablePropertity.DEFAULT_PAGE_SIZE);
         result.setTotal(total);
         result.setData(data);
         return result;

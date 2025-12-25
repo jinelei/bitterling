@@ -1,10 +1,11 @@
-package com.jinelei.bitterling.core.domain;
+package com.jinelei.bitterling.core.domain.response;
 
 import java.util.Optional;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "通用响应对象")
+@SuppressWarnings("rawtypes")
 public class GenericResult<T> {
     public static final Integer CODE_SUCCESS = 200;
     public static final Integer CODE_FAILURE_INTERNAL = 500;
@@ -73,7 +74,6 @@ public class GenericResult<T> {
     }
 
     @Override
-    @SuppressWarnings("rawtypes")
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
