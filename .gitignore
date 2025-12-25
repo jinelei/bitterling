@@ -20,8 +20,6 @@ logs/*
 *.rar
 
 # 本地配置文件（如数据库密码、本地端口等，不对外公开）
-*.properties
-*.xml
 !pom.xml  # 排除 Maven 核心配置文件 pom.xml，必须纳入版本控制
 !**/pom.xml  # 排除 Maven 核心配置文件 pom.xml，必须纳入版本控制
 !src/main/resources/*.xml  # 排除源码目录下的配置文件（如需忽略可删除该行）
