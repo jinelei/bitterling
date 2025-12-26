@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jinelei.bitterling.core.controller.BaseController;
 import com.jinelei.bitterling.core.domain.response.GenericResult;
+import com.jinelei.bitterling.core.helper.TimeTracker;
 import com.jinelei.bitterling.core.service.BaseService;
 import com.jinelei.bitterling.web.domain.BookmarkDomain;
 
@@ -55,8 +56,10 @@ public class BookmarkController extends BaseController<BookmarkDomain, Long> {
     @PostMapping("list")
     @Operation(summary = "查询书签列表", description = "查询书签列表")
     public GenericResult<String> list(@RequestBody @JsonView(BookmarkDomain.Views.Query.class) BookmarkDomain req) {
+        TimeTracker.getInstance().mark("查询书签列表");
         log.info("req: {}", req);
         this.service.findAll();
+        TimeTracker.getInstance().mark("查询书签列表").printTotalTime("查询书签列表");
         return GenericResult.of("success");
     }
 
