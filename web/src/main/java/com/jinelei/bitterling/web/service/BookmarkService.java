@@ -20,12 +20,14 @@ public class BookmarkService extends BaseService<BookmarkDomain, Long> {
 
     public String importFromFile(MultipartFile file) throws IOException {
         List<BookmarkDomain> bookmarkList = BookmarkParser.parseFromFile(file);
-        // 打印解析结果
-        System.out.println("解析书签总数：" + bookmarkList.size());
-        for (BookmarkDomain domain : bookmarkList) {
-            System.out.printf("[%s] %s -> %s (创建时间：%s)%n",
-                    domain.getType(), domain.getName(), domain.getUrl(), domain.getCreateTime());
-        }
+        log.debug("解析书签: {}", bookmarkList);
+        bookmarkList.forEach(bookmark -> {
+            try {
+                save(bookmark);
+            } catch (Exception e) {
+                log.error("保存失败: {}, {}", bookmark.getUrl(), e.getMessage());
+            }
+        });
         return "success";
     }
 }

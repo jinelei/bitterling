@@ -4,7 +4,7 @@ package com.jinelei.bitterling.core.exception;
  * 自定义业务异常
  */
 public class BusinessException extends RuntimeException {
-    private Integer code;
+    private final Integer code;
 
     public BusinessException(Integer code, String message) {
         super(message);

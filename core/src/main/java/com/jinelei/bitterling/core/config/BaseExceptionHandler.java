@@ -24,52 +24,51 @@ public abstract class BaseExceptionHandler {
      * 处理自定义业务异常
      */
     @ExceptionHandler(BusinessException.class)
-    public GenericResult<?> handleBusinessException(BusinessException e) {
+    public GenericResult<String> handleBusinessException(BusinessException e) {
         log.debug("全局捕获业务异常: {}", ThrowableHelper.getStackTraceAsString(e));
-        return GenericResult.of(e.getCode(), e.getMessage());
+        return GenericResult.failure(e.getCode(), GenericResult.MESSAGE_FAILURE_BUSINESS, e.getMessage());
     }
 
     /**
      * 处理请求参数校验异常（@RequestBody 注解的参数）
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public GenericResult<?> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
+    public GenericResult<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
         log.debug("全局捕获校验异常: {}", ThrowableHelper.getStackTraceAsString(e));
-        // 拼接所有字段的错误信息
         String errorMsg = e.getBindingResult().getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("；"));
-        return GenericResult.failure("参数校验失败：" + errorMsg);
+        return GenericResult.failure("参数校验失败", errorMsg);
     }
 
     /**
      * 处理请求参数绑定异常（如参数类型不匹配）
      */
     @ExceptionHandler(BindException.class)
-    public GenericResult<?> handleBindException(BindException e) {
+    public GenericResult<String> handleBindException(BindException e) {
         log.debug("全局捕获绑定异常: {}", ThrowableHelper.getStackTraceAsString(e));
         String errorMsg = e.getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("；"));
-        return GenericResult.failure("参数绑定失败：" + errorMsg);
+        return GenericResult.failure("参数绑定失败", errorMsg);
     }
 
     /**
      * 处理请求体解析异常（如JSON格式错误）
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
-    public GenericResult<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
+    public GenericResult<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.debug("全局捕获解析异常: {}", ThrowableHelper.getStackTraceAsString(e));
-        return GenericResult.failure("请求体解析失败：请检查JSON格式是否正确");
+        return GenericResult.failure("请求体解析失败", "请检查JSON格式是否正确");
     }
 
     /**
      * 处理空指针异常
      */
     @ExceptionHandler(NullPointerException.class)
-    public GenericResult<?> handleNullPointerException(NullPointerException e) {
+    public GenericResult<String> handleNullPointerException(NullPointerException e) {
         log.debug("全局捕获空指针异常: {}", ThrowableHelper.getStackTraceAsString(e));
-        return GenericResult.failure("系统异常：空指针异常");
+        return GenericResult.failure("空指针异常");
     }
 
 }

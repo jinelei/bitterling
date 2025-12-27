@@ -2,6 +2,8 @@ package com.jinelei.bitterling.web.controller;
 
 import java.io.IOException;
 import java.security.InvalidParameterException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.web.bind.annotation.PostMapping;
@@ -66,15 +68,13 @@ public class BookmarkController extends BaseController {
 
     @PostMapping("list")
     @Operation(summary = "查询书签列表", description = "查询书签列表")
-    public GenericResult<String> list(@RequestBody @JsonView(BookmarkDomain.Views.Query.class) BookmarkDomain req) {
+    public GenericResult<List<BookmarkDomain>> list(@RequestBody @JsonView(BookmarkDomain.Views.Query.class) BookmarkDomain req) {
         TimeTracker.getInstance().mark("查询书签列表");
-        log.info("req: {}", req);
-        this.service.findAll();
-        if (Math.random() > 0.2) {
-            throw new NullPointerException("测试空指针");
-        }
+        Iterable<BookmarkDomain> all = this.service.findAll();
         TimeTracker.getInstance().mark("查询书签列表").printTotalTime("查询书签列表");
-        return GenericResult.success("success");
+        List<BookmarkDomain> list = new ArrayList<>();
+        all.forEach(list::add);
+        return GenericResult.success(list);
     }
 
 }

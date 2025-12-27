@@ -14,6 +14,7 @@ public class GenericResult<T> {
     public static final Integer CODE_FAILURE_INTERNAL = 500;
     public static final String MESSAGE_SUCCESS = "操作成功";
     public static final String MESSAGE_FAILURE_INTERNAL = "内部错误";
+    public static final String MESSAGE_FAILURE_BUSINESS = "业务错误";
 
     @Schema(name = "错误代码")
     protected Integer code;
@@ -23,34 +24,23 @@ public class GenericResult<T> {
     protected T data;
 
     public static <T> GenericResult<T> success(T data) {
-        GenericResult<T> result = new GenericResult<>();
-        result.setCode(CODE_SUCCESS);
-        result.setMessage(MESSAGE_SUCCESS);
-        result.setData(data);
-        return result;
+        return of(CODE_SUCCESS, MESSAGE_SUCCESS, data);
     }
 
     public static <T> GenericResult<T> failure(T data) {
-        GenericResult<T> result = new GenericResult<>();
-        result.setCode(CODE_FAILURE_INTERNAL);
-        result.setMessage(MESSAGE_FAILURE_INTERNAL);
-        result.setData(data);
-        return result;
+        return of(CODE_FAILURE_INTERNAL, MESSAGE_FAILURE_INTERNAL, data);
     }
 
     public static <T> GenericResult<T> failure(String message, T data) {
-        GenericResult<T> result = new GenericResult<>();
-        result.setCode(CODE_FAILURE_INTERNAL);
-        result.setMessage(message);
-        result.setData(data);
-        return result;
+        return of(CODE_FAILURE_INTERNAL, message, data);
     }
 
-    public static GenericResult<String> of(Integer code, String message) {
-        GenericResult<String> result = new GenericResult<>();
-        result.setCode(code);
-        result.setMessage(message);
-        return result;
+    public static <T> GenericResult<T> failure(Integer code, T data) {
+        return of(code, MESSAGE_FAILURE_INTERNAL, data);
+    }
+
+    public static <T> GenericResult<T> failure(Integer code, String message, T data) {
+        return of(code, message, data);
     }
 
     public static <T> GenericResult<T> of(Integer code, String message, T data) {

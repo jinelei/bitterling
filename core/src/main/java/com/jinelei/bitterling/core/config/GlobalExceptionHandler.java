@@ -15,8 +15,7 @@ public class GlobalExceptionHandler extends BaseExceptionHandler {
      * 处理所有未捕获的未知异常（兜底）
      */
     @ExceptionHandler(Exception.class)
-    public GenericResult<?> handleGlobalException(Exception e) {
-        // 打印异常栈信息，方便排查问题
+    public GenericResult<String> handleGlobalException(Exception e) {
         log.error("全局捕获未知异常: {}", ThrowableHelper.getStackTraceAsString(e));
         return GenericResult.failure(e.getMessage());
     }
