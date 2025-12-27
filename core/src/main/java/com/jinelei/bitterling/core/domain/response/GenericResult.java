@@ -2,10 +2,13 @@ package com.jinelei.bitterling.core.domain.response;
 
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "通用响应对象")
 @SuppressWarnings("rawtypes")
+@JsonPropertyOrder({"code", "message", "data"})
 public class GenericResult<T> {
     public static final Integer CODE_SUCCESS = 200;
     public static final Integer CODE_FAILURE_INTERNAL = 500;
@@ -24,6 +27,13 @@ public class GenericResult<T> {
         result.setCode(CODE_SUCCESS);
         result.setMessage(MESSAGE_SUCCESS);
         result.setData(data);
+        return result;
+    }
+
+    public static GenericResult<Void> of(Integer code, String message) {
+        GenericResult<Void> result = new GenericResult<>();
+        result.setCode(code);
+        result.setMessage(message);
         return result;
     }
 

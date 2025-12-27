@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/bookmark")
-@Tag(name = "书签管理", description = "书签相关接口")	
+@Tag(name = "书签管理", description = "书签相关接口")
 public class BookmarkController extends BaseController<BookmarkDomain, Long> {
 
     public BookmarkController(BaseService<BookmarkDomain, Long> service) {
@@ -59,6 +59,9 @@ public class BookmarkController extends BaseController<BookmarkDomain, Long> {
         TimeTracker.getInstance().mark("查询书签列表");
         log.info("req: {}", req);
         this.service.findAll();
+        if (Math.random() > 0.2) {
+            throw new NullPointerException("测试空指针");
+        }
         TimeTracker.getInstance().mark("查询书签列表").printTotalTime("查询书签列表");
         return GenericResult.of("success");
     }

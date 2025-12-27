@@ -2,12 +2,14 @@ package com.jinelei.bitterling.core.domain.response;
 
 import java.util.Collection;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.jinelei.bitterling.core.constant.PageablePropertity;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "分页响应对象")
 @SuppressWarnings("rawtypes")
+@JsonPropertyOrder({ "code", "message", "pageNo", "pageSize", "total", "data" })
 public class PageableResult<T extends Collection> extends GenericResult<T> {
     public static final Integer DEFAULT_TOTAL = 0;
     @Schema(name = "分页页码")
