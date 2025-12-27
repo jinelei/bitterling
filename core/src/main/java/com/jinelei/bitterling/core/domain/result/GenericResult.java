@@ -1,4 +1,4 @@
-package com.jinelei.bitterling.core.domain.response;
+package com.jinelei.bitterling.core.domain.result;
 
 import java.util.Optional;
 
@@ -22,10 +22,26 @@ public class GenericResult<T> {
     @Schema(name = "响应数据")
     protected T data;
 
-    public static <T> GenericResult<T> of(T data) {
+    public static <T> GenericResult<T> success(T data) {
         GenericResult<T> result = new GenericResult<>();
         result.setCode(CODE_SUCCESS);
         result.setMessage(MESSAGE_SUCCESS);
+        result.setData(data);
+        return result;
+    }
+
+    public static <T> GenericResult<T> failure(T data) {
+        GenericResult<T> result = new GenericResult<>();
+        result.setCode(CODE_FAILURE_INTERNAL);
+        result.setMessage(MESSAGE_FAILURE_INTERNAL);
+        result.setData(data);
+        return result;
+    }
+
+    public static <T> GenericResult<T> failure(String message, T data) {
+        GenericResult<T> result = new GenericResult<>();
+        result.setCode(CODE_FAILURE_INTERNAL);
+        result.setMessage(message);
         result.setData(data);
         return result;
     }

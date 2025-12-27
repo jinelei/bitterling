@@ -8,13 +8,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jinelei.bitterling.core.controller.BaseController;
-import com.jinelei.bitterling.core.domain.response.GenericResult;
+import com.jinelei.bitterling.core.domain.result.GenericResult;
 import com.jinelei.bitterling.core.helper.TimeTracker;
 import com.jinelei.bitterling.web.domain.BookmarkDomain;
 import com.jinelei.bitterling.web.service.BookmarkService;
@@ -36,7 +35,7 @@ public class BookmarkController extends BaseController {
     @Operation(summary = "导入书签", description = "导入书签")
     public GenericResult<String> importFromFile(@RequestParam("file") MultipartFile file) throws IOException {
         this.service.importFromFile(file);
-        return GenericResult.of("success");
+        return GenericResult.success("success");
     }
 
     @PostMapping("create")
@@ -44,7 +43,7 @@ public class BookmarkController extends BaseController {
     public GenericResult<String> create(@RequestBody @JsonView(BookmarkDomain.Views.Create.class) BookmarkDomain req) {
         log.info("req: {}", req);
         this.service.save(req);
-        return GenericResult.of("success");
+        return GenericResult.success("success");
     }
 
     @PostMapping("update")
@@ -52,7 +51,7 @@ public class BookmarkController extends BaseController {
     public GenericResult<String> update(@RequestBody @JsonView(BookmarkDomain.Views.Update.class) BookmarkDomain req) {
         log.info("req: {}", req);
         this.service.save(req);
-        return GenericResult.of("success");
+        return GenericResult.success("success");
     }
 
     @PostMapping("delete")
@@ -62,7 +61,7 @@ public class BookmarkController extends BaseController {
         Long id = Optional.ofNullable(req).map(i -> i.getId())
                 .orElseThrow(() -> new InvalidParameterException("需要删除的ID不能为空"));
         this.service.deleteById(id);
-        return GenericResult.of("success");
+        return GenericResult.success("success");
     }
 
     @PostMapping("list")
@@ -75,7 +74,7 @@ public class BookmarkController extends BaseController {
             throw new NullPointerException("测试空指针");
         }
         TimeTracker.getInstance().mark("查询书签列表").printTotalTime("查询书签列表");
-        return GenericResult.of("success");
+        return GenericResult.success("success");
     }
 
 }

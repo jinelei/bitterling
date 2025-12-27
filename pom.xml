@@ -22,7 +22,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <java.version>1.8</java.version>
         <lombok.version>1.14.8</lombok.version>
-        <openapi.version>2.2.0</openapi.version>
+        <openapi.version>2.6.0</openapi.version>
     </properties>
 
     <dependencyManagement>

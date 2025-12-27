@@ -3,6 +3,7 @@ package com.jinelei.bitterling.core.service;
 import java.lang.reflect.ParameterizedType;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -94,7 +95,7 @@ public abstract class BaseService<ENT extends BaseDomain<ID>, ID> {
      */
     public void deleteAllById(List<ID> ids) {
         List<ID> validIds = Optional.ofNullable(ids)
-                .map(c -> c.stream().filter(id -> id != null).toList())
+                .map(c -> c.stream().filter(Objects::nonNull).toList())
                 .filter(c -> !CollectionUtils.isEmpty(c))
                 .orElseThrow(() -> new IllegalArgumentException("批量删除实体：传入的ID列表为null或空，无需执行删除操作"));
         repository.deleteAllById(validIds);

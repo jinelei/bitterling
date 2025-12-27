@@ -1,4 +1,4 @@
-package com.jinelei.bitterling.core.domain.response;
+package com.jinelei.bitterling.core.domain.result;
 
 import java.util.Collection;
 

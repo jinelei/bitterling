@@ -8,7 +8,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import com.jinelei.bitterling.core.domain.response.GenericResult;
+import com.jinelei.bitterling.core.domain.result.GenericResult;
 import com.jinelei.bitterling.core.exception.BusinessException;
 import com.jinelei.bitterling.core.helper.ThrowableHelper;
 
@@ -39,7 +39,7 @@ public abstract class BaseExceptionHandler {
         String errorMsg = e.getBindingResult().getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("；"));
-        return GenericResult.of(400, "参数校验失败：" + errorMsg);
+        return GenericResult.failure("参数校验失败：" + errorMsg);
     }
 
     /**
@@ -51,7 +51,7 @@ public abstract class BaseExceptionHandler {
         String errorMsg = e.getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("；"));
-        return GenericResult.of(400, "参数绑定失败：" + errorMsg);
+        return GenericResult.failure("参数绑定失败：" + errorMsg);
     }
 
     /**
@@ -60,7 +60,7 @@ public abstract class BaseExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public GenericResult<?> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.debug("全局捕获解析异常: {}", ThrowableHelper.getStackTraceAsString(e));
-        return GenericResult.of(400, "请求体解析失败：请检查JSON格式是否正确");
+        return GenericResult.failure("请求体解析失败：请检查JSON格式是否正确");
     }
 
     /**
@@ -69,7 +69,7 @@ public abstract class BaseExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public GenericResult<?> handleNullPointerException(NullPointerException e) {
         log.debug("全局捕获空指针异常: {}", ThrowableHelper.getStackTraceAsString(e));
-        return GenericResult.of(500, "系统异常：空指针异常");
+        return GenericResult.failure("系统异常：空指针异常");
     }
 
 }
