@@ -1,19 +1,23 @@
 package com.jinelei.bitterling.web.controller;
 
+import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.Optional;
 
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jinelei.bitterling.core.controller.BaseController;
 import com.jinelei.bitterling.core.domain.response.GenericResult;
 import com.jinelei.bitterling.core.helper.TimeTracker;
-import com.jinelei.bitterling.core.service.BaseService;
 import com.jinelei.bitterling.web.domain.BookmarkDomain;
+import com.jinelei.bitterling.web.service.BookmarkService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -21,10 +25,18 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @RestController
 @RequestMapping("/bookmark")
 @Tag(name = "书签管理", description = "书签相关接口")
-public class BookmarkController extends BaseController<BookmarkDomain, Long> {
+public class BookmarkController extends BaseController {
+    protected final BookmarkService service;
 
-    public BookmarkController(BaseService<BookmarkDomain, Long> service) {
-        super(service);
+    public BookmarkController(BookmarkService service) {
+        this.service = service;
+    }
+
+    @PostMapping("import")
+    @Operation(summary = "导入书签", description = "导入书签")
+    public GenericResult<String> importFromFile(@RequestParam("file") MultipartFile file) throws IOException {
+        this.service.importFromFile(file);
+        return GenericResult.of("success");
     }
 
     @PostMapping("create")

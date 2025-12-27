@@ -3,18 +3,9 @@ package com.jinelei.bitterling.core.controller;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jinelei.bitterling.core.domain.BaseDomain;
-import com.jinelei.bitterling.core.service.BaseService;
-
 /**
  * 基础控制器
  */
-public abstract class BaseController<ENT extends BaseDomain<ID>, ID> {
-    protected final BaseService<ENT, ID> service;
-    protected final Logger log;
-
-    public BaseController(BaseService<ENT, ID> service) {
-        this.service = service;
-        this.log = LoggerFactory.getLogger(getClass());
-    }
+public abstract class BaseController {
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 }

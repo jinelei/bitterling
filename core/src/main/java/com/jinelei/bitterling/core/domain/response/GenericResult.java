@@ -30,8 +30,8 @@ public class GenericResult<T> {
         return result;
     }
 
-    public static GenericResult<Void> of(Integer code, String message) {
-        GenericResult<Void> result = new GenericResult<>();
+    public static GenericResult<String> of(Integer code, String message) {
+        GenericResult<String> result = new GenericResult<>();
         result.setCode(code);
         result.setMessage(message);
         return result;
