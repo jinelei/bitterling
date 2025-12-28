@@ -1,0 +1,110 @@
+/* src/main/resources/static/css/nav.css */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: "Microsoft YaHei", sans-serif;
+    background-color: #f5f5f5;
+    padding: 20px;
+}
+
+.nav-container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.nav-title {
+    text-align: center;
+    font-size: 28px;
+    color: #333;
+    margin-bottom: 30px;
+    font-weight: 600;
+}
+
+.bookmark-group {
+    background-color: #fff;
+    border-radius: 8px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.group-title {
+    font-size: 20px;
+    color: #409eff;
+    margin-bottom: 15px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #e6e6e6;
+}
+
+.bookmark-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+/* 通用书签项样式 */
+.bookmark-item {
+    width: 120px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    color: #333;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+/* 文件夹样式 */
+.bookmark-item.folder {
+    background-color: #fdf6ec;
+    border: 1px solid #faad14;
+}
+
+.bookmark-item.folder:hover {
+    background-color: #fef0c7;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(250, 173, 20, 0.2);
+}
+
+/* 书签项样式 */
+.bookmark-item.item {
+    background-color: #f9f9f9;
+    border: 1px solid #e6e6e6;
+}
+
+.bookmark-item.item:hover {
+    background-color: #e8f4ff;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 12px rgba(64, 158, 255, 0.2);
+}
+
+.bookmark-icon {
+    width: 40px;
+    height: 40px;
+    margin-bottom: 8px;
+    object-fit: contain;
+}
+
+.bookmark-name {
+    font-size: 14px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    padding: 0 5px;
+}
+
+/* 禁用文件夹的链接样式 */
+.bookmark-item.folder a {
+    pointer-events: none;
+    text-decoration: none;
+    color: inherit;
+}

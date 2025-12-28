@@ -1,0 +1,46 @@
+<!-- src/main/resources/templates/nav.html -->
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>我的导航页</title>
+    <link rel="stylesheet" th:href="@{/css/nav.css}">
+</head>
+<body>
+<div class="nav-container">
+    <h1 class="nav-title">我的书签导航</h1>
+
+    <!-- 遍历书签分组 -->
+    <div th:each="entry : ${bookmarkGroups}">
+        <div class="bookmark-group">
+            <!-- 分组标题：区分文件夹/书签项 -->
+            <h2 class="group-title" th:text="${entry.key == T(com.jinelei.bitterling.web.enums.BookmarkType).FOLDER ? folderDesc : itemDesc}">
+                书签类型
+            </h2>
+
+            <!-- 书签列表 -->
+            <div class="bookmark-list">
+                <div th:each="bookmark : ${entry.value}"
+                     th:class="|bookmark-item ${bookmark.type == T(com.jinelei.bitterling.web.enums.BookmarkType).FOLDER ? 'folder' : 'item'}|">
+
+                    <!-- 文件夹：仅展示图标和名称，无链接 -->
+                    <div th:if="${bookmark.type == T(com.jinelei.bitterling.web.enums.BookmarkType).FOLDER}">
+                        <img th:src="${bookmark.icon}" alt="文件夹图标" class="bookmark-icon">
+                        <span class="bookmark-name" th:text="${bookmark.name}">文件夹名称</span>
+                    </div>
+
+                    <!-- 书签项：带跳转链接 -->
+                    <a th:if="${bookmark.type == T(com.jinelei.bitterling.web.enums.BookmarkType).ITEM}"
+                       th:href="${bookmark.url}" target="_blank" style="text-decoration: none; color: inherit;">
+                        <img th:src="${bookmark.icon}" alt="书签图标" class="bookmark-icon">
+                        <span class="bookmark-name" th:text="${bookmark.name}">书签名称</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script th:src="@{/js/nav.js}"></script>
+</body>
+</html>
