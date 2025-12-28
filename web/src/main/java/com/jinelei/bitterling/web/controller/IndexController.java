@@ -8,12 +8,11 @@ import com.jinelei.bitterling.web.service.BookmarkService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 /**
  * 首页控制器
@@ -34,23 +33,26 @@ public class IndexController extends BaseController {
      * 导航页面入口
      */
     @GetMapping(value = {"/", "/index"})
-    public String nav(Model model) {
-        // 模拟书签数据（包含文件夹+书签项）
+    public ModelAndView index() {
+        ModelAndView mav = new ModelAndView("nav"); // 对应templates/nav.html
         Iterable<BookmarkDomain> all = service.findAll();
         TimeTracker.getInstance().mark("查询书签列表").printTotalTime("查询书签列表");
-        List<BookmarkDomain> bookmarks = new ArrayList<>();
-        all.forEach(bookmarks::add);
-
-        // 按类型分组，便于前端分类展示
-        Map<BookmarkType, List<BookmarkDomain>> groupByType = bookmarks.stream()
-                .sorted(Comparator.comparingInt(BookmarkDomain::getOrderNumber)) // 按排序值升序
-                .collect(Collectors.groupingBy(BookmarkDomain::getType));
-
-        model.addAttribute("bookmarkGroups", groupByType);
-        // 传递枚举描述，便于前端展示
-        model.addAttribute("folderDesc", "文件夹");
-        model.addAttribute("itemDesc", "书签项");
-        return "nav";
+        final List<BookmarkDomain> bookmarks = StreamSupport.stream(all.spliterator(), false).collect(Collectors.toList());
+        final Map<Long, String> categoryMap = bookmarks.parallelStream()
+                .filter(i -> BookmarkType.FOLDER.equals(i.getType()))
+                .collect(Collectors.toMap(BookmarkDomain::getId, BookmarkDomain::getName));
+        final List<BookmarkDomain> categories = bookmarks.parallelStream()
+                .filter(i -> BookmarkType.FOLDER.equals(i.getType()))
+                .filter(i -> Objects.nonNull(i.getId()))
+                .filter(i -> Objects.nonNull(i.getName()))
+                .collect(Collectors.toList());
+        Map<Long, List<BookmarkDomain>> bookmarkGroups = bookmarks.parallelStream()
+                .filter(i -> BookmarkType.ITEM.equals(i.getType()))
+                .collect(Collectors.groupingBy(i -> Optional.ofNullable(i.getParentId()).orElse(0L), Collectors.toList()));
+        log.info("categories: {}", categories);
+        log.info("bookmarkGroups: {}", bookmarkGroups);
+        mav.addObject("categories", categoryMap);
+        mav.addObject("bookmarkGroups", bookmarkGroups);
+        return mav;
     }
-
 }
