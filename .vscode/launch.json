@@ -1,0 +1,24 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "web",
+            "type": "java",
+            "request": "launch",
+            "mainClass": "com.jinelei.bitterling.web.WebApplication",
+            "projectName": "web",
+            "args": "", // 启动参数（可选，如 --server.port=8081）
+            "vmArgs": "-Dspring.profiles.active=dev -Xms512m -Xmx1024m",
+            "env": {
+            },
+            "cwd": "${workspaceFolder}/web",
+            "console": "integratedTerminal",
+            "stopOnEntry": false,
+            "sourcePaths": [
+                "src/main/java"
+            ],
+            "classPaths": [],
+            "showStdio": true 
+        }
+    ]
+}
