@@ -15,9 +15,11 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 @Entity
+@Table(name="bookmark")
 @Schema(title = "书签领域对象", description = "书签领域对象")
 public class BookmarkDomain extends BaseDomain<Long>
         implements Comparable<BookmarkDomain>, TreeView<BookmarkDomain, Long> {

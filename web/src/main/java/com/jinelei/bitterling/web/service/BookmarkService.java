@@ -1,6 +1,5 @@
 package com.jinelei.bitterling.web.service;
 
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,6 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.springframework.stereotype.Service;
+
 import com.jinelei.bitterling.core.repository.BaseRepository;
 import com.jinelei.bitterling.core.service.BaseService;
 import com.jinelei.bitterling.web.domain.BookmarkDomain;
@@ -41,16 +41,13 @@ public class BookmarkService extends BaseService<BookmarkDomain, Long> {
                 .collect(Collectors
                         .groupingBy(i -> Optional.ofNullable(i.getParentId()).map(folderNameById::get).orElse("根目录")));
         itemByFolderId.put("全部", list);
-        props.put("tags", itemByFolderId.keySet().stream().sorted(new Comparator<String>() {
-            @Override
-            public int compare(String o1, String o2) {
-                if ("全部".equals(o1)) {
-                    return -1;
-                } else if ("全部".equals(o2)) {
-                    return 1;
-                } else {
-                    return o1.compareTo(o2);
-                }
+        props.put("tags", itemByFolderId.keySet().stream().sorted((String o1, String o2) -> {
+            if ("全部".equals(o1)) {
+                return -1;
+            } else if ("全部".equals(o2)) {
+                return 1;
+            } else {
+                return o1.compareTo(o2);
             }
         }).toList());
         props.put("bookmarkByTags", itemByFolderId);
