@@ -1,19 +1,13 @@
 package com.jinelei.bitterling.web.controller;
 
-import java.io.IOException;
 import java.security.InvalidParameterException;
 import java.util.*;
-import java.util.stream.Collectors;
-
-import com.jinelei.bitterling.web.enums.BookmarkType;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jinelei.bitterling.core.controller.BaseController;
 import com.jinelei.bitterling.core.domain.result.GenericResult;
 import com.jinelei.bitterling.core.helper.TimeTracker;
+import com.jinelei.bitterling.core.helper.TreeHelper;
 import com.jinelei.bitterling.web.domain.BookmarkDomain;
 import com.jinelei.bitterling.web.service.BookmarkService;
 
@@ -28,13 +22,6 @@ public class BookmarkController extends BaseController {
 
     public BookmarkController(BookmarkService service) {
         this.service = service;
-    }
-
-    @PostMapping("import")
-    @Operation(summary = "导入书签", description = "导入书签")
-    public GenericResult<String> importFromFile(@RequestParam("file") MultipartFile file) throws IOException {
-        this.service.importFromFile(file);
-        return GenericResult.success("success");
     }
 
     @PostMapping("create")
@@ -72,6 +59,18 @@ public class BookmarkController extends BaseController {
         List<BookmarkDomain> list = new ArrayList<>();
         all.forEach(list::add);
         return GenericResult.success(list);
+    }
+
+    @PostMapping("tree")
+    @Operation(summary = "查询书签树", description = "查询书签树")
+    public GenericResult<List<BookmarkDomain>> tree(@RequestBody @JsonView(BookmarkDomain.Views.Query.class) BookmarkDomain req) {
+        TimeTracker.getInstance().mark("查询书签树");
+        Iterable<BookmarkDomain> all = this.service.findAll();
+        TimeTracker.getInstance().mark("查询书签树").printTotalTime("查询书签树");
+        List<BookmarkDomain> list = new ArrayList<>();
+        all.forEach(list::add);
+        List<BookmarkDomain> tree = TreeHelper.convertToTree(list);
+        return GenericResult.success(tree);
     }
 
 }
