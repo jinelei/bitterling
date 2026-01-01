@@ -56,7 +56,7 @@
         <div class="flex overflow-x-auto pb-4 mb-8 scrollbar-hide space-x-2 md:justify-center" id="category-tabs">
             <button th:each="tag : ${tags}"
                 th:class="'category-tab px-4 py-2 rounded-full bg-white text-dark whitespace-nowrap transition-all-300 hover:bg-neutral-100'"
-                th:attr="data-category=${tag}" th:text="${tag}">
+                th:attr="data-category=${tag.key}" th:text="${tag.value}">
                 分类占位
             </button>
         </div>
@@ -66,10 +66,10 @@
             <a th:each="bookmark : ${bookmarkByTags[__${tag?:'全部'}__]}" th:href="${bookmark.url}" target="_blank"
                 th:class="'bookmark-card group bg-white rounded-xl shadow-card hover:shadow-card-hover p-4 flex flex-col
                 items-center justify-center transition-all-300 transform hover:-translate-y-1'"
-                th:attr="data-category=${bookmark.name}" th:data-name="${bookmark.name}">
+                th:attr="data-category=${bookmark.parentId}" th:data-name="${bookmark.name}">
                 <div
                     th:class="'w-12 h-12 rounded-full ' + ${bookmark.name} + '/10 flex items-center justify-center mb-3 group-hover:' + ${bookmark.name} + '/20 transition-all-300'">
-                    <img th:src="${bookmark.icon}" alt="图标" class="w-6 h-6">
+                    <i th:class="'fa ' + ${bookmark.icon} + ' text-xl'" th:style="'color: ' + ${bookmark.name}"></i>
                 </div>
                 <h3 class="text-center font-medium" th:text="${bookmark.name}">书签名称</h3>
             </a>
@@ -78,7 +78,7 @@
 
     <footer class="bg-white py-6 border-t border-neutral-200 mt-12">
         <div class="container mx-auto px-4 text-center text-neutral-500 text-sm">
-            <p>jinelei.com© 2025</p>
+            <p>jinelei.com © 2025</p>
         </div>
     </footer>
 
@@ -108,7 +108,7 @@
 
                 const category = this.getAttribute('data-category');
                 bookmarkCards.forEach(card => {
-                    if (category === '全部' || card.getAttribute('data-category') === category) {
+                    if (!!!category || card.getAttribute('data-category') === category) {
                         card.style.display = 'flex';
                         setTimeout(() => {
                             card.style.opacity = '1';

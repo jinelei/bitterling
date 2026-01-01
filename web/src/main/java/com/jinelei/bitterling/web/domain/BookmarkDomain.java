@@ -19,7 +19,7 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 @Entity
-@Table(name="bookmark")
+@Table(name = "bookmark")
 @Schema(title = "书签领域对象", description = "书签领域对象")
 public class BookmarkDomain extends BaseDomain<Long>
         implements Comparable<BookmarkDomain>, TreeView<BookmarkDomain, Long> {
@@ -31,7 +31,7 @@ public class BookmarkDomain extends BaseDomain<Long>
     @JsonView(value = { Views.Query.class, Views.Create.class, Views.Delete.class, Views.Update.class })
     @Schema(description = "父级ID")
     private Long parentId;
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
     @Schema(description = "书签名称")
     private String name;
@@ -39,7 +39,7 @@ public class BookmarkDomain extends BaseDomain<Long>
     @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
     @Schema(description = "书签类型")
     private BookmarkType type;
-    @Column(name = "url", unique = true)
+    @Column(name = "url")
     @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
     @Schema(description = "书签地址")
     private String url;

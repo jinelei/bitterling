@@ -77,4 +77,5 @@ Desktop.ini # Windows
 *.swo
 *~
 
-web/data/bitterling_db.mv.db
+**/*_db.mv.db
+**/*_db.trace.db
