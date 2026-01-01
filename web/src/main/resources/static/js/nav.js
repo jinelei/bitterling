@@ -1,11 +1,18 @@
-// src/main/resources/static/js/nav.js
-document.addEventListener('DOMContentLoaded', function() {
-    // 文件夹点击事件（示例：展开子书签）
-    const folderItems = document.querySelectorAll('.bookmark-item.folder');
-    folderItems.forEach(folder => {
-        folder.addEventListener('click', function() {
-            // 此处可扩展：加载文件夹下的子书签并展示
-            alert(`展开文件夹：${this.querySelector('.bookmark-name').textContent}`);
-        });
-    });
-});
+tailwind.config = {
+    darkMode: 'class',
+    theme: {
+        extend: {
+            colors: {
+                primary: '#3B82F6',
+                secondary: '#10B981',
+                dark: {
+                    bg: '#1E293B',
+                    card: '#334155'
+                }
+            },
+            fontFamily: {
+                inter: ['Inter', 'system-ui', 'sans-serif'],
+            },
+        },
+    }
+}

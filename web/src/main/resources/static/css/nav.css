@@ -1,4 +1,26 @@
-/* src/main/resources/static/css/nav.css */
+@layer utilities {
+    .transition-all-300 {
+        transition: all 300ms ease-in-out;
+    }
+
+    .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .greeting-animation {
+        @apply transition-opacity duration-1000 ease-in-out;
+    }
+}
+
 * {
     margin: 0;
     padding: 0;

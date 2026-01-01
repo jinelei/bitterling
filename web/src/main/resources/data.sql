@@ -89,4 +89,35 @@ values
         7,
         'https://www.bilibili.com/',
         'fa-youtube-play'
+    ),
+    (
+        8,
+        10000,
+        '豆包',
+        1,
+        8,
+        'https://www.doubao.com/chat/',
+        'fa-wheelchair-alt'
+    );
+
+
+insert into
+    bookmark (
+        id,
+        parent_id,
+        name,
+        type,
+        order_number,
+        url,
+        icon
+    )
+values
+    (
+        9,
+        10001,
+        'DQS',
+        1,
+        9,
+        'https://www.bilibili.com/',
+        'fa-youtube-play'
     );
