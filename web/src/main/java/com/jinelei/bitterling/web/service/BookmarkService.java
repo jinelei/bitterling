@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.jinelei.bitterling.comparator.PriorityComparator;
@@ -25,6 +26,9 @@ public class BookmarkService extends BaseService<BookmarkDomain, Long> {
     public BookmarkService(BaseRepository<BookmarkDomain, Long> repository) {
         super(repository);
     }
+
+    @Value("${bitterling.nickname}")
+    private String nickname;
 
     private final PriorityComparator<String> tagsComparator = PriorityComparator.of(
             new String[]{"全部", "根目录"},
@@ -45,6 +49,7 @@ public class BookmarkService extends BaseService<BookmarkDomain, Long> {
                 .collect(Collectors.groupingBy(i -> folderNameById.get(i.getParentId())));
         folderNameById.put(null, "全部");
         itemByFolderId.put("全部", map.get(BookmarkType.ITEM));
+        props.put("nickname", nickname);
         props.put("tags", map.get(BookmarkType.FOLDER));
         props.put("bookmarkByTags", itemByFolderId);
         return props;

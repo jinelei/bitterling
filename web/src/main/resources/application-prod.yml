@@ -12,14 +12,14 @@ spring:
     encoding: UTF-8
     mode: HTML5
   datasource:
-    url: jdbc:h2:mem:bitterling_db
+    url: jdbc:h2:file:/usr/local/src/bitterling/bitterling_db
     driver-class-name: org.h2.Driver
     username: sa
     password: jinelei
 
   h2:
     console:
-      enabled: true
+      enabled: false
       path: /h2-console
       settings:
         web-allow-others: true
@@ -50,17 +50,14 @@ spring:
 logging:
   level:
     root: warn
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql: TRACE
-    com.jinelei.bitterling: INFO
+    org.hibernate.SQL: warn
+    org.hibernate.type.descriptor.sql: warn
+    com.jinelei.bitterling: warn
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
 
 springdoc:
   api-docs:
-    enabled: true
+    enabled: false
     path: /
   paths-to-match: /**
-
-bitterling:
-  nickname: 美丽人生

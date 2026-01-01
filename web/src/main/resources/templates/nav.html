@@ -15,10 +15,9 @@
     <div class="container mx-auto px-4 py-4 flex flex-col md:flex-row items-center justify-between">
         <div class="flex items-center mb-4 md:mb-0">
             <h1 class="text-[clamp(2rem,5vw,3rem)] font-bold mb-2 bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent greeting-animation">
-                <span id="user" style="cursor: pointer; user-select: none">美丽人生</span>
-                <span>，</span>
                 <span id="greeting" style="cursor: pointer">早上好</span>
-                <span>！</span>
+                <span>，</span>
+                <span id="user" style="cursor: pointer; user-select: none" th:text="${nickname}"></span>
             </h1>
         </div>
         <div class="w-full md:w-auto relative flex-grow md:flex-grow-0 md:max-w-md">
