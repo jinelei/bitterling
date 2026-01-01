@@ -59,16 +59,17 @@
         </dependency>
     </dependencies>
     <build>
+        <finalName>app</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>${spring-boot.version}</version>
                 <configuration>
                     <mainClass>com.jinelei.bitterling.web.WebApplication</mainClass>
                     <layers>
                         <enabled>true</enabled>
                     </layers>
-                    <includeDependencies>true</includeDependencies>
                 </configuration>
                 <executions>
                     <execution>
@@ -81,6 +82,7 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven-compiler-plugin.version}</version>
                 <configuration>
                     <source>21</source>
                     <target>21</target>
