@@ -6,8 +6,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.*;
-
 /**
  * 首页控制器
  *
@@ -28,10 +26,6 @@ public class IndexController extends BaseController {
      */
     @GetMapping(value = {"/", "/index"})
     public ModelAndView index() {
-        log.info("index");
-        ModelAndView mav = new ModelAndView("nav");
-        Map<String, Object> properties = bookmarkService.renderBookmark();
-        mav.addAllObjects(properties);
-        return mav;
+        return new ModelAndView("index", bookmarkService.indexRenderProperties());
     }
 }

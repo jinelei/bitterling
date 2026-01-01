@@ -1,20 +1,16 @@
 package com.jinelei.bitterling.web.service;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.jinelei.bitterling.comparator.PriorityComparator;
 import com.jinelei.bitterling.core.repository.BaseRepository;
 import com.jinelei.bitterling.core.service.BaseService;
 import com.jinelei.bitterling.web.domain.BookmarkDomain;
@@ -30,11 +26,7 @@ public class BookmarkService extends BaseService<BookmarkDomain, Long> {
     @Value("${bitterling.nickname}")
     private String nickname;
 
-    private final PriorityComparator<String> tagsComparator = PriorityComparator.of(
-            new String[]{"全部", "根目录"},
-            Comparator.naturalOrder());
-
-    public Map<String, Object> renderBookmark() {
+    public Map<String, Object> indexRenderProperties() {
         final Map<String, Object> props = new HashMap<>();
         Iterable<BookmarkDomain> all = findAll();
         final Map<BookmarkType, List<BookmarkDomain>> map = StreamSupport.stream(all.spliterator(), true)
@@ -47,7 +39,6 @@ public class BookmarkService extends BaseService<BookmarkDomain, Long> {
                 .parallelStream()
                 .filter(i -> Objects.nonNull(i.getParentId()))
                 .collect(Collectors.groupingBy(i -> folderNameById.get(i.getParentId())));
-        folderNameById.put(null, "全部");
         itemByFolderId.put("全部", map.get(BookmarkType.ITEM));
         props.put("nickname", nickname);
         props.put("tags", map.get(BookmarkType.FOLDER));
