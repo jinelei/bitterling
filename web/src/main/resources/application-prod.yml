@@ -12,7 +12,7 @@ logging:
     root: warn
     org.hibernate.SQL: warn
     org.hibernate.type.descriptor.sql: warn
-    com.jinelei.bitterling: warn
+    com.jinelei.bitterling: info
 springdoc:
   api-docs:
     enabled: false

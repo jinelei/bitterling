@@ -27,6 +27,7 @@ public class BookmarkService extends BaseService<BookmarkDomain, Long> {
     private String nickname;
 
     public Map<String, Object> indexRenderProperties() {
+        log.info("indexRenderProperties, nickname: {}", nickname);
         final Map<String, Object> props = new HashMap<>();
         Iterable<BookmarkDomain> all = findAll();
         final Map<BookmarkType, List<BookmarkDomain>> map = StreamSupport.stream(all.spliterator(), true)

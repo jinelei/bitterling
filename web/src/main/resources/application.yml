@@ -48,7 +48,7 @@ logging:
     root: warn
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql: TRACE
-    com.jinelei.bitterling: INFO
+    com.jinelei.bitterling: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
 
