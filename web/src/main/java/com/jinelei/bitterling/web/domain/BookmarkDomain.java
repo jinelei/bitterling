@@ -2,6 +2,7 @@ package com.jinelei.bitterling.web.domain;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -19,48 +20,52 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
 
 @Entity
-@Table(name = "bookmark")
+@Table(name = "BOOKMARK")
 @Schema(title = "书签领域对象", description = "书签领域对象")
 public class BookmarkDomain extends BaseDomain<Long>
         implements Comparable<BookmarkDomain>, TreeView<BookmarkDomain, Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(value = { Views.Query.class, Views.Delete.class, Views.Update.class })
+    @JsonView(value = {Views.Query.class, Views.Delete.class, Views.Update.class})
     @Schema(description = "主键ID")
     private Long id;
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Delete.class, Views.Update.class })
+    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Delete.class, Views.Update.class})
     @Schema(description = "父级ID")
     private Long parentId;
     @Column(name = "name", unique = true)
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
     @Schema(description = "书签名称")
     private String name;
     @Column(name = "type")
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
     @Schema(description = "书签类型")
     private BookmarkType type;
     @Column(name = "url")
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
     @Schema(description = "书签地址")
     private String url;
-    @Column(name = "icon", length = 10240)
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @Column(name = "icon")
+    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
     @Schema(description = "书签图标")
     private String icon;
+    @Column(name = "color")
+    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
+    @Schema(description = "书签颜色")
+    private String color;
     @Column(name = "order_number")
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
     @Schema(description = "排序值")
     private Integer orderNumber;
     @Column(name = "create_time")
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
     @Column(name = "update_time")
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
     @Transient
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
     @Schema(description = "子级")
     private transient List<BookmarkDomain> children;
 
@@ -119,6 +124,14 @@ public class BookmarkDomain extends BaseDomain<Long>
         this.icon = icon;
     }
 
+    public String getColor() {
+        return color;
+    }
+
+    public void setColor(String color) {
+        this.color = color;
+    }
+
     public Integer getOrderNumber() {
         return orderNumber;
     }
@@ -152,86 +165,32 @@ public class BookmarkDomain extends BaseDomain<Long>
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        BookmarkDomain other = (BookmarkDomain) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (parentId == null) {
-            if (other.parentId != null)
-                return false;
-        } else if (!parentId.equals(other.parentId))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (type != other.type)
-            return false;
-        if (url == null) {
-            if (other.url != null)
-                return false;
-        } else if (!url.equals(other.url))
-            return false;
-        if (icon == null) {
-            if (other.icon != null)
-                return false;
-        } else if (!icon.equals(other.icon))
-            return false;
-        if (orderNumber == null) {
-            if (other.orderNumber != null)
-                return false;
-        } else if (!orderNumber.equals(other.orderNumber))
-            return false;
-        if (createTime == null) {
-            if (other.createTime != null)
-                return false;
-        } else if (!createTime.equals(other.createTime))
-            return false;
-        if (updateTime == null) {
-            if (other.updateTime != null)
-                return false;
-        } else if (!updateTime.equals(other.updateTime))
-            return false;
-        if (children == null) {
-            if (other.children != null)
-                return false;
-        } else if (!children.equals(other.children))
-            return false;
-        return true;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+        BookmarkDomain that = (BookmarkDomain) o;
+        return Objects.equals(id, that.id) && Objects.equals(parentId, that.parentId) && Objects.equals(name, that.name) && type == that.type && Objects.equals(url, that.url) && Objects.equals(icon, that.icon) && Objects.equals(color, that.color) && Objects.equals(orderNumber, that.orderNumber) && Objects.equals(createTime, that.createTime) && Objects.equals(updateTime, that.updateTime) && Objects.equals(children, that.children);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((parentId == null) ? 0 : parentId.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        result = prime * result + ((url == null) ? 0 : url.hashCode());
-        result = prime * result + ((icon == null) ? 0 : icon.hashCode());
-        result = prime * result + ((orderNumber == null) ? 0 : orderNumber.hashCode());
-        result = prime * result + ((createTime == null) ? 0 : createTime.hashCode());
-        result = prime * result + ((updateTime == null) ? 0 : updateTime.hashCode());
-        result = prime * result + ((children == null) ? 0 : children.hashCode());
-        return result;
+        return Objects.hash(id, parentId, name, type, url, icon, color, orderNumber, createTime, updateTime, children);
     }
 
     @Override
     public String toString() {
-        return "BookmarkDomain [id=" + id + ", parentId=" + parentId + ", name=" + name + ", type=" + type + ", url="
-                + url + ", icon=" + icon + ", orderNumber=" + orderNumber + ", createTime=" + createTime
-                + ", updateTime=" + updateTime + "]";
+        return "BookmarkDomain{" +
+                "id=" + id +
+                ", parentId=" + parentId +
+                ", name='" + name + '\'' +
+                ", type=" + type +
+                ", url='" + url + '\'' +
+                ", icon='" + icon + '\'' +
+                ", color='" + color + '\'' +
+                ", orderNumber=" + orderNumber +
+                ", createTime=" + createTime +
+                ", updateTime=" + updateTime +
+                ", children=" + children +
+                "} " + super.toString();
     }
 
     public static interface Views {

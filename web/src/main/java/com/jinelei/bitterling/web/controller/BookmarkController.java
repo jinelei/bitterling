@@ -27,7 +27,7 @@ public class BookmarkController extends BaseController {
     @PostMapping("create")
     @Operation(summary = "新增书签", description = "新增书签")
     public GenericResult<String> create(@RequestBody @JsonView(BookmarkDomain.Views.Create.class) BookmarkDomain req) {
-        log.info("req: {}", req);
+        log.info("create: {}", req);
         this.service.save(req);
         return GenericResult.success("success");
     }
@@ -35,7 +35,7 @@ public class BookmarkController extends BaseController {
     @PostMapping("update")
     @Operation(summary = "更新书签", description = "根据id更新书签")
     public GenericResult<String> update(@RequestBody @JsonView(BookmarkDomain.Views.Update.class) BookmarkDomain req) {
-        log.info("req: {}", req);
+        log.info("update: {}", req);
         this.service.save(req);
         return GenericResult.success("success");
     }
@@ -43,8 +43,8 @@ public class BookmarkController extends BaseController {
     @PostMapping("delete")
     @Operation(summary = "删除书签", description = "根据id删除书签")
     public GenericResult<String> delete(@RequestBody @JsonView(BookmarkDomain.Views.Delete.class) BookmarkDomain req) {
-        log.info("req: {}", req);
-        Long id = Optional.ofNullable(req).map(i -> i.getId())
+        log.info("delete: {}", req);
+        Long id = Optional.ofNullable(req).map(BookmarkDomain::getId)
                 .orElseThrow(() -> new InvalidParameterException("需要删除的ID不能为空"));
         this.service.deleteById(id);
         return GenericResult.success("success");
@@ -53,6 +53,7 @@ public class BookmarkController extends BaseController {
     @PostMapping("list")
     @Operation(summary = "查询书签列表", description = "查询书签列表")
     public GenericResult<List<BookmarkDomain>> list(@RequestBody @JsonView(BookmarkDomain.Views.Query.class) BookmarkDomain req) {
+        log.info("list: {}", req);
         TimeTracker.getInstance().mark("查询书签列表");
         Iterable<BookmarkDomain> all = this.service.findAll();
         TimeTracker.getInstance().mark("查询书签列表").printTotalTime("查询书签列表");
@@ -64,6 +65,7 @@ public class BookmarkController extends BaseController {
     @PostMapping("tree")
     @Operation(summary = "查询书签树", description = "查询书签树")
     public GenericResult<List<BookmarkDomain>> tree(@RequestBody @JsonView(BookmarkDomain.Views.Query.class) BookmarkDomain req) {
+        log.info("tree: {}", req);
         TimeTracker.getInstance().mark("查询书签树");
         Iterable<BookmarkDomain> all = this.service.findAll();
         TimeTracker.getInstance().mark("查询书签树").printTotalTime("查询书签树");

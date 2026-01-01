@@ -27,45 +27,26 @@ public class BookmarkService extends BaseService<BookmarkDomain, Long> {
     }
 
     private final PriorityComparator<String> tagsComparator = PriorityComparator.of(
-            new String[] { "全部", "根目录" },
+            new String[]{"全部", "根目录"},
             Comparator.naturalOrder());
 
     public Map<String, Object> renderBookmark() {
         final Map<String, Object> props = new HashMap<>();
         Iterable<BookmarkDomain> all = findAll();
-        final List<BookmarkDomain> folderList = new ArrayList<>();
-        final List<BookmarkDomain> itemList = new ArrayList<>();
-        StreamSupport.stream(all.spliterator(), false)
-                .forEach(it -> {
-                    Optional.ofNullable(it.getType())
-                            .filter(BookmarkType.FOLDER::equals)
-                            .ifPresentOrElse(i -> {
-                                folderList.add(it);
-                            }, () -> {
-                                itemList.add(it);
-                            });
-                });
-        log.info("null check folderList: {}", folderList);
-        log.info("null check itemList: {}", itemList);
-        final Map<Long, String> folderNameById = folderList.parallelStream()
+        final Map<BookmarkType, List<BookmarkDomain>> map = StreamSupport.stream(all.spliterator(), true)
+                .filter(i -> Objects.nonNull(i.getType()))
+                .collect(Collectors.groupingBy(BookmarkDomain::getType));
+        final Map<Long, String> folderNameById = map.getOrDefault(BookmarkType.FOLDER, new ArrayList<>())
+                .parallelStream()
                 .collect(Collectors.toMap(BookmarkDomain::getId, BookmarkDomain::getName));
-        folderNameById.put(null, "全部");
-        folderNameById.put(null, "全部");
-        log.info("null check folderNameById: {}", folderNameById);
-        final Map<String, List<BookmarkDomain>> itemByFolderId = itemList.parallelStream()
+        final Map<String, List<BookmarkDomain>> itemByFolderId = map.getOrDefault(BookmarkType.ITEM, new ArrayList<>())
+                .parallelStream()
                 .filter(i -> Objects.nonNull(i.getParentId()))
-                .collect(Collectors
-                        .groupingBy(i -> folderNameById.get(i.getParentId())));
-        itemByFolderId.put("全部", itemList);
-        props.put("tags", folderNameById.entrySet().stream()
-                .sorted(Map.Entry.comparingByValue(tagsComparator))
-                .collect(Collectors.toMap(
-                        Map.Entry::getKey,
-                        Map.Entry::getValue,
-                        (e1, e2) -> e1,
-                        LinkedHashMap::new)));
+                .collect(Collectors.groupingBy(i -> folderNameById.get(i.getParentId())));
+        folderNameById.put(null, "全部");
+        itemByFolderId.put("全部", map.get(BookmarkType.ITEM));
+        props.put("tags", map.get(BookmarkType.FOLDER));
         props.put("bookmarkByTags", itemByFolderId);
-        log.info("renderBookmark props: {}", props);
         return props;
     }
 

@@ -26,8 +26,9 @@ public class IndexController extends BaseController {
     /**
      * 导航页面入口
      */
-    @GetMapping(value = { "/", "/index" })
+    @GetMapping(value = {"/", "/index"})
     public ModelAndView index() {
+        log.info("index");
         ModelAndView mav = new ModelAndView("nav");
         Map<String, Object> properties = bookmarkService.renderBookmark();
         mav.addAllObjects(properties);
