@@ -79,3 +79,6 @@ Desktop.ini # Windows
 
 **/*_db.mv.db
 **/*_db.trace.db
+
+**/application-dev.yml
+**/application-prod.yml
