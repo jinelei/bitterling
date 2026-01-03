@@ -2,9 +2,26 @@ server:
   port: 8081
   servlet:
     context-path: /
+  tomcat:
+    remote-ip-header: X-Real-IP
+    protocol-header: X-Forwarded-Proto
+    port-header: X-Forwarded-Port
+    protocol-header-https-value: https
+    use-remote-port-header: true
 spring:
   application:
     name: bitterling
+  mvc:
+    dispatch-options-request: true
+    async:
+      request-timeout: 30000
+  session:
+    cookie:
+      domain: jinelei.com
+      port: 9443
+      secure: true
+      http-only: true
+      same-site: Lax
   thymeleaf:
     cache: false
     prefix: classpath:/templates/
@@ -43,6 +60,27 @@ spring:
       enabled: true
   main:
     banner-mode: off
+  web:
+    cors:
+      allowed-origin-patterns:
+        - "https://*.jinelei.com:9443"
+        - "http://localhost:8080"
+        - "http://localhost:8081"
+        - "http://localhost:8082"
+        - "http://localhost:8083"
+      allowed-methods:
+        - GET
+        - POST
+        - PUT
+        - DELETE
+        - OPTIONS
+      allowed-headers: "*"
+      allow-credentials: true
+      max-age: 3600
+      exposed-headers:
+        - Authorization
+        - X-Token
+      path-patterns: "/**"
 logging:
   level:
     root: warn
@@ -59,4 +97,9 @@ springdoc:
   paths-to-match: /**
 
 bitterling:
-  nickname: 美丽人生
+  administrator:
+    username: asdf
+    password: asdf
+    nickname: 美丽人生
+  cors:
+    allowed-origin-

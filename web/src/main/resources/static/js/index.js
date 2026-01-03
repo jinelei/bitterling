@@ -17,33 +17,6 @@ tailwind.config = {
     }
 }
 
-function updateGreeting() {
-    const hour = new Date().getHours();
-    let greeting;
-
-    if (hour >= 5 && hour < 9) {
-        greeting = "早上好";
-    } else if (hour >= 9 && hour < 12) {
-        greeting = "上午好";
-    } else if (hour >= 12 && hour < 14) {
-        greeting = "中午好";
-    } else if (hour >= 14 && hour < 18) {
-        greeting = "下午好";
-    } else if (hour >= 18 && hour < 22) {
-        greeting = "晚上好";
-    } else {
-        greeting = "夜深了";
-    }
-
-    const greetingElement = document.getElementById("greeting");
-    greetingElement.style.opacity = "0";
-
-    setTimeout(() => {
-        greetingElement.textContent = greeting;
-        greetingElement.style.opacity = "1";
-    }, 100);
-}
-
 function searchBookmark() {
     const tags = document.querySelectorAll(".category-tab");
     const bookmarks = document.querySelectorAll(".bookmark-card");
@@ -102,23 +75,31 @@ function searchBookmark() {
 }
 
 function initThemeSwitch() {
-    const themeToggle = document.getElementById('greeting');
-
+    const themeToggle = document.getElementById('theme');
     if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
         document.documentElement.classList.add('dark');
+        themeToggle.classList.remove('fa-moon-o');
+        themeToggle.classList.add('fa-sun-o');
     } else {
         document.documentElement.classList.remove('dark');
+        themeToggle.classList.remove('fa-sun-o');
+        themeToggle.classList.add('fa-moon-o');
     }
-
     themeToggle.addEventListener('click', () => {
         document.documentElement.classList.toggle('dark');
         localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+        if (localStorage.theme === 'dark') {
+            themeToggle.classList.remove('fa-moon-o');
+            themeToggle.classList.add('fa-sun-o');
+        } else {
+            themeToggle.classList.remove('fa-sun-o');
+            themeToggle.classList.add('fa-moon-o');
+        }
     });
 }
 
 initThemeSwitch();
 searchBookmark();
-updateGreeting();
 
 // window.addEventListener("scroll", () => {
 //     const header = document.getElementById("header");
