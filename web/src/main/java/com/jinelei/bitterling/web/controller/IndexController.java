@@ -34,11 +34,6 @@ public class IndexController extends BaseController {
         return new ModelAndView("index", bookmarkService.indexRenderProperties());
     }
 
-    // @GetMapping("/login")
-    // public String showLoginPage() {
-    // return "login";
-    // }
-
     @GetMapping("/login")
     public ModelAndView login(
             @RequestParam(value = "error", required = false) String error,
@@ -61,19 +56,4 @@ public class IndexController extends BaseController {
         return model;
     }
 
-    // @PostMapping("/login")
-    // public String handleLogin(UserLoginRequest request, ModelAndView model) {
-    // try {
-    // String fullUrl =
-    // ServletUriComponentsBuilder.fromCurrentRequest().toUriString();
-    // log.info("fullUrl: {}", fullUrl);
-    // userService.login(request);
-    // return "redirect:/";
-    // } catch (Exception e) {
-    // model.addObject("errorMsg", e.getMessage());
-    // model.addObject("username", request.getUsername());
-    // model.addObject("rememberMe", request.getPassword());
-    // return "login";
-    // }
-    // }
 }
