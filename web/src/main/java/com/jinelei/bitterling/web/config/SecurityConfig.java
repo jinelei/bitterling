@@ -27,7 +27,7 @@ public class SecurityConfig {
     private String password;
 
     /**
-     * 1. 密码编码器（Spring Security 6.x 强制要求，不能使用明文）
+     * 1. 密码编码器
      */
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -53,7 +53,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/static/**", "/favicon.ico").permitAll()
+                        .requestMatchers("/login", "/css/**", "/js/**", "/fonts/**", "/favicon.ico").permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .requestMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                         .anyRequest().authenticated())
