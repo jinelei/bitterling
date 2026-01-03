@@ -30,6 +30,8 @@ public class SecurityConfig {
     private String password;
     @Value("${spring.security.rememberme.key:myRememberMeKey}")
     private String rememberMeKey;
+    @Value("${spring.security.rememberme.token-validity-seconds:604800}")
+    private int tokenValiditySeconds;
 
     /**
      * 1. 密码编码器
@@ -62,7 +64,7 @@ public class SecurityConfig {
     public PersistentTokenBasedRememberMeServices rememberMeServices() {
         PersistentTokenBasedRememberMeServices services = new PersistentTokenBasedRememberMeServices(rememberMeKey,
                 userDetailsService(), persistentTokenRepository());
-        services.setTokenValiditySeconds(604800);
+        services.setTokenValiditySeconds(tokenValiditySeconds);
         services.setParameter("rememberMe");
         return services;
     }
