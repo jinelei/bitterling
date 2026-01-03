@@ -15,6 +15,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -25,6 +28,8 @@ public class SecurityConfig {
     private String username;
     @Value("${bitterling.administrator.password:admin}")
     private String password;
+    @Value("${spring.security.rememberme.key:myRememberMeKey}")
+    private String rememberMeKey;
 
     /**
      * 1. 密码编码器
@@ -44,6 +49,22 @@ public class SecurityConfig {
                 .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(adminUser);
+    }
+
+    // 记住我：内存令牌仓库
+    @Bean
+    public PersistentTokenRepository persistentTokenRepository() {
+        return new InMemoryTokenRepositoryImpl();
+    }
+
+    // 记住我服务配置
+    @Bean
+    public PersistentTokenBasedRememberMeServices rememberMeServices() {
+        PersistentTokenBasedRememberMeServices services = new PersistentTokenBasedRememberMeServices(rememberMeKey,
+                userDetailsService(), persistentTokenRepository());
+        services.setTokenValiditySeconds(604800);
+        services.setParameter("rememberMe");
+        return services;
     }
 
     /**
@@ -69,10 +90,9 @@ public class SecurityConfig {
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout=true")
                         .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID")
+                        .deleteCookies("JSESSIONID", "remember-me")
                         .permitAll())
                 .csrf(csrf -> csrf
-                        // .disable()
                         .ignoringRequestMatchers("/login"))
                 .sessionManagement(session -> session
                         .maximumSessions(1)
@@ -82,7 +102,7 @@ public class SecurityConfig {
     }
 
     /**
-     * 可选：自定义登录成功处理器（适配 Nginx 代理的 HTTPS+9443 端口）
+     * 自定义登录成功处理器
      */
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
