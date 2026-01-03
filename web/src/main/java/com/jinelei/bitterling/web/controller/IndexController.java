@@ -36,12 +36,13 @@ public class IndexController extends BaseController {
 
     // @GetMapping("/login")
     // public String showLoginPage() {
-    //     return "login";
+    // return "login";
     // }
 
     @GetMapping("/login")
     public ModelAndView login(
             @RequestParam(value = "error", required = false) String error,
+            @RequestParam(value = "expired", required = false) String expired,
             @RequestParam(value = "username", required = false) String username,
             ModelAndView model) {
         model.setViewName("login");
@@ -52,6 +53,10 @@ public class IndexController extends BaseController {
         if (error != null) {
             model.addObject("errorMsg", "用户名或密码错误，请重新输入！");
             log.error("用户登录失败: 用户名或密码错误，请重新输入！");
+        }
+        if (expired != null) {
+            model.addObject("errorMsg", "用户登录已过期，请重新登录！");
+            log.error("用户登录失败: 用户登录已过期，请重新登录！");
         }
         return model;
     }

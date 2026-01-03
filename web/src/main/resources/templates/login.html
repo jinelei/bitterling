@@ -15,7 +15,7 @@
 <body class="min-h-screen flex flex-col items-center justify-center py-6 px-4">
     <div class="w-full max-w-md rounded-lg login-shadow p-8">
         <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-center text-gray-800 mb-8">用户登录</h2>
-        <div th:if="${error != null or errorMsg != null}"
+        <div th:if="${error != null or expired != null or errorMsg != null}"
             class="mb-6 p-3 bg-danger/10 border border-danger/20 rounded-md text-danger text-center text-sm">
             <span th:text="${errorMsg != null ? errorMsg : 
                 (SPRING_SECURITY_LAST_EXCEPTION != null ? SPRING_SECURITY_LAST_EXCEPTION.message : '用户名或密码错误')}">

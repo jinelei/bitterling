@@ -32,6 +32,8 @@ public class SecurityConfig {
     private String rememberMeKey;
     @Value("${spring.security.rememberme.token-validity-seconds:604800}")
     private int tokenValiditySeconds;
+    @Value("${spring.security.session.maximum-sessions:3}")
+    private int maximumSessions;
 
     /**
      * 1. 密码编码器
@@ -97,7 +99,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/login"))
                 .sessionManagement(session -> session
-                        .maximumSessions(1)
+                        .maximumSessions(maximumSessions)
                         .expiredUrl("/login?expired=true"));
 
         return http.build();
