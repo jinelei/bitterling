@@ -15,9 +15,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
-import org.springframework.security.web.authentication.rememberme.InMemoryTokenRepositoryImpl;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenBasedRememberMeServices;
-import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
 @Configuration
 @EnableWebSecurity
@@ -28,7 +25,7 @@ public class SecurityConfig {
     private String username;
     @Value("${bitterling.administrator.password:admin}")
     private String password;
-    @Value("${spring.security.rememberme.key:myRememberMeKey}")
+    @Value("${spring.security.rememberme.key:rememberMe}")
     private String rememberMeKey;
     @Value("${spring.security.rememberme.token-validity-seconds:604800}")
     private int tokenValiditySeconds;
@@ -55,24 +52,8 @@ public class SecurityConfig {
         return new InMemoryUserDetailsManager(adminUser);
     }
 
-    // 记住我：内存令牌仓库
-    @Bean
-    public PersistentTokenRepository persistentTokenRepository() {
-        return new InMemoryTokenRepositoryImpl();
-    }
-
-    // 记住我服务配置
-    @Bean
-    public PersistentTokenBasedRememberMeServices rememberMeServices() {
-        PersistentTokenBasedRememberMeServices services = new PersistentTokenBasedRememberMeServices(rememberMeKey,
-                userDetailsService(), persistentTokenRepository());
-        services.setTokenValiditySeconds(tokenValiditySeconds);
-        services.setParameter("rememberMe");
-        return services;
-    }
-
     /**
-     * 3. 核心安全过滤链（配置权限规则、登录、退出等）
+     * 核心安全过滤链（配置权限规则、登录、退出等）
      */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -94,8 +75,14 @@ public class SecurityConfig {
                         .logoutUrl("/logout")
                         .logoutSuccessUrl("/login?logout=true")
                         .invalidateHttpSession(true)
-                        .deleteCookies("JSESSIONID", "remember-me")
+                        .deleteCookies("JSESSIONID", "REMEMBER_ME")
                         .permitAll())
+                .rememberMe(rememberMe -> rememberMe
+                        .userDetailsService(userDetailsService())
+                        .rememberMeParameter(rememberMeKey)
+                        .rememberMeCookieName("REMEMBER_ME")
+                        .tokenValiditySeconds(tokenValiditySeconds)
+                        .useSecureCookie(true))
                 .csrf(csrf -> csrf
                         .ignoringRequestMatchers("/login"))
                 .sessionManagement(session -> session
