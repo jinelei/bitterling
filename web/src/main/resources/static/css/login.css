@@ -1,5 +1,0 @@
-@layer utilities {
-    .input-focus {
-        @apply border-primary ring-2 ring-primary/20;
-    }
-}

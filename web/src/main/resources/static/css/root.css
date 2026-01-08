@@ -7,5 +7,41 @@
 body {
     font-family: "Microsoft YaHei", sans-serif;
     background-color: white;
-    padding: 20px;
+    padding: 0px;
+}
+
+@layer utilities {
+    .transition-all-300 {
+        transition: all 300ms ease-in-out;
+    }
+
+    .text-shadow {
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+
+    .scrollbar-hide {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+
+    .greeting-animation {
+        @apply transition-opacity duration-1000 ease-in-out;
+    }
+
+    .input-focus {
+        @apply border-primary ring-2 ring-primary/20;
+    }
+
+    /* 自定义工具类 */
+    .content-auto {
+        content-visibility: auto;
+    }
+
+    .sidebar-item-active {
+        @apply bg-primary/10 text-primary border-l-4 border-primary;
+    }
 }
