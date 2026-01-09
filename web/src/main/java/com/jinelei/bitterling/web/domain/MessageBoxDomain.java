@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jinelei.bitterling.core.domain.BaseDomain;
-import com.jinelei.bitterling.web.domain.BookmarkDomain.Views;
+import com.jinelei.bitterling.core.domain.view.ContextView;
 import com.jinelei.bitterling.web.enums.MessageType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -16,50 +16,53 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
-@Table(name = "BOOKMARK")
-@Schema(title = "书签领域对象", description = "书签领域对象")
+@Table(name = "MESSAGE")
+@Schema(title = "消息领域对象", description = "消息领域对象")
 public class MessageBoxDomain extends BaseDomain<Long> implements Comparable<MessageBoxDomain> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(value = { Views.Query.class, Views.Delete.class, Views.Update.class })
+    @JsonView(value = { ContextView.Query.class, ContextView.Delete.class, ContextView.Update.class })
+    @NotNull(message = "ID不能为空", groups = { ContextView.Delete.class, ContextView.Update.class })
     @Schema(description = "主键ID")
     private Long id;
     @Column(name = "send_user")
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
+    @NotNull(message = "ID不能为空", groups = { ContextView.Create.class })
     @Schema(description = "发送人")
     private String sendUser;
     @Column(name = "receive_user")
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
     @Schema(description = "接收人")
     private String receiveUser;
     @Column(name = "group_id")
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
     @Schema(description = "消息组")
     private String groupId;
     @Column(name = "title")
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
     @Schema(description = "消息标题")
     private String title;
     @Column(name = "type")
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
     @Schema(description = "消息类型")
-    private MessageType type;
+    private MessageType type = MessageType.NOTIFY;
     @Column(name = "content")
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
     @Schema(description = "消息内容")
     private String content;
     @Column(name = "read_state")
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
     @Schema(description = "读取状态")
-    private Boolean readState;
+    private Boolean readState = Boolean.FALSE;
     @Column(name = "create_time")
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
     @Column(name = "update_time")
-    @JsonView(value = { Views.Query.class, Views.Create.class, Views.Update.class })
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
 

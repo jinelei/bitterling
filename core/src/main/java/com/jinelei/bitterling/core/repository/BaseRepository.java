@@ -1,5 +1,6 @@
 package com.jinelei.bitterling.core.repository;
 
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.repository.CrudRepository;
 
 import com.jinelei.bitterling.core.domain.BaseDomain;
@@ -7,5 +8,6 @@ import com.jinelei.bitterling.core.domain.BaseDomain;
 /**
  * 基础仓库
  */
-public interface BaseRepository<ENT extends BaseDomain<ID>, ID> extends CrudRepository<ENT, ID> {
+public interface BaseRepository<ENT extends BaseDomain<ID>, ID>
+        extends CrudRepository<ENT, ID>, JpaSpecificationExecutor<ENT> {
 }

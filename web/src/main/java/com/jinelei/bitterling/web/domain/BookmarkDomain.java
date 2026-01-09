@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jinelei.bitterling.core.domain.BaseDomain;
+import com.jinelei.bitterling.core.domain.view.ContextView;
 import com.jinelei.bitterling.core.domain.view.TreeView;
 import com.jinelei.bitterling.web.enums.BookmarkType;
 
@@ -18,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "BOOKMARK")
@@ -26,46 +28,47 @@ public class BookmarkDomain extends BaseDomain<Long>
         implements Comparable<BookmarkDomain>, TreeView<BookmarkDomain, Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(value = {Views.Query.class, Views.Delete.class, Views.Update.class})
+    @JsonView(value = {ContextView.Query.class, ContextView.Delete.class, ContextView.Update.class})
+    @NotNull(message = "ID不能为空", groups = { ContextView.Delete.class, ContextView.Update.class, ContextView.Persist.class })
     @Schema(description = "主键ID")
     private Long id;
-    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Delete.class, Views.Update.class})
+    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Delete.class, ContextView.Update.class})
     @Schema(description = "父级ID")
     private Long parentId;
     @Column(name = "name", unique = true)
-    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
+    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
     @Schema(description = "书签名称")
     private String name;
     @Column(name = "type")
-    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
+    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
     @Schema(description = "书签类型")
     private BookmarkType type;
     @Column(name = "url")
-    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
+    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
     @Schema(description = "书签地址")
     private String url;
     @Column(name = "icon")
-    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
+    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
     @Schema(description = "书签图标")
     private String icon;
     @Column(name = "color")
-    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
+    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
     @Schema(description = "书签颜色")
     private String color;
     @Column(name = "order_number")
-    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
+    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
     @Schema(description = "排序值")
     private Integer orderNumber;
     @Column(name = "create_time")
-    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
+    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
     @Column(name = "update_time")
-    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
+    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
     @Transient
-    @JsonView(value = {Views.Query.class, Views.Create.class, Views.Update.class})
+    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
     @Schema(description = "子级")
     private transient List<BookmarkDomain> children;
 
@@ -193,17 +196,4 @@ public class BookmarkDomain extends BaseDomain<Long>
                 "} " + super.toString();
     }
 
-    public static interface Views {
-        public static interface Create {
-        }
-
-        public static interface Delete {
-        }
-
-        public static interface Update {
-        }
-
-        public static interface Query {
-        }
-    }
 }
