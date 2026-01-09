@@ -1,82 +1,145 @@
 <!DOCTYPE html>
-<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>我的导航</title>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <script src="/js/tailwind.min.js"></script>
-    <link href="/css/font-awesome.min.css" rel="stylesheet">
-    <link href="/css/root.css" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="书签"></title>
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <script th:src="@{/js/tailwind.min.js}"></script>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
+    <link th:href="@{/css/root.css}" rel="stylesheet">
 </head>
+<body>
+<th:block th:replace="layout/base :: navbar('index')"></th:block>
 
-<body class="bg-gray-50 dark:bg-dark-bg text-gray-800 dark:text-gray-100 min-h-screen font-inter p-3">
-    <header id="header" class="flex flex-row justify-between">
-        <div
-            class="w-full md:w-auto relative flex-grow md:flex-grow-0 md:max-w-md flex flex-row items-center justify-start">
-            <input type="text" id="search-input" placeholder="搜索书签..."
-                class="w-full px-4 py-2 pl-10 rounded-full border border-neutral-200 focus:border-primary text-primary focus:ring-2 focus:ring-primary/20 focus:outline-none transition-all-300" />
-            <i class="fa fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-neutral-400"></i>
-        </div>
-        <div class="text-[clamp(1rem,3vw+1rem,2rem)] flex flex-row items-center justify-end bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-            <span class="font-bold ml-3">
-                <i id="theme" class="fa fa-moon-o"></i>
-            </span>
-            <span
-                class="hidden md:block font-bold ml-3 greeting-animation">
-                <span th:text="${greeting}">早上好</span>
-                <span>，</span>
-                <span sec:authorize="isAuthenticated()" sec:authentication="name">用户名</span>
-            </span>
-            <span class="font-bold ml-3">
-                <form th:action="@{/logout}" method="post" sec:authorize="isAuthenticated()">
-                    <button type="submit" class="rounded hover:bg-red/50"><i class="fa fa-sign-out"></i></button>
-                </form>
-            </span>
-        </div>
-    </header>
-
-    <main class="flex-grow container mx-auto py-6">
-        <div id="category-tabs" class="flex overflow-x-auto pb-4 mb-4 scrollbar-hide space-x-2 md:justify-center">
-            <button
+<main class="flex-grow container mx-auto py-6 px-3">
+    <div id="category-tabs" class="flex overflow-x-auto pb-4 mb-4 scrollbar-hide space-x-2 md:justify-center">
+        <button
                 th:class="'category-tab px-4 py-2 rounded-xl whitespace-nowrap bg-primary/30 hover:bg-primary/50 transition-all-300 p-1 flex flex-direction items-center justify-center'">
-                <i th:class="'fa fa-home text-xl mr-3'" th:style="'color: grey'"></i>
-                <p>全部</p>
-            </button>
-            <button th:each="tag : ${tags}"
+            <i th:class="'fa fa-home text-xl mr-3'" th:style="'color: grey'"></i>
+            <p>全部</p>
+        </button>
+        <button th:each="tag : ${tags}"
                 th:class="'category-tab px-4 py-2 rounded-xl whitespace-nowrap hover:bg-primary/50 transition-all-300 p-1 flex flex-direction items-center justify-center'"
                 th:attr="data-category=${tag.id}">
-                <i th:class="'fa ' + ${tag.icon} + ' text-xl mr-3'" th:style="'color: ' + ${tag.color}"></i>
-                <p th:text="${tag.name}">占位</p>
-            </button>
-        </div>
+            <i th:class="'fa ' + ${tag.icon} + ' text-xl mr-3'" th:style="'color: ' + ${tag.color}"></i>
+            <p th:text="${tag.name}">占位</p>
+        </button>
+    </div>
 
-        <div id="bookmark-grid"
-            class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
-            <a th:each="bookmark : ${bookmarkByTags[__${tag?:'全部'}__]}" th:href="${bookmark.url}" target="_blank"
-                th:class="'bookmark-card group bg-primary/15 rounded-xl shadow-card hover:shadow-card-hover hover:bg-primary/50 p-3 flex flex-direction items-center justify-center transition-all-300 transform hover:-translate-y-1'"
-                th:attr="data-category=${bookmark.parentId}" th:data-name="${bookmark.name}">
-                <div
-                    th:class="'rounded-full ' + ${bookmark.color} + '/10 flex items-center justify-end mr-2 group-hover:' + ${bookmark.color} + '/30 transition-all-300'">
-                    <i th:class="'fa ' + ${bookmark.icon} + ' text-xl'" th:style="'color: ' + ${bookmark.color}"></i>
-                </div>
-                <h3 class="text-center font-medium items-center justify-center whitespace-nowrap overflow-hidden text-ellipsis"
-                    th:text="${bookmark.name}">
-                    书签名称
-                </h3>
-            </a>
-        </div>
+    <div id="bookmark-grid"
+         class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4 md:gap-6">
+        <a th:each="bookmark : ${bookmarkByTags[__${tag?:'全部'}__]}" th:href="${bookmark.url}" target="_blank"
+           th:class="'bookmark-card group bg-primary/10 rounded-xl shadow-card p-3 flex flex-direction items-center justify-center transition-all-300 transform hover:shadow-card-hover hover:bg-primary/15 hover:-translate-y-1'"
+           th:attr="data-category=${bookmark.parentId}" th:data-name="${bookmark.name}">
+            <div
+                    th:class="'rounded-full ' + ${bookmark.color} + '/10 flex items-center justify-end mr-2 group-hover:' + ${bookmark.color} + '/20 transition-all-300'">
+                <i th:class="'fa ' + ${bookmark.icon} + ' text-xl'" th:style="'color: ' + ${bookmark.color}"></i>
+            </div>
+            <h3 class="text-center font-medium items-center justify-center whitespace-nowrap overflow-hidden text-ellipsis"
+                th:text="${bookmark.name}">
+                书签名称
+            </h3>
+        </a>
+    </div>
 
-    </main>
+</main>
 
-    <footer class="py-6 mt-12">
-        <div class="container mx-auto px-4 text-center text-neutral-500 text-sm">
-            <p>jinelei.com © 2025</p>
-        </div>
-    </footer>
+<th:block th:replace="layout/base :: footer"></th:block>
 
-    <script src="/js/index.js"></script>
+<th:block>
+    <script>
+        console.log('书签加载完成（原生方案）');
+
+        function searchBookmark() {
+            const tags = document.querySelectorAll(".category-tab");
+            const bookmarks = document.querySelectorAll(".bookmark-card");
+            tags.forEach((tab) => {
+                tab.addEventListener("click", function () {
+                    tags.forEach((t) => {
+                        t.classList.remove("bg-primary/30", "text-white");
+                        t.classList.add("bg-neutral", "text-dark", "hover:bg-primary/50");
+                    });
+                    this.classList.remove(
+                        "bg-primary/30",
+                        "text-dark",
+                        "hover:bg-primary/50"
+                    );
+                    this.classList.add("bg-primary/30", "text-white");
+
+                    const category = this.getAttribute("data-category");
+                    bookmarks.forEach((card) => {
+                        if (
+                            !!!category ||
+                            card.getAttribute("data-category") === category
+                        ) {
+                            card.style.display = "flex";
+                            setTimeout(() => {
+                                card.style.opacity = "1";
+                                card.style.transform = "translateY(0)";
+                            }, 50);
+                        } else {
+                            card.style.opacity = "0";
+                            card.style.transform = "translateY(10px)";
+                            setTimeout(() => {
+                                card.style.display = "none";
+                            }, 300);
+                        }
+                    });
+                });
+            });
+            const searchInput = document.getElementById("search-input");
+            if (!!searchInput) {
+                searchInput.addEventListener("input", function () {
+                    const searchTerm = this.value.toLowerCase().trim();
+                    bookmarks.forEach((card) => {
+                        const cardName = card.dataset.name.toLowerCase();
+                        if (cardName.includes(searchTerm)) {
+                            card.style.display = "flex";
+                            card.style.opacity = "1";
+                            card.style.transform = "translateY(0)";
+                        } else {
+                            card.style.opacity = "0";
+                            card.style.transform = "translateY(10px)";
+                            setTimeout(() => {
+                                card.style.display = "none";
+                            }, 300);
+                        }
+                    });
+                });
+            }
+        }
+
+        function initThemeSwitch() {
+            const themeToggle = document.getElementById('theme');
+            if (!!themeToggle) {
+                if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                    themeToggle.classList.remove('fa-moon-o');
+                    themeToggle.classList.add('fa-sun-o');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    themeToggle.classList.remove('fa-sun-o');
+                    themeToggle.classList.add('fa-moon-o');
+                }
+                themeToggle.addEventListener('click', () => {
+                    document.documentElement.classList.toggle('dark');
+                    localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+                    if (localStorage.theme === 'dark') {
+                        themeToggle.classList.remove('fa-moon-o');
+                        themeToggle.classList.add('fa-sun-o');
+                    } else {
+                        themeToggle.classList.remove('fa-sun-o');
+                        themeToggle.classList.add('fa-moon-o');
+                    }
+                });
+            }
+        }
+
+        initThemeSwitch();
+        searchBookmark();
+    </script>
+</th:block>
+
 </body>
-
 </html>

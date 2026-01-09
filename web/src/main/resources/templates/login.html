@@ -1,56 +1,75 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>用户登录</title>
-    <link rel="icon" href="/favicon.ico" type="image/x-icon">
-    <script src="/js/tailwind.min.js"></script>
-    <link href="/css/font-awesome.min.css" rel="stylesheet">
-    <link href="/css/root.css" rel="stylesheet">
+    <title th:text="用户登录"></title>
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <script th:src="@{/js/tailwind.min.js}"></script>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
+    <link th:href="@{/css/root.css}" rel="stylesheet">
 </head>
 
-<body class="min-h-screen flex flex-col items-center justify-center py-6 px-4">
-    <div class="w-full max-w-md rounded-lg login-shadow p-8">
-        <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-center text-gray-800 mb-8">用户登录</h2>
-        <div th:if="${error != null or expired != null or errorMsg != null}"
-            class="mb-6 p-3 bg-danger/10 border border-danger/20 rounded-md text-danger text-center text-sm">
+<body class="min-h-screen flex flex-col items-center justify-center">
+
+<main class="w-full max-w-md rounded-lg login-shadow mb-4">
+    <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-center text-gray-800 mb-8">用户登录</h2>
+    <div th:if="${error != null or expired != null or errorMsg != null}"
+         class="mb-6 p-3 bg-danger/10 border border-danger/20 rounded-md text-danger text-center text-sm">
             <span th:text="${errorMsg != null ? errorMsg : 
                 (SPRING_SECURITY_LAST_EXCEPTION != null ? SPRING_SECURITY_LAST_EXCEPTION.message : '用户名或密码错误')}">
                 登录失败，请检查账号密码
             </span>
-        </div>
-        <form th:action="@{/login}" method="post" class="space-y-6">
-            <div>
-                <label for="username" class="block text-gray-600 text-sm mb-2">用户名/手机号</label>
-                <input type="text" id="username" name="username" th:value="${username != null ? username : ''}"
-                    placeholder="请输入账号" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:input-focus transition duration-200">
-            </div>
-            <div>
-                <label for="password" class="block text-gray-600 text-sm mb-2">密码</label>
-                <input type="password" id="password" name="password" placeholder="请输入密码" required
-                    class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:input-focus transition duration-200">
-            </div>
-            <div class="flex items-center">
-                <input type="checkbox" id="rememberMe" name="rememberMe" th:checked="${rememberMe == true}"
-                    class="w-4 h-4 text-primary focus:ring-primary/20 border-gray-300 rounded">
-                <label for="rememberMe" class="ml-2 text-sm text-gray-600">记住我</label>
-            </div>
-            <button type="submit"
-                class="w-full py-2 border border-gray-300 rounded-md hover:bg-primary/90 transition duration-200 font-medium text-base">
-                登录<i class="fa fa-sign-in ml-2"></i>
-            </button>
-        </form>
     </div>
-    <footer class="py-6 mt-12">
-        <div class="container mx-auto px-4 text-center text-neutral-500 text-sm">
-            <p>jinelei.com © 2025</p>
+    <form th:action="@{/login}" method="post" class="space-y-6">
+        <div>
+            <label for="username" class="block text-gray-600 text-sm mb-2">用户名/手机号</label>
+            <input type="text" id="username" name="username" th:value="${username != null ? username : ''}"
+                   placeholder="请输入账号" required
+                   class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:input-focus transition duration-200">
         </div>
-    </footer>
+        <div>
+            <label for="password" class="block text-gray-600 text-sm mb-2">密码</label>
+            <input type="password" id="password" name="password" placeholder="请输入密码" required
+                   class="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:input-focus transition duration-200">
+        </div>
+        <div class="flex items-center">
+            <input type="checkbox" id="rememberMe" name="rememberMe" th:checked="${rememberMe == true}"
+                   class="w-4 h-4 text-primary focus:ring-primary/20 border-gray-300 rounded">
+            <label for="rememberMe" class="ml-2 text-sm text-gray-600">记住我</label>
+        </div>
+        <button type="submit"
+                class="w-full py-2 border border-gray-300 rounded-md hover:bg-primary/90 transition duration-200 font-medium text-base">
+            登录<i class="fa fa-sign-in ml-2"></i>
+        </button>
+    </form>
+</main>
 
-    <script src="/js/login.js"></script>
+<th:block th:replace="layout/base :: footer"></th:block>
+
+<th:block>
+    <script>
+        const form = document.querySelector('form');
+        if (!!form) {
+            form.addEventListener('submit', function (e) {
+                const username = document.getElementById('username').value.trim();
+                const password = document.getElementById('password').value.trim();
+
+                if (!username) {
+                    alert('请输入用户名！');
+                    e.preventDefault();
+                    return;
+                }
+                if (!password) {
+                    alert('请输入密码！');
+                    e.preventDefault();
+                    return;
+                }
+            });
+        }
+    </script>
+</th:block>
+
 </body>
 
 </html>

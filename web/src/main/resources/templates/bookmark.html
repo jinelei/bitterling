@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="书签"></title>
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <script th:src="@{/js/tailwind.min.js}"></script>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
+    <link th:href="@{/css/root.css}" rel="stylesheet">
+</head>
 <body>
 
-<!--<th:block th:fragment="homeContent" th:remove="tag">-->
-<!--    <h1>欢迎进入系统首页</h1>-->
-<!--    <p>这是首页独有的业务内容，仅在首页展示</p>-->
-<!--    <p>当前系统时间：<span th:text="${#dates.format(new java.util.Date(), 'yyyy-MM-dd HH:mm:ss')}"></span></p>-->
-<!--</th:block>-->
+<th:block th:replace="layout/base :: navbar('bookmark')"></th:block>
 
-<div th:replace="fragments/global-layout::html(
-        pageTitle='书签',
-        username='${username}',
-        contentFragment='这里是内容'
-    )"></div>
+<main class="flex-grow container mx-auto py-6 p-3">
+    <h1>欢迎来到Bookmark</h1>
+</main>
 
+<th:block th:replace="layout/base :: footer"></th:block>
+
+<th:block>
+    <script th:src="@{/js/index.js}"></script>
+    <script>
+        console.log('书签加载完成（原生方案）');
+    </script>
+</th:block>
 
 </body>
-
-
 </html>
