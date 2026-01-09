@@ -7,6 +7,7 @@ import java.util.Optional;
 import com.fasterxml.jackson.annotation.JsonView;
 import com.jinelei.bitterling.core.domain.BaseDomain;
 import com.jinelei.bitterling.core.domain.view.ContextView;
+import com.jinelei.bitterling.core.exception.BusinessException;
 import com.jinelei.bitterling.web.enums.MessageType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -73,6 +74,20 @@ public class MessageDomain extends BaseDomain<Long> implements Comparable<Messag
     @NotNull(message = "更新时间不能为空", groups = { ContextView.Persist.class })
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
+
+    public static MessageDomain ofSystemNotify(String title, String content, String receiveUser) {
+        final MessageDomain message = new MessageDomain();
+        message.setTitle(
+                Optional.ofNullable(title).map(String::trim).orElseThrow(() -> new BusinessException("消息标题不能为空")));
+        message.setContent(
+                Optional.ofNullable(content).map(String::trim).orElseThrow(() -> new BusinessException("消息标题不能为空")));
+        message.setReceiveUser(
+                Optional.ofNullable(receiveUser).map(String::trim).orElseThrow(() -> new BusinessException("接收人不能为空")));
+        message.setSendUser("system");
+        message.setCreateTime(LocalDateTime.now());
+        message.setUpdateTime(LocalDateTime.now());
+        return message;
+    }
 
     @Override
     public int compareTo(MessageDomain o) {
