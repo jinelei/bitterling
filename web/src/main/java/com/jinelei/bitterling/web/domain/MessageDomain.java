@@ -22,7 +22,7 @@ import jakarta.validation.constraints.NotNull;
 @Entity
 @Table(name = "MESSAGE")
 @Schema(title = "消息领域对象", description = "消息领域对象")
-public class MessageBoxDomain extends BaseDomain<Long> implements Comparable<MessageBoxDomain> {
+public class MessageDomain extends BaseDomain<Long> implements Comparable<MessageDomain> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(value = { ContextView.Query.class, ContextView.Delete.class, ContextView.Update.class })
@@ -75,10 +75,10 @@ public class MessageBoxDomain extends BaseDomain<Long> implements Comparable<Mes
     private LocalDateTime updateTime;
 
     @Override
-    public int compareTo(MessageBoxDomain o) {
+    public int compareTo(MessageDomain o) {
         return Optional.ofNullable(o.getCreateTime())
                 .map(s -> s.compareTo(
-                        Optional.ofNullable(o).map(MessageBoxDomain::getCreateTime).orElse(LocalDateTime.now())))
+                        Optional.ofNullable(o).map(MessageDomain::getCreateTime).orElse(LocalDateTime.now())))
                 .orElse(0);
     }
 
@@ -189,7 +189,7 @@ public class MessageBoxDomain extends BaseDomain<Long> implements Comparable<Mes
         if (getClass() != obj.getClass()) {
             return false;
         }
-        final MessageBoxDomain other = (MessageBoxDomain) obj;
+        final MessageDomain other = (MessageDomain) obj;
         if (!Objects.equals(this.sendUser, other.sendUser)) {
             return false;
         }

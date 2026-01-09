@@ -9,20 +9,21 @@ import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
-import org.springframework.validation.annotation.Validated;
 
 import com.jinelei.bitterling.core.domain.BaseDomain;
 import com.jinelei.bitterling.core.repository.BaseRepository;
+
+import jakarta.validation.Validator;
 
 /**
  * 基础服务
  */
 public abstract class BaseService<ENT extends BaseDomain<ID>, ID> {
     protected final BaseRepository<ENT, ID> repository;
-    protected final Validated validator;
+    protected final Validator validator;
     protected final Logger log;
 
-    public BaseService(BaseRepository<ENT, ID> repository, Validated validator) {
+    public BaseService(BaseRepository<ENT, ID> repository, Validator validator) {
         this.repository = repository;
         this.validator = validator;
         this.log = LoggerFactory.getLogger(this.getClass());
