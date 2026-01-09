@@ -27,7 +27,7 @@ public class IndexController extends BaseController {
      */
     @GetMapping(value = { "/", "/index" })
     public ModelAndView index() {
-        return new ModelAndView("index", bookmarkService.indexRenderProperties());
+        return new ModelAndView("index", bookmarkService.renderIndex());
     }
 
 }

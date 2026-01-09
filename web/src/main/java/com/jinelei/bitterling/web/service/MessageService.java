@@ -24,12 +24,15 @@ public class MessageService extends BaseService<MessageDomain, Long> {
     }
 
     public void userLoginNotify(String receiveUser) {
-        MessageDomain message = MessageDomain.ofSystemNotify(MSG_TITLE_USER_LOGIN, String.format("登录时间: %s",
+        log.info("userLoginNotify: {}", receiveUser);
+        final MessageDomain message = MessageDomain.ofSystemNotify(MSG_TITLE_USER_LOGIN, String.format("登录时间: %s",
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"))), receiveUser);
         Set<jakarta.validation.ConstraintViolation<MessageDomain>> violations = validator.validate(message);
         if (!violations.isEmpty()) {
             throw new jakarta.validation.ConstraintViolationException(violations);
         }
+        MessageDomain save = repository.save(message);
+        log.info("userLoginNotify: {}", save);
     }
 
     public List<MessageDomain> unreadMessages() {
