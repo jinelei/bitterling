@@ -15,4 +15,7 @@ public interface ContextView {
 
     public static interface Persist {
     }
+
+    public static interface Operate extends Create, Delete, Update, Persist {
+    }
 }

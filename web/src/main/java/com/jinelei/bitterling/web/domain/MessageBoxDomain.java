@@ -16,6 +16,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
@@ -25,16 +26,17 @@ public class MessageBoxDomain extends BaseDomain<Long> implements Comparable<Mes
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(value = { ContextView.Query.class, ContextView.Delete.class, ContextView.Update.class })
-    @NotNull(message = "ID不能为空", groups = { ContextView.Delete.class, ContextView.Update.class })
+    @NotNull(message = "ID不能为空", groups = { ContextView.Persist.class })
     @Schema(description = "主键ID")
     private Long id;
     @Column(name = "send_user")
     @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
-    @NotNull(message = "ID不能为空", groups = { ContextView.Create.class })
+    @NotNull(message = "发送人不能为空", groups = { ContextView.Persist.class })
     @Schema(description = "发送人")
     private String sendUser;
     @Column(name = "receive_user")
     @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
+    @NotNull(message = "接收人不能为空", groups = { ContextView.Persist.class })
     @Schema(description = "接收人")
     private String receiveUser;
     @Column(name = "group_id")
@@ -43,26 +45,32 @@ public class MessageBoxDomain extends BaseDomain<Long> implements Comparable<Mes
     private String groupId;
     @Column(name = "title")
     @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
+    @NotBlank(message = "消息标题不能为空", groups = { ContextView.Persist.class })
     @Schema(description = "消息标题")
     private String title;
     @Column(name = "type")
     @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
+    @NotNull(message = "消息类型不能为空", groups = { ContextView.Persist.class })
     @Schema(description = "消息类型")
     private MessageType type = MessageType.NOTIFY;
     @Column(name = "content")
     @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
+    @NotBlank(message = "消息内容不能为空", groups = { ContextView.Persist.class })
     @Schema(description = "消息内容")
     private String content;
     @Column(name = "read_state")
     @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
+    @NotNull(message = "读取状态不能为空", groups = { ContextView.Persist.class })
     @Schema(description = "读取状态")
     private Boolean readState = Boolean.FALSE;
     @Column(name = "create_time")
     @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
+    @NotNull(message = "创建时间不能为空", groups = { ContextView.Persist.class })
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
     @Column(name = "update_time")
     @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
+    @NotNull(message = "更新时间不能为空", groups = { ContextView.Persist.class })
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
 

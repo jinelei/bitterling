@@ -19,6 +19,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import jakarta.persistence.Transient;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 @Entity
@@ -28,47 +29,52 @@ public class BookmarkDomain extends BaseDomain<Long>
         implements Comparable<BookmarkDomain>, TreeView<BookmarkDomain, Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(value = {ContextView.Query.class, ContextView.Delete.class, ContextView.Update.class})
-    @NotNull(message = "ID不能为空", groups = { ContextView.Delete.class, ContextView.Update.class, ContextView.Persist.class })
+    @JsonView(value = { ContextView.Query.class, ContextView.Delete.class, ContextView.Update.class })
+    @NotNull(message = "ID不能为空", groups = { ContextView.Persist.class })
     @Schema(description = "主键ID")
     private Long id;
-    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Delete.class, ContextView.Update.class})
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Delete.class,
+            ContextView.Update.class })
     @Schema(description = "父级ID")
     private Long parentId;
     @Column(name = "name", unique = true)
-    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
+    @NotBlank(message = "书签名称不能为空", groups = { ContextView.Persist.class })
     @Schema(description = "书签名称")
     private String name;
     @Column(name = "type")
-    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
+    @NotNull(message = "书签类型不能为空", groups = { ContextView.Persist.class })
     @Schema(description = "书签类型")
     private BookmarkType type;
     @Column(name = "url")
-    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
     @Schema(description = "书签地址")
     private String url;
     @Column(name = "icon")
-    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
     @Schema(description = "书签图标")
     private String icon;
     @Column(name = "color")
-    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
     @Schema(description = "书签颜色")
     private String color;
     @Column(name = "order_number")
-    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
     @Schema(description = "排序值")
     private Integer orderNumber;
     @Column(name = "create_time")
-    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
+    @NotNull(message = "创建时间不能为空", groups = { ContextView.Persist.class })
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
     @Column(name = "update_time")
-    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
+    @NotNull(message = "更新时间不能为空", groups = { ContextView.Persist.class })
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
     @Transient
-    @JsonView(value = {ContextView.Query.class, ContextView.Create.class, ContextView.Update.class})
+    @JsonView(value = { ContextView.Query.class, ContextView.Create.class, ContextView.Update.class })
     @Schema(description = "子级")
     private transient List<BookmarkDomain> children;
 
@@ -169,9 +175,14 @@ public class BookmarkDomain extends BaseDomain<Long>
 
     @Override
     public boolean equals(Object o) {
-        if (o == null || getClass() != o.getClass()) return false;
+        if (o == null || getClass() != o.getClass())
+            return false;
         BookmarkDomain that = (BookmarkDomain) o;
-        return Objects.equals(id, that.id) && Objects.equals(parentId, that.parentId) && Objects.equals(name, that.name) && type == that.type && Objects.equals(url, that.url) && Objects.equals(icon, that.icon) && Objects.equals(color, that.color) && Objects.equals(orderNumber, that.orderNumber) && Objects.equals(createTime, that.createTime) && Objects.equals(updateTime, that.updateTime) && Objects.equals(children, that.children);
+        return Objects.equals(id, that.id) && Objects.equals(parentId, that.parentId) && Objects.equals(name, that.name)
+                && type == that.type && Objects.equals(url, that.url) && Objects.equals(icon, that.icon)
+                && Objects.equals(color, that.color) && Objects.equals(orderNumber, that.orderNumber)
+                && Objects.equals(createTime, that.createTime) && Objects.equals(updateTime, that.updateTime)
+                && Objects.equals(children, that.children);
     }
 
     @Override
