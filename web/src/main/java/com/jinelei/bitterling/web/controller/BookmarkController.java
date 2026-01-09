@@ -1,6 +1,7 @@
 package com.jinelei.bitterling.web.controller;
 
 import java.security.InvalidParameterException;
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -41,12 +42,14 @@ public class BookmarkController extends BaseController {
         this.messageService = messageService;
     }
 
-    @GetMapping(value = { "", "/", "/index" })
-    public ModelAndView index() {
+    @GetMapping(value = {"", "/", "/index"})
+    public ModelAndView index(Principal principal) {
         ModelAndView modelAndView = new ModelAndView("bookmark");
         modelAndView.addAllObjects(service.renderIndex());
         modelAndView.addObject("greeting", indexService.getGreeting());
         modelAndView.addObject("unreadMessage", messageService.unreadMessages());
+        modelAndView.addObject("username", Optional.ofNullable(principal).map(Principal::getName).orElse("匿名用户"));
+        log.info("modelAndView: {}", modelAndView);
         return modelAndView;
     }
 

@@ -1,7 +1,10 @@
 package com.jinelei.bitterling.web.service;
 
+import org.springframework.stereotype.Service;
+
 import java.time.LocalDateTime;
 
+@Service
 public class IndexService {
 
     public String getGreeting() {

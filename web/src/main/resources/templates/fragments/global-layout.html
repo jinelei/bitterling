@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title th:text="${pageTitle != null ? pageTitle + ' - 芝士小屋' : '芝士小屋'}"></title>
+    <link rel="icon" href="/favicon.ico" type="image/x-icon">
+    <script th:src="@{/js/tailwind.min.js}"></script>
+    <link rel="stylesheet" th:href="@{/css/font-awesome.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/root.css}"/>
+</head>
+<body>
+<div th:replace="fragments/common-parts::headerTop(${username})"></div>
+
+<div th:replace="fragments/common-parts::navBar"></div>
+
+<div th:insert="${contentFragment}" style="padding: 20px;">
+    请填充业务页面独有的内容...
+</div>
+
+<div th:replace="fragments/common-parts::footerCopyright"></div>
+</body>
+</html>

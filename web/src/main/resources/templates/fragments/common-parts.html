@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+</head>
+<body>
+
+<header th:fragment="headerTop(username)" style="background-color: #f5f5f5; padding: 10px; text-align: right;">
+    <span th:text="'当前登录用户：' + ${username}">游客</span>
+    <a th:href="@{/logout}" style="margin-left: 20px;">退出登录</a>
+</header>
+
+<nav th:fragment="navBar" style="background-color: #333; padding: 15px; margin: 10px 0;">
+    <a th:href="@{/home}" style="color: white; margin: 0 10px;">首页</a>
+    <a th:href="@{/user}" style="color: white; margin: 0 10px;">用户管理</a>
+    <a th:href="@{/order}" style="color: white; margin: 0 10px;">订单管理</a>
+    <a th:href="@{/setting}" style="color: white; margin: 0 10px;">系统设置</a>
+</nav>
+
+<footer th:fragment="footerCopyright" style="margin-top: 50px; text-align: center; color: #666;">
+    jinelei.com © 2026
+</footer>
+</body>
+</html>
