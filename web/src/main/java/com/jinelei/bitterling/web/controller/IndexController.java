@@ -22,12 +22,14 @@ public class IndexController extends BaseController {
         this.bookmarkService = bookmarkService;
     }
 
-    /**
-     * 导航页面入口
-     */
-    @GetMapping(value = { "/", "/index" })
+    @GetMapping(value = {"/", "/index"})
     public ModelAndView index() {
         return new ModelAndView("index", bookmarkService.renderIndex());
+    }
+
+    @GetMapping(value = {"/about"})
+    public ModelAndView about() {
+        return new ModelAndView("about");
     }
 
 }
