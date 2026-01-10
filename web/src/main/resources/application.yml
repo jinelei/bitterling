@@ -92,7 +92,7 @@ logging:
 springdoc:
   api-docs:
     enabled: true
-    path: /
+    path: /api-docs
   paths-to-match: /**
 bitterling:
   administrator:

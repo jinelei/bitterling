@@ -1,6 +1,6 @@
 package com.jinelei.bitterling.core.domain.view;
 
-public interface ContextView {
+public interface BaseView {
     public static interface Create {
     }
 
@@ -16,6 +16,9 @@ public interface ContextView {
     public static interface Persist {
     }
 
-    public static interface Operate extends Create, Delete, Update, Persist {
+    public static interface Detail {
+    }
+
+    public static interface List {
     }
 }

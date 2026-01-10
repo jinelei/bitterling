@@ -33,3 +33,63 @@ values (10001, '天行平台-生产', 1, 10, 'https://erdp.seres.cn', 'fa-window
        (10001, 'Grafana', 1, 24, 'https://grafana.erdp-sd.seres.cn/', 'fa-pie-chart', 'green'),
        (10001, 'Sonar', 1, 25, 'https://erdp.seres.cn/erdp-sonar/projects?search=erdp-fas', 'fa-pie-chart', 'green'),
        (10001, '账号查询', 1, 26, 'https://erdpqa.seres.cn/chandao-api/index.html', 'fa-user-secret', 'green');
+
+
+
+-- insert into MEMO (id, title, sub_title, content)
+-- values (1, '测试标题', "测试副标题", '
+--            # 一级标题
+--            ## 二级标题
+--            ### 三级标题
+--            #### 四级标题
+--            ##### 五级标题
+--            ###### 六级标题
+--
+--            ## 1. 文本基础格式
+--          这是普通文本，包含**加粗文本**、*斜体文本*、***加粗斜体***、~~删除线文本~~。
+--          这是<u>下划线文本</u>（HTML 扩展），这是==标记文本==（GFM 扩展）。
+--          上标：H~2~O（水），下标：X^2^+Y^2^=Z^2^（勾股定理）。
+--
+-- ## 2. 引用/块引用
+--          > 一级引用：人生苦短，我用 Python。
+--          >> 二级嵌套引用：Java 也不错～
+--          >>> 三级嵌套引用：Markdown 转换全搞定！
+--
+-- ## 3. 列表
+--            ### 3.1 无序列表
+--          - 无序列表项 1
+--          - 嵌套无序列表项 1.1
+--          - 嵌套无序列表项 1.2
+--          - 无序列表项 2
+--          * 嵌套无序列表项 2.1（星号）
+--          + 嵌套无序列表项 2.2（加号）
+--
+-- ### 3.2 有序列表
+--          1. 有序列表项 1
+--          1. 嵌套有序列表项 1.1
+--          2. 嵌套有序列表项 1.2
+--          2. 有序列表项 2
+--          3. 有序列表项 3
+--
+--            ### 3.3 任务列表（GFM 扩展）
+--          - [x] 已完成任务 1
+--          - [ ] 未完成任务 2
+--          - [x] 已完成任务 3（带备注）
+--
+-- ## 4. 链接与图片
+--            ### 4.1 普通链接
+--            [百度首页](https://www.baidu.com "百度-全球最大的中文搜索引擎")
+--            [相对路径链接](./docs/api.md)
+--          <https://www.github.com>（自动链接）
+--
+--            ### 4.2 图片
+--          ![示例图片](https://picsum.photos/800/400 "随机示例图片")
+--          ![缺失图片](https://picsum.photos/404 "缺失图片占位符")
+--          ![带链接的图片](https://picsum.photos/200/200 "点击跳转百度")(https://www.baidu.com)
+--
+--            ## 5. 代码块
+--            ### 5.1 单行代码
+--          `System.out.println("Hello Markdown!");`（Java 单行代码）
+--          `SELECT * FROM user WHERE id = 1;`（SQL 单行代码）
+--
+-- ### 5.2 多行代码块（带语言标识）');
