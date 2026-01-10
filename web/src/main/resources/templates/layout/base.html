@@ -35,18 +35,15 @@
 
                 <nav class="hidden sm:ml-6 sm:flex sm:space-x-8">
                     <a th:href="@{/}"
-                       th:class="${activeMenu == 'index' ? 'border-red-500 text-gray-900 dark:text-white' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white'}"
-                       class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                       th:class="'p-2 inline-flex items-center border-0 border-b-2 hover:bg-primary/10 ' + ${activeMenu == 'index' ? 'border-red-500' : ''}">
                         首页
                     </a>
                     <a th:href="@{/bookmark}"
-                       th:class="${activeMenu == 'bookmark' ? 'border-red-500 text-gray-900 dark:text-white' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white'}"
-                       class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                       th:class="'p-2 inline-flex items-center border-0 border-b-2 hover:bg-primary/10 ' + ${activeMenu == 'bookmark' ? 'border-red-500' : ''}">
                         书签
                     </a>
                     <a th:href="@{/about}"
-                       th:class="${activeMenu == 'about' ? 'border-red-500 text-gray-900 dark:text-white' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-300 dark:hover:text-white'}"
-                       class="inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                       th:class="'p-2 inline-flex items-center border-0 border-b-2 hover:bg-primary/10 ' + ${activeMenu == 'about' ? 'border-red-500' : ''}">
                         关于我们
                     </a>
                 </nav>
@@ -99,20 +96,17 @@
     </div>
 
     <div class="sm:hidden hidden" id="mobile-menu">
-        <div class="px-2 pt-2 pb-3 space-y-1 bg-white dark:bg-gray-900 shadow-lg">
+        <div class="p-3 space-y-2 bg-white dark:bg-gray-900 shadow-lg">
             <a th:href="@{/}"
-               th:class="${activeMenu == 'index' ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'}"
-               class="block px-3 py-2 rounded-md">
+               th:class="'block p-2 rounded-md ' + ${activeMenu == 'index' ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'}">
                 首页
             </a>
             <a th:href="@{/bookmark}"
-               th:class="${activeMenu == 'bookmark' ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'}"
-               class="block px-3 py-2 rounded-md">
+               th:class="'block p-2 rounded-md ' + ${activeMenu == 'bookmark' ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'}">
                 书签
             </a>
             <a th:href="@{/about}"
-               th:class="${activeMenu == 'about' ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'}"
-               class="block px-3 py-2 rounded-md">
+               th:class="'block p-2 rounded-md ' + ${activeMenu == 'about' ? 'bg-gray-100 text-gray-900 dark:bg-gray-800 dark:text-white' : 'text-gray-500 hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'}">
                 关于我们
             </a>
         </div>
