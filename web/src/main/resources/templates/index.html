@@ -6,13 +6,19 @@
     <title th:text="书签"></title>
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
     <script th:src="@{/js/tailwind.min.js}"></script>
+    <script th:src="@{/js/nav.js}"></script>
+    <script th:src="@{/js/root.js}"></script>
     <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
     <link th:href="@{/css/root.css}" rel="stylesheet">
 </head>
-<body>
-<th:block th:replace="layout/base :: navbar('index')"></th:block>
 
-<main class="flex-grow container mx-auto py-6 px-3">
+<body class="min-h-screen flex flex-col items-center justify-center">
+
+<div class="w-full">
+    <th:block th:replace="layout/base :: navbar('index')"></th:block>
+</div>
+
+<main class="bg-page dark:bg-page-dark flex-grow w-full py-6 px-3">
     <div id="category-tabs" class="flex overflow-x-auto pb-4 mb-4 scrollbar-hide space-x-2 md:justify-center">
         <button
                 th:class="'category-tab px-4 py-2 rounded-xl whitespace-nowrap bg-primary/30 hover:bg-primary/50 transition-all-300 p-1 flex flex-direction items-center justify-center'">
@@ -45,49 +51,52 @@
 
 </main>
 
-<th:block th:replace="layout/base :: footer"></th:block>
+<div class="bg-page dark:bg-page-dark absolute bottom-0 w-full z-10 flex items-center justify-center py-3">
+    <th:block th:replace="layout/base :: footer"></th:block>
+</div>
 
 <th:block>
     <script>
-        console.log('书签加载完成（原生方案）');
-
         function searchBookmark() {
             const tags = document.querySelectorAll(".category-tab");
             const bookmarks = document.querySelectorAll(".bookmark-card");
-            tags.forEach((tab) => {
-                tab.addEventListener("click", function () {
-                    tags.forEach((t) => {
-                        t.classList.remove("bg-primary/30", "text-white");
-                        t.classList.add("bg-neutral", "text-dark", "hover:bg-primary/50");
-                    });
-                    this.classList.remove(
-                        "bg-primary/30",
-                        "text-dark",
-                        "hover:bg-primary/50"
-                    );
-                    this.classList.add("bg-primary/30", "text-white");
+            if (!!tags) {
+                tags.forEach((tab) => {
+                    tab.addEventListener("click", function () {
+                        tags.forEach((t) => {
+                            t.classList.remove("bg-primary/30", "text-white");
+                            t.classList.add("bg-neutral", "text-dark", "hover:bg-primary/50");
+                        });
+                        this.classList.remove(
+                            "bg-primary/30",
+                            "text-dark",
+                            "hover:bg-primary/50"
+                        );
+                        this.classList.add("bg-primary/30", "text-white");
 
-                    const category = this.getAttribute("data-category");
-                    bookmarks.forEach((card) => {
-                        if (
-                            !!!category ||
-                            card.getAttribute("data-category") === category
-                        ) {
-                            card.style.display = "flex";
-                            setTimeout(() => {
-                                card.style.opacity = "1";
-                                card.style.transform = "translateY(0)";
-                            }, 50);
-                        } else {
-                            card.style.opacity = "0";
-                            card.style.transform = "translateY(10px)";
-                            setTimeout(() => {
-                                card.style.display = "none";
-                            }, 300);
-                        }
+                        const category = this.getAttribute("data-category");
+                        bookmarks.forEach((card) => {
+                            if (
+                                !!!category ||
+                                card.getAttribute("data-category") === category
+                            ) {
+                                card.style.display = "flex";
+                                setTimeout(() => {
+                                    card.style.opacity = "1";
+                                    card.style.transform = "translateY(0)";
+                                }, 50);
+                            } else {
+                                card.style.opacity = "0";
+                                card.style.transform = "translateY(10px)";
+                                setTimeout(() => {
+                                    card.style.display = "none";
+                                }, 300);
+                            }
+                        });
                     });
                 });
-            });
+            }
+
             const searchInput = document.getElementById("search-input");
             if (!!searchInput) {
                 searchInput.addEventListener("input", function () {
@@ -110,36 +119,11 @@
             }
         }
 
-        function initThemeSwitch() {
-            const themeToggle = document.getElementById('theme');
-            if (!!themeToggle) {
-                if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                    themeToggle.classList.remove('fa-moon-o');
-                    themeToggle.classList.add('fa-sun-o');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    themeToggle.classList.remove('fa-sun-o');
-                    themeToggle.classList.add('fa-moon-o');
-                }
-                themeToggle.addEventListener('click', () => {
-                    document.documentElement.classList.toggle('dark');
-                    localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
-                    if (localStorage.theme === 'dark') {
-                        themeToggle.classList.remove('fa-moon-o');
-                        themeToggle.classList.add('fa-sun-o');
-                    } else {
-                        themeToggle.classList.remove('fa-sun-o');
-                        themeToggle.classList.add('fa-moon-o');
-                    }
-                });
-            }
-        }
 
-        initThemeSwitch();
         searchBookmark();
     </script>
 </th:block>
 
 </body>
+
 </html>

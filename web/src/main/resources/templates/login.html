@@ -10,7 +10,7 @@
     <link th:href="@{/css/root.css}" rel="stylesheet">
 </head>
 
-<body class="min-h-screen flex flex-col items-center justify-center">
+<body class="bg-primary dark:bg-primary-dark min-h-screen flex flex-col items-center justify-center">
 
 <main class="max-w-md rounded-lg shadow w-[clamp(20rem,30vw,30rem)] p-5">
     <h2 class="text-[clamp(1.5rem,3vw,2rem)] font-bold text-center text-gray-800 mb-8">用户登录</h2>
@@ -45,7 +45,7 @@
     </form>
 </main>
 
-<div class="absolute bottom-0 w-full z-10 flex items-center justify-center py-3">
+<div class="bg-page dark:bg-page-dark absolute bottom-0 w-full z-10 flex items-center justify-center py-3">
     <th:block th:replace="layout/base :: footer"></th:block>
 </div>
 

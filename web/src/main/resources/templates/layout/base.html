@@ -7,6 +7,8 @@
     <title th:text="${pageTitle != null ? pageTitle + ' - 芝士小屋': '芝士小屋'}">芝士小屋</title>
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
     <script th:src="@{/js/tailwind.min.js}"></script>
+    <script th:src="@{/js/nav.js}"></script>
+    <script th:src="@{/js/root.js}"></script>
     <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
     <link th:href="@{/css/root.css}" rel="stylesheet">
     <th:block th:fragment="styles">
@@ -14,7 +16,7 @@
 </head>
 <body class="bg-gray-50 dark:bg-dark-bg text-gray-800 dark:text-gray-100 min-h-screen font-inter">
 
-<header th:fragment="navbar(activeMenu)" class="bg-white shadow-sm sticky top-0 z-50 dark:bg-gray-900">
+<header th:fragment="navbar(activeMenu)" class="bg-white dark:bg-gray-900 shadow-sm sticky top-0 z-50">
     <div class="container mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
             <div class="flex items-center">
@@ -23,7 +25,7 @@
                     <span class="font-bold">芝士小屋</span>
                 </a>
                 <button type="button"
-                        class="ml-4 block sm:hidden rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:text-gray-300 dark:hover:bg-gray-800 dark:hover:text-white focus:outline-none"
+                        class="ml-4 block sm:hidden rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 dark:hover:text-white focus:outline-none"
                         id="mobile-menu-button">
                     <span class="sr-only">打开主菜单</span>
                     <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,9 +72,9 @@
                                 id="dropdown-menu"
                                 class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden dark:bg-gray-800 dark:border dark:border-gray-700"
                         >
-                            <a href="#"
+                            <a href="#" id="theme"
                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">
-                                个人设置
+                                切换主题
                             </a>
                             <a href="#"
                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">
