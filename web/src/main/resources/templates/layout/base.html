@@ -55,10 +55,8 @@
             <div class="flex items-center">
                 <div sec:authorize="isAuthenticated()" class="flex flex-row">
                     <div class="relative" id="dropdown-container">
-                        <button
-                                id="dropdown-button"
-                                class="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md hover:bg-gray-50 hover:outline-none hover:ring-2 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700"
-                        >
+                        <button id="dropdown-button"
+                                class="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md hover:bg-gray-50 hover:outline-none hover:ring-2 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700">
                             <span sec:authentication="name" class="px-2">匿名用户</span>
                             <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor"
                                  viewBox="0 0 24 24">
@@ -66,13 +64,11 @@
                                       d="M19 9l-7 7-7-7"></path>
                             </svg>
                         </button>
-
-                        <div
-                                id="dropdown-menu"
-                                class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-1 z-10 hidden dark:bg-gray-800 dark:border dark:border-gray-700"
-                        >
+                        <div id="dropdown-menu"
+                             class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg z-10 hidden dark:bg-gray-800 dark:border dark:border-gray-700">
                             <a href="#" id="theme"
                                class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:text-gray-200 dark:hover:bg-gray-700">
+                                <i id="theme-icon" th:class="'fa fa-moon-o'"></i>
                                 切换主题
                             </a>
                             <a href="#"
@@ -120,6 +116,8 @@
         </div>
     </div>
     <script>
+        let hiddenInterval = undefined;
+
         function initNavBarClient() {
             const mobileMenuButton = document.getElementById('mobile-menu-button');
             const mobileMenu = document.getElementById('mobile-menu');
@@ -131,13 +129,31 @@
             }
 
             const dropdownButton = document.getElementById('dropdown-button');
+            const dropdownContainer = document.getElementById('dropdown-container');
             const dropdownMenu = document.getElementById('dropdown-menu');
             const dropdownIcon = dropdownButton.querySelector('svg');
 
-            if (dropdownButton && dropdownMenu && dropdownIcon) {
+            if (dropdownButton && dropdownMenu && dropdownIcon && dropdownContainer) {
                 dropdownButton.addEventListener('click', () => {
                     dropdownMenu.classList.toggle('hidden');
                     dropdownIcon.classList.toggle('rotate-180'); // 箭头旋转动画
+                });
+                dropdownContainer.addEventListener('mouseenter', () => {
+                    if (!!hiddenInterval) {
+                        clearTimeout(hiddenInterval);
+                    }
+                    if (dropdownMenu.classList.contains("hidden")) {
+                        dropdownMenu.classList.remove('hidden');
+                        dropdownIcon.classList.add('rotate-180'); // 箭头旋转动画
+                    }
+                });
+                dropdownContainer.addEventListener('mouseleave', () => {
+                    hiddenInterval = setTimeout(() => {
+                        if (!dropdownMenu.classList.contains("hidden")) {
+                            dropdownMenu.classList.add('hidden');
+                            dropdownIcon.classList.remove('rotate-180'); // 箭头旋转动画
+                        }
+                    }, 100);
                 });
 
                 document.addEventListener('click', (e) => {
@@ -151,25 +167,26 @@
 
         function initThemeSwitch() {
             const themeToggle = document.getElementById('theme');
+            const themeIcon = document.getElementById('theme-icon');
             if (!!themeToggle) {
                 if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
                     document.documentElement.classList.add('dark');
-                    themeToggle.classList.remove('fa-moon-o');
-                    themeToggle.classList.add('fa-sun-o');
+                    themeIcon.classList.remove('fa-moon-o');
+                    themeIcon.classList.add('fa-sun-o');
                 } else {
                     document.documentElement.classList.remove('dark');
-                    themeToggle.classList.remove('fa-sun-o');
-                    themeToggle.classList.add('fa-moon-o');
+                    themeIcon.classList.remove('fa-sun-o');
+                    themeIcon.classList.add('fa-moon-o');
                 }
                 themeToggle.addEventListener('click', () => {
                     document.documentElement.classList.toggle('dark');
                     localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
                     if (localStorage.theme === 'dark') {
-                        themeToggle.classList.remove('fa-moon-o');
-                        themeToggle.classList.add('fa-sun-o');
+                        themeIcon.classList.remove('fa-moon-o');
+                        themeIcon.classList.add('fa-sun-o');
                     } else {
-                        themeToggle.classList.remove('fa-sun-o');
-                        themeToggle.classList.add('fa-moon-o');
+                        themeIcon.classList.remove('fa-sun-o');
+                        themeIcon.classList.add('fa-moon-o');
                     }
                 });
             }
