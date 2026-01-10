@@ -53,11 +53,14 @@
             </div>
 
             <div class="flex items-center">
-                <div sec:authorize="isAuthenticated()" class="flex flex-row">
-                    <div class="relative" id="dropdown-container">
+                <div sec:authorize="isAuthenticated()" class="flex flex-row  items-center justify-center">
+                    <span class="text-red-500">
+                        <i class='fa fa-bell'></i>
+                    </span>
+                    <div class="relative ml-2" id="dropdown-container">
                         <button id="dropdown-button"
-                                class="flex items-center gap-1 px-4 py-2 text-sm font-medium text-gray-700 bg-white rounded-md hover:bg-gray-50 hover:outline-none hover:ring-2 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700">
-                            <span sec:authentication="name" class="px-2">匿名用户</span>
+                                class="flex items-center gap-1 text-sm font-medium text-gray-700 bg-white rounded-md hover:bg-gray-50 hover:outline-none hover:ring-2 dark:bg-gray-800 dark:text-gray-200 dark:border-gray-600 dark:hover:bg-gray-700">
+                            <span sec:authentication="name" class="px-2 py-1">匿名用户</span>
                             <svg class="w-4 h-4 transition-transform duration-200" fill="none" stroke="currentColor"
                                  viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -84,7 +87,6 @@
                             </form>
                         </div>
                     </div>
-
                 </div>
                 <div sec:authorize="!isAuthenticated()">
                     <a th:href="@{/login}"
