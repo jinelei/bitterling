@@ -3,6 +3,7 @@ package com.jinelei.bitterling.web.service;
 import com.jinelei.bitterling.core.repository.BaseRepository;
 import com.jinelei.bitterling.core.service.BaseService;
 import com.jinelei.bitterling.web.domain.MemoDomain;
+import com.jinelei.bitterling.web.domain.dto.TagDto;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
@@ -31,6 +32,11 @@ public class MemoService extends BaseService<MemoDomain, Long> {
         Iterable<MemoDomain> all = findAll();
         List<MemoDomain> list = StreamSupport.stream(all.spliterator(), false).toList();
         props.put("memoList", list);
+        props.put("tagList", List.of(
+                new TagDto(1L, "fa-briefcase", "工作", (int) Math.round(Math.random() * 10)),
+                new TagDto(2L, "fa-home", "生活", (int) Math.round(Math.random() * 10)),
+                new TagDto(3L, "fa-book", "学习", (int) Math.round(Math.random() * 10))
+        ));
         log.info("renderIndex: {}", props);
         return props;
     }
@@ -46,20 +52,5 @@ public class MemoService extends BaseService<MemoDomain, Long> {
             });
         });
         return domain;
-    }
-
-    public void mock() {
-        List<MemoDomain> list = new ArrayList<>();
-        for (int i = 0; i < 10; i++) {
-            MemoDomain domain = new MemoDomain();
-            domain.setId((long) i);
-            domain.setTitle("标题" + i);
-            domain.setTitle("副标题" + i);
-            domain.setContent("副标题1" + i);
-            domain.setCreateTime(LocalDateTime.now());
-            domain.setUpdateTime(LocalDateTime.now());
-            list.add(domain);
-        }
-        saveAll(list);
     }
 }

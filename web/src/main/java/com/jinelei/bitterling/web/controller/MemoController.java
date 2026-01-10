@@ -101,10 +101,4 @@ public class MemoController extends BaseController {
         return GenericResult.success(byId);
     }
 
-    @GetMapping("mock")
-    public GenericResult<String> mock() {
-        service.mock();
-        return GenericResult.success("success");
-    }
-
 }
