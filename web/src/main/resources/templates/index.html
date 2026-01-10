@@ -14,7 +14,7 @@
 <body class="min-h-screen flex flex-col items-center justify-center">
 
 <div class="w-full">
-    <th:block th:replace="layout/base :: navbar('index')"></th:block>
+    <th:block th:replace="~{layout/base :: navbar('index')}"></th:block>
 </div>
 
 <main class="bg-page dark:bg-page-dark flex-grow w-full py-6 px-3">
@@ -51,7 +51,7 @@
 </main>
 
 <div class="bg-page dark:bg-page-dark absolute bottom-0 w-full z-10 flex items-center justify-center py-3">
-    <th:block th:replace="layout/base :: footer"></th:block>
+    <th:block th:replace="~{layout/base :: footer}"></th:block>
 </div>
 
 <th:block>

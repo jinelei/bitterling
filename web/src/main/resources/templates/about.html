@@ -13,7 +13,7 @@
 <body class="min-h-screen flex flex-col items-center justify-center">
 
 <div class="w-full">
-    <th:block th:replace="layout/base :: navbar('about')"></th:block>
+    <th:block th:replace="~{layout/base :: navbar('about')}"></th:block>
 </div>
 
 <main class="min-h-screen w-full flex flex-col items-center justify-center bg-gray-50">
@@ -134,7 +134,7 @@
     </section>
 
     <div class="bg-page dark:bg-page-dark w-full z-10 flex items-center justify-center py-3">
-        <th:block th:replace="layout/base :: footer"></th:block>
+        <th:block th:replace="~{layout/base :: footer}"></th:block>
     </div>
 </main>
 

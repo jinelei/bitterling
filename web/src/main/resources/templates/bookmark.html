@@ -12,7 +12,7 @@
 </head>
 <body>
 
-<th:block th:replace="layout/base :: navbar('bookmark')"></th:block>
+<th:block th:replace="~{layout/base :: navbar('bookmark')}"></th:block>
 
 <main class="flex-grow container mx-auto py-6 p-3">
     <h1>欢迎来到Bookmark</h1>
@@ -55,7 +55,7 @@
     </div>
 </main>
 
-<th:block th:replace="layout/base :: footer"></th:block>
+<th:block th:replace="~{layout/base :: footer}"></th:block>
 
 <th:block>
     <script>
