@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="备忘"></title>
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <script th:src="@{/js/tailwind.min.js}"></script>
+    <script th:src="@{/js/root.js}"></script>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
+    <link th:href="@{/css/root.css}" rel="stylesheet">
+</head>
+<body>
+
+<th:block th:replace="~{layout/base :: navbar('memo')}"></th:block>
+
+<main class="flex-grow container mx-auto py-6 p-3">
+    <h1>欢迎来到备忘</h1>
+</main>
+
+<th:block th:replace="~{layout/base :: footer}"></th:block>
+
+<th:block>
+    <script>
+        console.log('书签加载完成（原生方案）');
+    </script>
+</th:block>
+
+</body>
+</html>

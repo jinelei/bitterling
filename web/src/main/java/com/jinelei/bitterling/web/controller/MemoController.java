@@ -96,9 +96,15 @@ public class MemoController extends BaseController {
     public GenericResult<MemoDomain> render(@PathVariable("id") Long id) {
         log.info("render: {}", id);
         TimeTracker.getInstance().mark("查询备忘列表");
-        MemoDomain byId = this.service.findById(id).orElseThrow(()-> new BusinessException("未找到备忘"));
+        MemoDomain byId = this.service.findById(id).orElseThrow(() -> new BusinessException("未找到备忘"));
         TimeTracker.getInstance().mark("查询备忘列表").printTotalTime("查询备忘列表");
         return GenericResult.success(byId);
+    }
+
+    @GetMapping("mock")
+    public GenericResult<String> mock() {
+        service.mock();
+        return GenericResult.success("success");
     }
 
 }
