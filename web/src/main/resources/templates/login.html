@@ -14,7 +14,7 @@
 <body class="min-h-screen flex flex-col items-center justify-center">
 
 <main class="max-w-md rounded-lg shadow w-[clamp(20rem,30vw,30rem)] p-8 relative top-[-5rem]">
-    <h2 class="text-center text-[clamp(1rem,3vw+1rem,2rem)] flex-shrink-0  bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">用户登录</h2>
+    <h2 class="text-center font-bold text-[clamp(1rem,3vw+1rem,2rem)] flex-shrink-0  bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">用户登录</h2>
     <div th:if="${error != null or expired != null or errorMsg != null}"
          class="mb-6 p-3 bg-danger/10 border border-danger/20 rounded-md text-danger text-center text-sm">
             <span th:text="${errorMsg != null ? errorMsg : 
