@@ -35,6 +35,9 @@ values (10001, '天行平台-生产', 1, 10, 'https://erdp.seres.cn', 'fa-window
        (10001, '账号查询', 1, 26, 'https://erdpqa.seres.cn/chandao-api/index.html', 'fa-user-secret', 'green');
 
 
+insert into MEMO (id, title, sub_title, content)
+values (1, '测试标题', '测试副标题', '#标题1'),
+       (2, '测试标题2', '测试副标题2', '#标题2');
 
 -- insert into MEMO (id, title, sub_title, content)
 -- values (1, '测试标题', "测试副标题", '

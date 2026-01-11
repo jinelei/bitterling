@@ -7,6 +7,7 @@ import com.jinelei.bitterling.core.domain.view.BaseView;
 import com.jinelei.bitterling.core.exception.BusinessException;
 import com.jinelei.bitterling.core.helper.TimeTracker;
 import com.jinelei.bitterling.web.domain.MemoDomain;
+import com.jinelei.bitterling.web.domain.dto.MemoPageRequest;
 import com.jinelei.bitterling.web.service.MemoService;
 import com.jinelei.bitterling.web.service.IndexService;
 import com.jinelei.bitterling.web.service.MessageService;
@@ -37,9 +38,20 @@ public class MemoController extends BaseController {
     }
 
     @GetMapping(value = {"", "/", "/index"})
-    public ModelAndView index(Principal principal) {
-        ModelAndView modelAndView = new ModelAndView("memo");
-        modelAndView.addAllObjects(service.renderIndex());
+    public ModelAndView index(MemoPageRequest request, Principal principal) {
+        ModelAndView modelAndView = new ModelAndView("memo/index");
+        modelAndView.addAllObjects(service.renderIndex(request));
+        modelAndView.addObject("greeting", indexService.getGreeting());
+        modelAndView.addObject("unreadMessage", messageService.unreadMessages());
+        modelAndView.addObject("username", Optional.ofNullable(principal).map(Principal::getName).orElse("匿名用户"));
+        log.info("modelAndView: {}", modelAndView);
+        return modelAndView;
+    }
+
+    @GetMapping(value = {"/create"})
+    public ModelAndView create(Principal principal) {
+        ModelAndView modelAndView = new ModelAndView("memo/create");
+        modelAndView.addAllObjects(service.renderCreate());
         modelAndView.addObject("greeting", indexService.getGreeting());
         modelAndView.addObject("unreadMessage", messageService.unreadMessages());
         modelAndView.addObject("username", Optional.ofNullable(principal).map(Principal::getName).orElse("匿名用户"));

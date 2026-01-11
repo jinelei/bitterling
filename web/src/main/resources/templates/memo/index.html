@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="备忘"></title>
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <script th:src="@{/js/tailwind.min.js}"></script>
+    <script th:src="@{/js/root.js}"></script>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
+    <link th:href="@{/css/root.css}" rel="stylesheet">
+</head>
+<body>
+
+<th:block th:replace="~{layout/base :: navbar('memo')}"></th:block>
+
+<main class="flex-grow mx-auto py-6 p-3  flex flex-row items-start min-h-screen">
+    <!-- 左侧标签列表栏 -->
+    <aside class="w-64 bg-white sidebar-shadow h-screen sticky top-0 flex flex-col hidden md:block">
+        <!-- 标签列表 -->
+        <div class="flex-grow overflow-y-auto p-4">
+            <ul id="tagList" class="space-y-2">
+                <li th:each="tag : ${tagList}" class="border-b border-gray-200">
+                    <a th:href="@{/memo(tag=${tag.id})}"
+                       class="tag-btn w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-all">
+                        <i th:class="'fa mr-2 ' + ${tag.icon}"></i>
+                        <span th:text="${tag.name}"></span>
+                        <span th:text="${tag.count}"
+                              class="bg-primary/20 rounded-full w-6 h-6 flex items-center justify-center text-xs">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- 左侧标签列表栏 -->
+        <!-- 标签列表 -->
+        <div class="flex-grow overflow-y-auto p-4">
+            <!-- 搜索栏 -->
+            <div class="relative w-full">
+                <input
+                        type="text"
+                        id="searchMemoInput"
+                        placeholder="输入关键词查询备忘录..."
+                        class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
+                >
+                <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            </div>
+
+        </div>
+
+        <a id="addBtn" th:href="@{/memo/create}"
+           class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-all duration-300">
+            <i class="fa fa-plus mr-2"></i>新增备忘录
+        </a>
+    </aside>
+
+    <div class="flex-grow  top-0">
+        <ul id="memoList" class="space-y-2">
+            <li th:each="memo : ${memoList}" class="border-b border-gray-200">
+                <a th:href="@{/memo/{id}(id=${memo.id})}"
+                   class="tag-btn w-full flex flex-row items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-all">
+                    <span class="flex-1 flex flex-col">
+                    <span th:text="${memo.title}"></span>
+                    <span th:text="${memo.subTitle}"
+                          class="text-gray-400 text-xs mt-1">0</span>
+                    </span>
+                    <span class="text-gray-400">
+                        <span >asdfasdfas</span>
+                    </span>
+                </a>
+            </li>
+        </ul>
+    </div>
+    <!-- 操作提示 Toast -->
+    <div id="toast"
+         class="fixed bottom-8 right-8 px-6 py-3 rounded-lg text-white shadow-lg transform translate-y-20 opacity-0 transition-all duration-500 z-50 hidden"></div>
+
+</main>
+
+<th:block th:replace="~{layout/base :: footer}"></th:block>
+
+<th:block>
+    <script>
+        function mockMemo() {
+            fetch('[[@{/memo/mock}]]', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json; charset=utf-8',
+                },
+                body: JSON.stringify({
+                    title: 'mockMemo'
+                })
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`请求失败：${response.status} ${response.statusText}`);
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    // 处理成功返回的数据
+                    console.log("接口返回结果：", data);
+                    alert("调用成功！返回数据：" + JSON.stringify(data));
+                })
+                .catch(error => {
+                    console.error("请求异常：", error);
+                    alert("调用失败：" + error.message);
+                });
+        }
+    </script>
+</th:block>
+
+</body>
+</html>

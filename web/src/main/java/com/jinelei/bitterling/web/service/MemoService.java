@@ -3,6 +3,7 @@ package com.jinelei.bitterling.web.service;
 import com.jinelei.bitterling.core.repository.BaseRepository;
 import com.jinelei.bitterling.core.service.BaseService;
 import com.jinelei.bitterling.web.domain.MemoDomain;
+import com.jinelei.bitterling.web.domain.dto.MemoPageRequest;
 import com.jinelei.bitterling.web.domain.dto.TagDto;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
@@ -27,7 +28,7 @@ public class MemoService extends BaseService<MemoDomain, Long> {
         renderer = HtmlRenderer.builder(options).build();
     }
 
-    public Map<String, Object> renderIndex() {
+    public Map<String, Object> renderIndex(MemoPageRequest request) {
         final Map<String, Object> props = new HashMap<>();
         Iterable<MemoDomain> all = findAll();
         List<MemoDomain> list = StreamSupport.stream(all.spliterator(), false).toList();
@@ -38,6 +39,21 @@ public class MemoService extends BaseService<MemoDomain, Long> {
                 new TagDto(3L, "fa-book", "学习", (int) Math.round(Math.random() * 10))
         ));
         log.info("renderIndex: {}", props);
+        return props;
+    }
+
+
+    public Map<String, ?> renderCreate() {
+        final Map<String, Object> props = new HashMap<>();
+        Iterable<MemoDomain> all = findAll();
+        List<MemoDomain> list = StreamSupport.stream(all.spliterator(), false).toList();
+        props.put("memoList", list);
+        props.put("tagList", List.of(
+                new TagDto(1L, "fa-briefcase", "工作", (int) Math.round(Math.random() * 10)),
+                new TagDto(2L, "fa-home", "生活", (int) Math.round(Math.random() * 10)),
+                new TagDto(3L, "fa-book", "学习", (int) Math.round(Math.random() * 10))
+        ));
+        log.info("renderCreate: {}", props);
         return props;
     }
 
