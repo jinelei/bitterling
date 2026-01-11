@@ -50,7 +50,7 @@
                             </span>
                             <span th:text="${memo.subTitle}" class="text-gray-400 text-xs mt-1"></span>
                             <span class="text-gray-400 text-xs mt-1"
-                                  th:text="${#temporals.format(memo.createTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+                                  th:text="${#temporals.format(memo.updateTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
                         </a>
                         <a th:href="@{/memo/edit/{id}(id=${memo.id})}" class="z-1000">
                             <span class="font-bold m-4 p-2 rounded-lg bg-gray-100"><i class="fa fa-edit"></i></span>

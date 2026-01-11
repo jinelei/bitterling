@@ -25,7 +25,8 @@ public class MemoDomain extends RecordDomain<Long> {
     @Column(name = "sub_title")
     @Schema(description = "备忘副标题")
     private String subTitle;
-    @Column(name = "content")
+    @Lob
+    @Column(name = "content", columnDefinition = "MEDIUMTEXT")
     @Schema(description = "备忘内容")
     private String content;
 

@@ -1,8 +1,8 @@
-insert into BOOKMARK (id, parent_id, name, type, order_number, icon, color, create_time, update_time)
+insert into bookmark (id, parent_id, name, type, order_number, icon, color, create_time, update_time)
 values (10000, null, '个人', 0, 1, 'fa-user', 'red', now(), now()),
        (10001, null, '工作', 0, 1, 'fa-briefcase', 'green', now(), now());
 
-insert into BOOKMARK (parent_id, name, type, order_number, url, icon, color, create_time, update_time)
+insert into bookmark (parent_id, name, type, order_number, url, icon, color, create_time, update_time)
 values (10000, 'Cockpit', 1, 2, 'https://home.jinelei.com:9443', 'fa-support', 'red', now(), now()),
        (10000, 'Windows', 1, 3, 'https://docker.jinelei.com:9443', 'fa-windows', 'red', now(), now()),
        (10000, 'Music', 1, 4, 'https://music.jinelei.com:9443', 'fa-music', 'red', now(), now()),
@@ -13,7 +13,7 @@ values (10000, 'Cockpit', 1, 2, 'https://home.jinelei.com:9443', 'fa-support', '
        (10000, '开源中国', 1, 9, 'https://www.oschina.net/', 'fa-git-square', 'red', now(), now());
 
 
-insert into BOOKMARK (parent_id, name, type, order_number, url, icon, color, create_time, update_time)
+insert into bookmark (parent_id, name, type, order_number, url, icon, color, create_time, update_time)
 values (10001, '天行平台-生产', 1, 10, 'https://erdp.seres.cn', 'fa-windows', 'green', now(), now()),
        (10001, '天行平台-UAT', 1, 11, 'https://erdpuat.seres.cn', 'fa-windows', 'green', now(), now()),
        (10001, '天行平台-QA', 1, 12, 'https://erdpqa.seres.cn', 'fa-windows', 'green', now(), now()),
@@ -39,17 +39,17 @@ values (10001, '天行平台-生产', 1, 10, 'https://erdp.seres.cn', 'fa-window
        (10001, '账号查询', 1, 26, 'https://erdpqa.seres.cn/chandao-api/index.html', 'fa-user-secret', 'green', now(),
         now());
 
-insert into MEMO_TAG (id, title, icon, order_number, create_time, update_time)
+insert into memo_tag (id, title, icon, order_number, create_time, update_time)
 values (1, '工作', 'fa-briefcase', 1, now(), now()),
        (2, '生活', 'fa-home', 2, now(), now()),
        (3, '学习', 'fa-book', 3, now(), now());
 
-insert into MEMO (id, title, sub_title, content, order_number, create_time, update_time)
+insert into memo (id, title, sub_title, content, order_number, create_time, update_time)
 values (1, '测试标题', '测试副标题', '# 内容标题1', 1, now(), now()),
        (2, '测试标题2', '测试副标题2', '# 内容标题2', 2, now(), now()),
        (3, '测试标题3', '测试副标题3', '# 内容标题3', 3, now(), now());
 
-insert into MEMO_TAG_RELATE (memo_id, tag_id, order_number, create_time, update_time)
+insert into memo_tag_relate (memo_id, tag_id, order_number, create_time, update_time)
 values (1, 1, 1, now(), now()),
        (1, 2, 2, now(), now()),
        (1, 3, 3, now(), now()),
