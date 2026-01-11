@@ -5,7 +5,7 @@ import com.jinelei.bitterling.core.repository.BaseRepository;
 import com.jinelei.bitterling.core.service.BaseService;
 import com.jinelei.bitterling.web.domain.MemoDomain;
 import com.jinelei.bitterling.web.domain.MemoTagDomain;
-import com.jinelei.bitterling.web.domain.MemoTagRelateDomain;
+import com.jinelei.bitterling.web.domain.MemoTagRelateRecordDomain;
 import com.jinelei.bitterling.web.domain.dto.MemoPageRequest;
 import com.jinelei.bitterling.web.domain.dto.TagDto;
 import com.jinelei.bitterling.web.domain.pk.MemoTagPrimaryKey;
@@ -13,15 +13,11 @@ import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
 import com.vladsch.flexmark.util.data.MutableDataSet;
-import jakarta.persistence.criteria.CriteriaBuilder;
-import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.persistence.criteria.Root;
 import jakarta.validation.Validator;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -49,10 +45,10 @@ public class MemoService extends BaseService<MemoDomain, Long> {
             final List<Long> ids = new ArrayList<>();
             Optional.ofNullable(request).map(MemoPageRequest::getId).ifPresent(ids::add);
             Optional.ofNullable(request).map(MemoPageRequest::getTagId)
-                    .map(id -> memoTagRelateService.getRepository().findAll((Specification<MemoTagRelateDomain>) (r1, q1, cb1) -> cb1.equal(r1.get("id").get("tagId"), id)))
+                    .map(id -> memoTagRelateService.getRepository().findAll((Specification<MemoTagRelateRecordDomain>) (r1, q1, cb1) -> cb1.equal(r1.get("id").get("tagId"), id)))
                     .stream()
                     .flatMap(List::stream)
-                    .map(MemoTagRelateDomain::getId)
+                    .map(MemoTagRelateRecordDomain::getId)
                     .map(MemoTagPrimaryKey::getMemoId)
                     .distinct()
                     .forEach(ids::add);
