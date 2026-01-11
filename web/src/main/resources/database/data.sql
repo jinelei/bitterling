@@ -39,10 +39,10 @@ values (10001, '天行平台-生产', 1, 10, 'https://erdp.seres.cn', 'fa-window
        (10001, '账号查询', 1, 26, 'https://erdpqa.seres.cn/chandao-api/index.html', 'fa-user-secret', 'green', now(),
         now());
 
-insert into MEMO_TAG (id, title, create_time, update_time)
-values (1, '工作', now(), now()),
-       (2, '生活', now(), now()),
-       (3, '学习', now(), now());
+insert into MEMO_TAG (id, title, icon, create_time, update_time)
+values (1, '工作', 'fa-briefcase', now(), now()),
+       (2, '生活', 'fa-home', now(), now()),
+       (3, '学习', 'fa-book', now(), now());
 
 insert into MEMO (id, title, sub_title, content, create_time, update_time)
 values (1, '测试标题', '测试副标题', '# 内容标题1', now(), now()),
@@ -54,8 +54,8 @@ values (1, 1, now(), now()),
        (1, 2, now(), now()),
        (1, 3, now(), now()),
        (2, 1, now(), now()),
-       (2, 2, now(), now()),
        (2, 3, now(), now()),
+       (3, 2, now(), now()),
        (3, 3, now(), now())
 
 

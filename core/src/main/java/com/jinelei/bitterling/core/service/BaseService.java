@@ -29,9 +29,13 @@ public abstract class BaseService<ENT extends BaseDomain<ID>, ID> {
         this.log = LoggerFactory.getLogger(this.getClass());
     }
 
+    public BaseRepository<ENT, ID> getRepository() {
+        return repository;
+    }
+
     /**
      * 新增/保存实体
-     * 
+     *
      * @param entity 待保存的领域实体
      * @return 保存后的领域实体（携带持久化后的ID等信息）
      */
@@ -44,7 +48,7 @@ public abstract class BaseService<ENT extends BaseDomain<ID>, ID> {
 
     /**
      * 批量保存实体
-     * 
+     *
      * @param entities 待批量保存的实体列表
      * @return 批量保存后的实体列表
      */
@@ -57,7 +61,7 @@ public abstract class BaseService<ENT extends BaseDomain<ID>, ID> {
 
     /**
      * 根据ID查询实体
-     * 
+     *
      * @param id 实体主键ID
      * @return 封装了实体的Optional对象（避免空指针，无数据时返回Optional.empty()）
      */
@@ -69,7 +73,7 @@ public abstract class BaseService<ENT extends BaseDomain<ID>, ID> {
 
     /**
      * 查询所有实体
-     * 
+     *
      * @return 所有实体的列表（无数据时返回空列表，非null）
      */
     public Iterable<ENT> findAll() {
@@ -79,7 +83,7 @@ public abstract class BaseService<ENT extends BaseDomain<ID>, ID> {
 
     /**
      * 根据ID删除实体
-     * 
+     *
      * @param id 实体主键ID
      */
     public void deleteById(ID id) {
@@ -94,7 +98,7 @@ public abstract class BaseService<ENT extends BaseDomain<ID>, ID> {
 
     /**
      * 批量删除实体
-     * 
+     *
      * @param ids 待删除实体的主键ID列表
      */
     public void deleteAllById(List<ID> ids) {
@@ -107,7 +111,7 @@ public abstract class BaseService<ENT extends BaseDomain<ID>, ID> {
 
     /**
      * 判断实体是否存在（根据ID）
-     * 
+     *
      * @param id 实体主键ID
      * @return true：存在，false：不存在
      */
@@ -119,7 +123,7 @@ public abstract class BaseService<ENT extends BaseDomain<ID>, ID> {
 
     /**
      * 查询实体总数
-     * 
+     *
      * @return 实体总数量
      */
     public long count() {
@@ -129,7 +133,7 @@ public abstract class BaseService<ENT extends BaseDomain<ID>, ID> {
 
     /**
      * 获取实体类的简单名称（用于日志输出，简化代码）
-     * 
+     *
      * @return 实体类简单名称（如User、Order）
      */
     @SuppressWarnings("unchecked")

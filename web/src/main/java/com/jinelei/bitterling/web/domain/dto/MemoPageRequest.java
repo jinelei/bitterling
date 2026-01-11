@@ -11,7 +11,7 @@ import java.util.Objects;
  */
 public class MemoPageRequest {
     private Long id;
-    private String tagId;
+    private Long tagId;
     private String title;
 
     public Long getId() {
@@ -22,11 +22,11 @@ public class MemoPageRequest {
         this.id = id;
     }
 
-    public String getTagId() {
+    public Long getTagId() {
         return tagId;
     }
 
-    public void setTagId(String tagId) {
+    public void setTagId(Long tagId) {
         this.tagId = tagId;
     }
 

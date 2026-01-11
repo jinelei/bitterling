@@ -22,10 +22,10 @@
         <div class="flex-grow overflow-y-auto p-4">
             <ul id="tagList" class="space-y-2">
                 <li th:each="tag : ${tagList}" class="border-b border-gray-200">
-                    <a th:href="@{/memo(tag=${tag.id})}"
-                       class="tag-btn w-full flex items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-all">
+                    <a th:href="@{/memo(tagId=${tag.id})}"
+                       th:class="'tag-btn w-full flex items-center justify-between p-3 hover:bg-gray-150 transition-all ' + ${currentTagId == tag.id ? 'bg-gray-100' : ''}">
                         <i th:class="'fa mr-2 ' + ${tag.icon}"></i>
-                        <span th:text="${tag.name}"></span>
+                        <span th:text="${tag.title}"></span>
                         <span th:text="${tag.count}"
                               class="bg-primary/20 rounded-full w-6 h-6 flex items-center justify-center text-xs">0</span>
                     </a>

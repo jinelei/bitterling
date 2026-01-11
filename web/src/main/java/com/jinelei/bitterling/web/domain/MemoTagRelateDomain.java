@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,7 +16,7 @@ import java.util.Optional;
 @Entity
 @Table(name = "MEMO_TAG_RELATE")
 @Schema(title = "备忘标签关联领域对象", description = "备忘标签关联领域对象")
-public class MemoTagRelateDomain extends BaseDomain<MemoTagPrimaryKey> implements Comparable<MemoTagRelateDomain> {
+public class MemoTagRelateDomain extends BaseDomain<MemoTagPrimaryKey> implements Comparable<MemoTagRelateDomain>, Serializable {
     @EmbeddedId
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JsonView(value = {BaseView.Query.class, BaseView.Delete.class, BaseView.Update.class, BaseView.Detail.class, BaseView.List.class})

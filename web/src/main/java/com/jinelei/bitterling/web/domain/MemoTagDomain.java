@@ -27,6 +27,11 @@ public class MemoTagDomain extends BaseDomain<Long> implements Comparable<MemoTa
     @NotBlank(message = "备忘标签标题不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "备忘标签标题")
     private String title;
+    @Column(name = "icon")
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class, BaseView.Detail.class, BaseView.List.class})
+    @NotBlank(message = "备忘标签图标不能为空", groups = {BaseView.Persist.class})
+    @Schema(description = "备忘标签图标")
+    private String icon;
     @Column(name = "create_time")
     @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class, BaseView.Detail.class, BaseView.List.class})
     @NotNull(message = "创建时间不能为空", groups = {BaseView.Persist.class})
@@ -37,6 +42,11 @@ public class MemoTagDomain extends BaseDomain<Long> implements Comparable<MemoTa
     @NotNull(message = "更新时间不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
+
+    @Transient
+    @JsonView(value = {BaseView.Detail.class, BaseView.List.class})
+    @Schema(description = "数量")
+    private transient Long count;
 
     @Override
     public int compareTo(MemoTagDomain o) {
@@ -64,6 +74,14 @@ public class MemoTagDomain extends BaseDomain<Long> implements Comparable<MemoTa
         this.title = title;
     }
 
+    public @NotBlank(message = "备忘标签图标不能为空", groups = {BaseView.Persist.class}) String getIcon() {
+        return icon;
+    }
+
+    public void setIcon(@NotBlank(message = "备忘标签图标不能为空", groups = {BaseView.Persist.class}) String icon) {
+        this.icon = icon;
+    }
+
     public LocalDateTime getCreateTime() {
         return createTime;
     }
@@ -80,16 +98,24 @@ public class MemoTagDomain extends BaseDomain<Long> implements Comparable<MemoTa
         this.updateTime = updateTime;
     }
 
+    public Long getCount() {
+        return count;
+    }
+
+    public void setCount(Long count) {
+        this.count = count;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         MemoTagDomain that = (MemoTagDomain) o;
-        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(createTime, that.createTime) && Objects.equals(updateTime, that.updateTime);
+        return Objects.equals(id, that.id) && Objects.equals(title, that.title) && Objects.equals(icon, that.icon) && Objects.equals(createTime, that.createTime) && Objects.equals(updateTime, that.updateTime) && Objects.equals(count, that.count);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, title, createTime, updateTime);
+        return Objects.hash(id, title, icon, createTime, updateTime, count);
     }
 
     @Override
@@ -97,9 +123,11 @@ public class MemoTagDomain extends BaseDomain<Long> implements Comparable<MemoTa
         return "MemoTagDomain{" +
                 "id=" + id +
                 ", title='" + title + '\'' +
+                ", icon='" + icon + '\'' +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
-                '}';
+                ", count=" + count +
+                "} " + super.toString();
     }
 
 }
