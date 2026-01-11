@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title th:text="备忘详情"></title>
+    <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
+    <script th:src="@{/js/tailwind.min.js}"></script>
+    <script th:src="@{/js/root.js}"></script>
+    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
+    <link th:href="@{/css/root.css}" rel="stylesheet">
+</head>
+<body>
+
+<th:block th:replace="~{layout/base :: navbar('memo')}"></th:block>
+
+<main class="flex-grow container mx-auto py-6 p-3">
+    <h1 th:text="${memo.title}">标题占位</h1>
+    <span class="text-gray-400" th:text="${memo.subTitle}">副标题占位</span>
+    <br/>
+    <span th:text="${memo.content}"></span>
+</main>
+
+<th:block th:replace="~{layout/base :: footer}"></th:block>
+
+<th:block>
+    <script>
+    </script>
+</th:block>
+
+</body>
+</html>

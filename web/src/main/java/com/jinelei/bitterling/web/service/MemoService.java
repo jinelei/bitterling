@@ -1,5 +1,6 @@
 package com.jinelei.bitterling.web.service;
 
+import com.jinelei.bitterling.core.exception.BusinessException;
 import com.jinelei.bitterling.core.repository.BaseRepository;
 import com.jinelei.bitterling.core.service.BaseService;
 import com.jinelei.bitterling.web.domain.MemoDomain;
@@ -39,6 +40,20 @@ public class MemoService extends BaseService<MemoDomain, Long> {
                 new TagDto(3L, "fa-book", "学习", (int) Math.round(Math.random() * 10))
         ));
         log.info("renderIndex: {}", props);
+        return props;
+    }
+
+    public Map<String, Object> renderDetail(MemoPageRequest request) {
+        final Map<String, Object> props = new HashMap<>();
+        Optional<MemoDomain> optById = repository.findById(Optional.ofNullable(request).map(MemoPageRequest::getId).orElseThrow(() -> new BusinessException("id不能为空")));
+        final MemoDomain memo = optById.orElseThrow(() -> new BusinessException("备忘不能为空"));
+        props.put("memo", memo);
+        props.put("tagList", List.of(
+                new TagDto(1L, "fa-briefcase", "工作", (int) Math.round(Math.random() * 10)),
+                new TagDto(2L, "fa-home", "生活", (int) Math.round(Math.random() * 10)),
+                new TagDto(3L, "fa-book", "学习", (int) Math.round(Math.random() * 10))
+        ));
+        log.info("renderDetail: {}", props);
         return props;
     }
 

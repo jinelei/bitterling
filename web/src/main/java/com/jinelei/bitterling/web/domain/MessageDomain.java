@@ -26,52 +26,52 @@ import jakarta.validation.constraints.NotNull;
 public class MessageDomain extends BaseDomain<Long> implements Comparable<MessageDomain> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(value = { BaseView.Query.class, BaseView.Delete.class, BaseView.Update.class })
-    @NotNull(message = "ID不能为空", groups = { BaseView.Persist.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Delete.class, BaseView.Update.class})
+    @NotNull(message = "ID不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "主键ID")
     private Long id;
     @Column(name = "send_user")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
-    @NotNull(message = "发送人不能为空", groups = { BaseView.Persist.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
+    @NotNull(message = "发送人不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "发送人")
     private String sendUser;
     @Column(name = "receive_user")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
-    @NotNull(message = "接收人不能为空", groups = { BaseView.Persist.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
+    @NotNull(message = "接收人不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "接收人")
     private String receiveUser;
     @Column(name = "group_id")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
     @Schema(description = "消息组")
     private String groupId;
     @Column(name = "title")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
-    @NotBlank(message = "消息标题不能为空", groups = { BaseView.Persist.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
+    @NotBlank(message = "消息标题不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "消息标题")
     private String title;
     @Column(name = "type")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
-    @NotNull(message = "消息类型不能为空", groups = { BaseView.Persist.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
+    @NotNull(message = "消息类型不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "消息类型")
     private MessageType type = MessageType.NOTIFY;
     @Column(name = "content")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
-    @NotBlank(message = "消息内容不能为空", groups = { BaseView.Persist.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
+    @NotBlank(message = "消息内容不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "消息内容")
     private String content;
     @Column(name = "read_state")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
-    @NotNull(message = "读取状态不能为空", groups = { BaseView.Persist.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
+    @NotNull(message = "读取状态不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "读取状态")
     private Boolean readState = Boolean.FALSE;
     @Column(name = "create_time")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
-    @NotNull(message = "创建时间不能为空", groups = { BaseView.Persist.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
+    @NotNull(message = "创建时间不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
     @Column(name = "update_time")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
-    @NotNull(message = "更新时间不能为空", groups = { BaseView.Persist.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
+    @NotNull(message = "更新时间不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
 

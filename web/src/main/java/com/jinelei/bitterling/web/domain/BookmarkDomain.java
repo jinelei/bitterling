@@ -29,52 +29,52 @@ public class BookmarkDomain extends BaseDomain<Long>
         implements Comparable<BookmarkDomain>, TreeView<BookmarkDomain, Long> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @JsonView(value = { BaseView.Query.class, BaseView.Delete.class, BaseView.Update.class })
-    @NotNull(message = "ID不能为空", groups = { BaseView.Persist.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Delete.class, BaseView.Update.class})
+    @NotNull(message = "ID不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "主键ID")
     private Long id;
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Delete.class,
-            BaseView.Update.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Delete.class,
+            BaseView.Update.class})
     @Schema(description = "父级ID")
     private Long parentId;
     @Column(name = "name", unique = true)
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
-    @NotBlank(message = "书签名称不能为空", groups = { BaseView.Persist.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
+    @NotBlank(message = "书签名称不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "书签名称")
     private String name;
     @Column(name = "type")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
-    @NotNull(message = "书签类型不能为空", groups = { BaseView.Persist.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
+    @NotNull(message = "书签类型不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "书签类型")
     private BookmarkType type;
     @Column(name = "url")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
     @Schema(description = "书签地址")
     private String url;
     @Column(name = "icon")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
     @Schema(description = "书签图标")
     private String icon;
     @Column(name = "color")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
     @Schema(description = "书签颜色")
     private String color;
     @Column(name = "order_number")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
     @Schema(description = "排序值")
     private Integer orderNumber;
     @Column(name = "create_time")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
-    @NotNull(message = "创建时间不能为空", groups = { BaseView.Persist.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
+    @NotNull(message = "创建时间不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "创建时间")
     private LocalDateTime createTime;
     @Column(name = "update_time")
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
-    @NotNull(message = "更新时间不能为空", groups = { BaseView.Persist.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
+    @NotNull(message = "更新时间不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "更新时间")
     private LocalDateTime updateTime;
     @Transient
-    @JsonView(value = { BaseView.Query.class, BaseView.Create.class, BaseView.Update.class })
+    @JsonView(value = {BaseView.Query.class, BaseView.Create.class, BaseView.Update.class})
     @Schema(description = "子级")
     private transient List<BookmarkDomain> children;
 

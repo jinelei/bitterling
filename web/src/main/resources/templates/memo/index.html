@@ -10,11 +10,14 @@
     <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
     <link th:href="@{/css/root.css}" rel="stylesheet">
 </head>
-<body class=" bg-gray-50 dark:bg-dark-bg text-gray-800 dark:text-gray-100 min-h-screen font-inter">
 
-<th:block th:replace="~{layout/base :: navbar('memo')}"></th:block>
+<body class="min-h-screen flex flex-col items-center justify-center">
 
-<div class="flex flex-grow h-[calc(100vh-64px)]">
+<div class="w-full">
+    <th:block th:replace="~{layout/base :: navbar('memo')}"></th:block>
+</div>
+
+<div class="flex flex-grow h-[calc(100vh-64px)] container">
     <aside class="w-64 bg-white sidebar-shadow sticky top-0 flex flex-col hidden md:block">
         <div class="flex-grow overflow-y-auto p-4">
             <ul id="tagList" class="space-y-2">
@@ -29,24 +32,6 @@
                 </li>
             </ul>
         </div>
-
-        <div class="flex-grow overflow-y-auto p-4">
-            <div class="relative w-full">
-                <input
-                        type="text"
-                        id="searchMemoInput"
-                        placeholder="输入关键词查询备忘录..."
-                        class="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 focus:border-primary transition-all"
-                >
-                <i class="fa fa-search absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-            </div>
-
-        </div>
-
-        <a id="addBtn" th:href="@{/memo/create}"
-           class="bg-primary hover:bg-primary/90 text-white px-4 py-2 rounded-lg transition-all duration-300">
-            <i class="fa fa-plus mr-2"></i>新增备忘录
-        </a>
     </aside>
 
     <main class="bg-white mx-auto py-6 p-3 flex-grow flex flex-col items-center">
@@ -61,7 +46,7 @@
                           class="text-gray-400 text-xs mt-1">0</span>
                     </span>
                         <span class="text-gray-400">
-                        <span>asdfasdfas</span>
+                        <span class="text-gray-400 text-xs mt-1" th:text="${memo.createTime}"></span>
                     </span>
                     </a>
                 </li>

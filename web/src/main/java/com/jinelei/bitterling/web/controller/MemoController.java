@@ -52,8 +52,10 @@ public class MemoController extends BaseController {
     @GetMapping(value = {"/{id}"})
     public ModelAndView detail(@PathVariable("id") Long id, MemoPageRequest request, Principal principal) {
         log.info("detail request: {}, {}", id, request);
-        ModelAndView modelAndView = new ModelAndView("memo/preview");
-        modelAndView.addAllObjects(service.renderIndex(request));
+        ModelAndView modelAndView = new ModelAndView("memo/detail");
+        Optional.ofNullable(id).orElseThrow(() -> new BusinessException("id不能为空"));
+        Optional.ofNullable(request).ifPresent(r -> r.setId(id));
+        modelAndView.addAllObjects(service.renderDetail(request));
         modelAndView.addObject("greeting", indexService.getGreeting());
         modelAndView.addObject("unreadMessage", messageService.unreadMessages());
         modelAndView.addObject("username", Optional.ofNullable(principal).map(Principal::getName).orElse("匿名用户"));
