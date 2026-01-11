@@ -63,6 +63,20 @@ public class MemoController extends BaseController {
         return modelAndView;
     }
 
+    @GetMapping(value = {"/edit/{id}"})
+    public ModelAndView edit(@PathVariable("id") Long id, MemoPageRequest request, Principal principal) {
+        log.info("edit request: {}, {}", id, request);
+        ModelAndView modelAndView = new ModelAndView("memo/edit");
+        Optional.ofNullable(id).orElseThrow(() -> new BusinessException("id不能为空"));
+        Optional.ofNullable(request).ifPresent(r -> r.setId(id));
+        modelAndView.addAllObjects(service.renderDetail(request));
+        modelAndView.addObject("greeting", indexService.getGreeting());
+        modelAndView.addObject("unreadMessage", messageService.unreadMessages());
+        modelAndView.addObject("username", Optional.ofNullable(principal).map(Principal::getName).orElse("匿名用户"));
+        log.info("modelAndView: {}", modelAndView);
+        return modelAndView;
+    }
+
     @GetMapping(value = {"/create"})
     public ModelAndView create(Principal principal) {
         ModelAndView modelAndView = new ModelAndView("memo/create");
