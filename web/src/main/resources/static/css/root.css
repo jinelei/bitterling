@@ -4,10 +4,23 @@
     box-sizing: border-box;
 }
 
+html {
+    scrollbar-width: none; /* 隐藏火狐滚动条 */
+    -ms-overflow-style: none; /* 隐藏IE/Edge旧版本滚动条 */
+}
+
 body {
     font-family: "Microsoft YaHei", sans-serif;
     background-color: white;
     padding: 0px;
+}
+
+/* 隐藏全局滚动条 */
+::-webkit-scrollbar {
+    /* 针对 Chrome, Safari, Edge 等webkit内核浏览器 */
+    display: none;
+    width: 0;
+    height: 0;
 }
 
 @layer utilities {

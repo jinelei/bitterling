@@ -10,14 +10,12 @@
     <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
     <link th:href="@{/css/root.css}" rel="stylesheet">
 </head>
-<body>
+<body class=" bg-gray-50 dark:bg-dark-bg text-gray-800 dark:text-gray-100 min-h-screen font-inter">
 
 <th:block th:replace="~{layout/base :: navbar('memo')}"></th:block>
 
-<main class="flex-grow mx-auto py-6 p-3  flex flex-row items-start min-h-screen">
-    <!-- 左侧标签列表栏 -->
-    <aside class="w-64 bg-white sidebar-shadow h-screen sticky top-0 flex flex-col hidden md:block">
-        <!-- 标签列表 -->
+<div class="flex flex-grow h-[calc(100vh-64px)]">
+    <aside class="w-64 bg-white sidebar-shadow sticky top-0 flex flex-col hidden md:block">
         <div class="flex-grow overflow-y-auto p-4">
             <ul id="tagList" class="space-y-2">
                 <li th:each="tag : ${tagList}" class="border-b border-gray-200">
@@ -32,10 +30,7 @@
             </ul>
         </div>
 
-        <!-- 左侧标签列表栏 -->
-        <!-- 标签列表 -->
         <div class="flex-grow overflow-y-auto p-4">
-            <!-- 搜索栏 -->
             <div class="relative w-full">
                 <input
                         type="text"
@@ -54,30 +49,28 @@
         </a>
     </aside>
 
-    <div class="flex-grow  top-0">
-        <ul id="memoList" class="space-y-2">
-            <li th:each="memo : ${memoList}" class="border-b border-gray-200">
-                <a th:href="@{/memo/{id}(id=${memo.id})}"
-                   class="tag-btn w-full flex flex-row items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-all">
+    <main class="bg-white mx-auto py-6 p-3 flex-grow flex flex-col items-center">
+        <div class="flex-grow w-full top-0">
+            <ul id="memoList" class="space-y-2">
+                <li th:each="memo : ${memoList}" class="border-b border-gray-200">
+                    <a th:href="@{/memo/{id}(id=${memo.id})}"
+                       class="tag-btn w-full flex flex-row items-center justify-between p-3 rounded-lg hover:bg-gray-50 transition-all">
                     <span class="flex-1 flex flex-col">
                     <span th:text="${memo.title}"></span>
                     <span th:text="${memo.subTitle}"
                           class="text-gray-400 text-xs mt-1">0</span>
                     </span>
-                    <span class="text-gray-400">
-                        <span >asdfasdfas</span>
+                        <span class="text-gray-400">
+                        <span>asdfasdfas</span>
                     </span>
-                </a>
-            </li>
-        </ul>
-    </div>
-    <!-- 操作提示 Toast -->
-    <div id="toast"
-         class="fixed bottom-8 right-8 px-6 py-3 rounded-lg text-white shadow-lg transform translate-y-20 opacity-0 transition-all duration-500 z-50 hidden"></div>
+                    </a>
+                </li>
+            </ul>
+        </div>
 
-</main>
-
-<th:block th:replace="~{layout/base :: footer}"></th:block>
+        <th:block th:replace="~{layout/base :: footer}"></th:block>
+    </main>
+</div>
 
 <th:block>
     <script>

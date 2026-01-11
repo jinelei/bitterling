@@ -39,7 +39,20 @@ public class MemoController extends BaseController {
 
     @GetMapping(value = {"", "/", "/index"})
     public ModelAndView index(MemoPageRequest request, Principal principal) {
+        log.info("index request: {}", request);
         ModelAndView modelAndView = new ModelAndView("memo/index");
+        modelAndView.addAllObjects(service.renderIndex(request));
+        modelAndView.addObject("greeting", indexService.getGreeting());
+        modelAndView.addObject("unreadMessage", messageService.unreadMessages());
+        modelAndView.addObject("username", Optional.ofNullable(principal).map(Principal::getName).orElse("匿名用户"));
+        log.info("modelAndView: {}", modelAndView);
+        return modelAndView;
+    }
+
+    @GetMapping(value = {"/{id}"})
+    public ModelAndView detail(@PathVariable("id") Long id, MemoPageRequest request, Principal principal) {
+        log.info("detail request: {}, {}", id, request);
+        ModelAndView modelAndView = new ModelAndView("memo/preview");
         modelAndView.addAllObjects(service.renderIndex(request));
         modelAndView.addObject("greeting", indexService.getGreeting());
         modelAndView.addObject("unreadMessage", messageService.unreadMessages());
