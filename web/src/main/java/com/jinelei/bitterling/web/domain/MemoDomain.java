@@ -9,6 +9,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -35,6 +36,10 @@ public class MemoDomain extends RecordDomain<Long> {
     @NotBlank(message = "备忘内容不能为空", groups = {BaseView.Persist.class})
     @Schema(description = "备忘内容")
     private transient String contentRender;
+    @Transient
+    @JsonView(value = {BaseView.List.class, View.Render.class})
+    @Schema(description = "备忘标签")
+    private transient List<MemoTagDomain> tags;
 
     public @NotBlank(message = "备忘标题不能为空", groups = {BaseView.Persist.class}) String getTitle() {
         return title;
@@ -68,17 +73,25 @@ public class MemoDomain extends RecordDomain<Long> {
         this.contentRender = contentRender;
     }
 
+    public List<MemoTagDomain> getTags() {
+        return tags;
+    }
+
+    public void setTags(List<MemoTagDomain> tags) {
+        this.tags = tags;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         if (!super.equals(o)) return false;
         MemoDomain that = (MemoDomain) o;
-        return Objects.equals(title, that.title) && Objects.equals(subTitle, that.subTitle) && Objects.equals(content, that.content) && Objects.equals(contentRender, that.contentRender);
+        return Objects.equals(title, that.title) && Objects.equals(subTitle, that.subTitle) && Objects.equals(content, that.content) && Objects.equals(contentRender, that.contentRender) && Objects.equals(tags, that.tags);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), title, subTitle, content, contentRender);
+        return Objects.hash(super.hashCode(), title, subTitle, content, contentRender, tags);
     }
 
     @Override
@@ -88,6 +101,7 @@ public class MemoDomain extends RecordDomain<Long> {
                 ", subTitle='" + subTitle + '\'' +
                 ", content='" + content + '\'' +
                 ", contentRender='" + contentRender + '\'' +
+                ", tags=" + tags +
                 ", id=" + id +
                 ", createTime=" + createTime +
                 ", updateTime=" + updateTime +
