@@ -3,7 +3,7 @@ package com.jinelei.bitterling.core.constant;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(name = "默认分页配置")
-public class PageablePropertity {
+public class PageableProperty {
     @Schema(name = "默认分页页码")
     public static Integer DEFAULT_PAGE_NO = 1;
     @Schema(name = "默认分页大小")

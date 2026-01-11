@@ -3,173 +3,114 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="新增备忘录"></title>
+    <title th:text="创建备忘录"></title>
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
     <script th:src="@{/js/tailwind.min.js}"></script>
     <script th:src="@{/js/root.js}"></script>
     <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
     <link th:href="@{/css/root.css}" rel="stylesheet">
 </head>
-<body>
+<body class=" bg-gray-50">
 
-<th:block th:replace="~{layout/base :: navbar('bookmark')}"></th:block>
+<th:block th:replace="~{layout/base :: navbar('memo')}"></th:block>
 
-<main class="flex-grow mx-auto p-3 flex flex-row items-center min-h-screen">
-    <div class="mx-auto p-4">
-        <!-- 主内容区域：左侧录入 + 右侧预览 -->
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <!-- 左侧：备忘录录入表单 -->
-            <div class="bg-white rounded-lg shadow-md p-3 lg:p-4">
-                <form th:action="@{/memo/save}" th:method="post" id="memoForm" class="space-y-6">
-                    <!-- 标题输入框 -->
-                    <div>
-                        <label for="title" class="block text-gray-700 font-medium mb-2">
-                            标题 <span class="text-red-500">*</span>
-                        </label>
-                        <input
-                                type="text"
-                                id="title"
-                                name="title"
-                                th:value="${memo != null ? memo.title : ''}"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200"
-                                placeholder="请输入备忘录标题（例如：2026年工作计划）"
-                                oninput="updatePreview()"
-                        >
-                    </div>
-
-                    <!-- 副标题输入框 -->
-                    <div>
-                        <label for="subtitle" class="block text-gray-700 font-medium mb-2">
-                            副标题
-                        </label>
-                        <input
-                                type="text"
-                                id="subtitle"
-                                name="subtitle"
-                                th:value="${memo != null ? memo.subtitle : ''}"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200"
-                                placeholder="请输入备忘录副标题（可选，例如：部门年度目标拆解）"
-                                oninput="updatePreview()"
-                        >
-                    </div>
-
-                    <!-- 下拉标签选择 -->
-                    <div>
-                        <label for="tag" class="block text-gray-700 font-medium mb-2">
-                            标签 <span class="text-red-500">*</span>
-                        </label>
-                        <select
-                                id="tag"
-                                name="tag"
-                                th:value="${memo != null ? memo.tag : ''}"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200 appearance-none bg-white"
-                                onchange="updatePreview()"
-                        >
-                            <option value="" disabled selected>请选择备忘录标签</option>
-                            <option value="工作">工作</option>
-                            <option value="生活">生活</option>
-                            <option value="学习">学习</option>
-                            <option value="重要">重要</option>
-                            <option value="临时">临时</option>
-                        </select>
-                    </div>
-
-                    <!-- 内容输入框（多行文本） -->
-                    <div>
-                        <label for="content" class="block text-gray-700 font-medium mb-2">
-                            内容 <span class="text-red-500">*</span>
-                        </label>
-                        <textarea
-                                id="content"
-                                name="content"
-                                th:value="${memo != null ? memo.content : ''}"
-                                rows="8"
-                                class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200 resize-y"
-                                placeholder="请输入备忘录详细内容，支持换行输入..."
-                                oninput="updatePreview()"
-                        ></textarea>
-                    </div>
-
-                    <!-- 提交按钮 -->
-                    <div class="flex justify-end space-x-4 pt-2">
-                        <button
-                                type="reset"
-                                class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200"
-                                onclick="resetPreview()"
-                        >
-                            重置
-                        </button>
-                        <button
-                                type="submit"
-                                class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition duration-200"
-                        >
-                            保存备忘录
-                        </button>
-                    </div>
-                </form>
+<main class="flex-grow mx-auto flex flex-row items-start container">
+    <div class="mx-auto p-5 w-full bg-white rounded p-3 lg:p-4">
+        <form id="form" th:action="@{/memo/create}" method="post" class="space-y-6">
+            <div>
+                <label for="title" class="block text-gray-700 font-medium mb-2">
+                    ID <span class="text-red-500">*</span>
+                </label>
+                <input
+                        type="text"
+                        id="id"
+                        name="id"
+                        th:value="${memo != null ? memo.id : ''}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200"
+                        placeholder="id"
+                >
             </div>
-
-            <!-- 右侧：实时编辑预览区 -->
-            <div class="bg-secondary rounded-lg shadow-md p-3 lg:p-4 hidden-sm">
-                <h2 class="text-gray-800 mb-4">预览区</h2>
-                <div id="previewArea" class="preview-card">
-                    <!-- 预览内容将通过 JavaScript 动态更新 -->
-                    <div class="text-center text-gray-400 py-10">
-                        填写表单内容，此处将实时预览备忘录效果
-                    </div>
-                </div>
+            <div>
+                <label for="title" class="block text-gray-700 font-medium mb-2">
+                    标题 <span class="text-red-500">*</span>
+                </label>
+                <input
+                        type="text"
+                        id="title"
+                        name="title"
+                        th:value="${memo != null ? memo.title : ''}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200"
+                        placeholder="请输入备忘录标题（例如：2026年工作计划）"
+                >
             </div>
-        </div>
+            <div>
+                <label for="subTitle" class="block text-gray-700 font-medium mb-2">
+                    副标题
+                </label>
+                <input
+                        type="text"
+                        id="subTitle"
+                        name="subTitle"
+                        th:value="${memo != null ? memo.subTitle : ''}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200"
+                        placeholder="请输入备忘录副标题（可选，例如：部门年度目标拆解）"
+                >
+            </div>
+            <div>
+                <label for="tag" class="block text-gray-700 font-medium mb-2">
+                    标签 <span class="text-red-500">*</span>
+                </label>
+                <select
+                        id="tag"
+                        name="tag"
+                        th:value="${memo != null ? memo.tags : ''}"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200 appearance-none bg-white"
+                >
+                    <option value="" disabled selected>请选择备忘录标签</option>
+                    <option value="工作">工作</option>
+                    <option value="生活">生活</option>
+                    <option value="学习">学习</option>
+                    <option value="重要">重要</option>
+                    <option value="临时">临时</option>
+                </select>
+            </div>
+            <div>
+                <label for="content" class="block text-gray-700 font-medium mb-2">
+                    内容 <span class="text-red-500">*</span>
+                </label>
+                <textarea
+                        id="content"
+                        name="content"
+                        th:value="${memo != null ? memo.content : ''}"
+                        rows="8"
+                        class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200 resize-y"
+                        placeholder="请输入备忘录详细内容，支持换行输入..."
+                ></textarea>
+            </div>
+            <div class="flex justify-end space-x-4 pt-2">
+                <button
+                        type="reset"
+                        class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200"
+                        onclick="resetPreview()"
+                >
+                    重置
+                </button>
+                <button
+                        type="submit"
+                        class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition duration-200"
+                >
+                    保存备忘录
+                </button>
+            </div>
+        </form>
+        <div id="submitTip" style="margin-top: 20px; color: #666;"></div>
     </div>
-
 </main>
 
 <th:block th:replace="~{layout/base :: footer}"></th:block>
 
 <th:block>
     <script>
-        // 实时更新预览区内容
-        function updatePreview() {
-            // 获取表单输入值
-            const title = document.getElementById('title').value || '未填写标题';
-            const subtitle = document.getElementById('subtitle').value || '';
-            const tag = document.getElementById('tag').options[document.getElementById('tag').selectedIndex].text || '未选择标签';
-            const content = document.getElementById('content').value || '无详细内容';
-
-            // 处理内容换行（将回车转换为 <br>）
-            const formattedContent = content.replace(/\n/g, '<br>');
-
-            // 构建预览区 HTML 结构
-            const previewHtml = `
-                <div class="space-y-4">
-                    <!-- 预览标签 -->
-                    <span class="inline-block px-3 py-1 bg-primary/10 text-primary rounded-full text-sm font-medium">
-                        ${tag}
-                    </span>
-
-                    <!-- 预览标题 -->
-                    <h3 class="text-2xl font-bold text-gray-800 break-words">
-                        ${title}
-                    </h3>
-
-                    <!-- 预览副标题（有值时显示） -->
-                    ${subtitle ? `<p class="text-gray-500 text-lg italic break-words">${subtitle}</p>` : ''}
-
-                    <!-- 分隔线 -->
-                    <hr class="border-gray-200 my-4">
-
-                    <!-- 预览内容 -->
-                    <div class="text-gray-700 leading-relaxed break-words">
-                        ${formattedContent}
-                    </div>
-                </div>
-            `;
-
-            // 更新预览区内容
-            document.getElementById('previewArea').innerHTML = previewHtml;
-        }
-
-        // 重置预览区（表单重置时调用）
         function resetPreview() {
             setTimeout(() => {
                 document.getElementById('previewArea').innerHTML = `

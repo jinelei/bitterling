@@ -14,10 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.fasterxml.jackson.annotation.JsonView;
 import com.jinelei.bitterling.core.controller.BaseController;
 import com.jinelei.bitterling.core.domain.result.GenericResult;
-import com.jinelei.bitterling.core.domain.view.BaseView;
 import com.jinelei.bitterling.core.helper.TimeTracker;
 import com.jinelei.bitterling.core.helper.TreeHelper;
 import com.jinelei.bitterling.web.domain.BookmarkDomain;
@@ -56,7 +54,7 @@ public class BookmarkController extends BaseController {
     @ResponseBody
     @PostMapping("create")
     @Operation(summary = "新增书签", description = "新增书签")
-    public GenericResult<String> create(@RequestBody @JsonView(BaseView.Create.class) BookmarkDomain req) {
+    public GenericResult<String> create(@RequestBody BookmarkDomain req) {
         log.info("create: {}", req);
         this.service.save(req);
         return GenericResult.success("success");
@@ -65,7 +63,7 @@ public class BookmarkController extends BaseController {
     @ResponseBody
     @PostMapping("update")
     @Operation(summary = "更新书签", description = "根据id更新书签")
-    public GenericResult<String> update(@RequestBody @JsonView(BaseView.Update.class) BookmarkDomain req) {
+    public GenericResult<String> update(@RequestBody BookmarkDomain req) {
         log.info("update: {}", req);
         this.service.save(req);
         return GenericResult.success("success");
@@ -74,7 +72,7 @@ public class BookmarkController extends BaseController {
     @ResponseBody
     @PostMapping("delete")
     @Operation(summary = "删除书签", description = "根据id删除书签")
-    public GenericResult<String> delete(@RequestBody @JsonView(BaseView.Delete.class) BookmarkDomain req) {
+    public GenericResult<String> delete(@RequestBody BookmarkDomain req) {
         log.info("delete: {}", req);
         Long id = Optional.ofNullable(req).map(BookmarkDomain::getId)
                 .orElseThrow(() -> new InvalidParameterException("需要删除的ID不能为空"));
@@ -85,8 +83,7 @@ public class BookmarkController extends BaseController {
     @ResponseBody
     @PostMapping("list")
     @Operation(summary = "查询书签列表", description = "查询书签列表")
-    public GenericResult<List<BookmarkDomain>> list(
-            @RequestBody @JsonView(BaseView.Query.class) BookmarkDomain req) {
+    public GenericResult<List<BookmarkDomain>> list(@RequestBody BookmarkDomain req) {
         log.info("list: {}", req);
         TimeTracker.getInstance().mark("查询书签列表");
         Iterable<BookmarkDomain> all = this.service.findAll();
@@ -99,8 +96,7 @@ public class BookmarkController extends BaseController {
     @ResponseBody
     @PostMapping("tree")
     @Operation(summary = "查询书签树", description = "查询书签树")
-    public GenericResult<List<BookmarkDomain>> tree(
-            @RequestBody @JsonView(BaseView.Query.class) BookmarkDomain req) {
+    public GenericResult<List<BookmarkDomain>> tree(@RequestBody BookmarkDomain req) {
         log.info("tree: {}", req);
         TimeTracker.getInstance().mark("查询书签树");
         Iterable<BookmarkDomain> all = this.service.findAll();

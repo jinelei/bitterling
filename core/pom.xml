@@ -5,9 +5,9 @@
 
     <modelVersion>4.0.0</modelVersion>
     <parent>
-          <groupId>com.jinelei.bitterling</groupId>
-          <artifactId>parent</artifactId>
-          <version>1.0.0-SNAPSHOT</version>
+        <groupId>com.jinelei.bitterling</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>core</artifactId>
@@ -34,6 +34,11 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

@@ -2,6 +2,7 @@ package com.jinelei.bitterling.web.service;
 
 import com.jinelei.bitterling.core.domain.EmbeddedRecordDomain;
 import com.jinelei.bitterling.core.exception.BusinessException;
+import com.jinelei.bitterling.core.helper.LongIdGenerator;
 import com.jinelei.bitterling.core.repository.BaseRepository;
 import com.jinelei.bitterling.core.service.BaseService;
 import com.jinelei.bitterling.web.domain.MemoDomain;
@@ -19,6 +20,7 @@ import jakarta.validation.Validator;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -30,6 +32,7 @@ public class MemoService extends BaseService<MemoDomain, Long> {
     private final MemoTagRelateService memoTagRelateService;
     private final Parser parser;
     private final HtmlRenderer renderer;
+    private final LongIdGenerator idGenerator = new LongIdGenerator();
 
     public MemoService(BaseRepository<MemoDomain, Long> repository, Validator validator, MemoTagService memoTagService, MemoTagRelateService memoTagRelateService) {
         super(repository, validator);
@@ -128,4 +131,13 @@ public class MemoService extends BaseService<MemoDomain, Long> {
         });
         return domain;
     }
+
+    @Override
+    public MemoDomain save(MemoDomain entity) {
+        entity.setId(idGenerator.generateId());
+        entity.setCreateTime(LocalDateTime.now());
+        entity.setUpdateTime(LocalDateTime.now());
+        return super.save(entity);
+    }
+
 }
