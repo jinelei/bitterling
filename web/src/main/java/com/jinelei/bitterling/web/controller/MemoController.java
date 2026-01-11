@@ -81,7 +81,7 @@ public class MemoController extends BaseController {
 
     @GetMapping(value = {"/create"})
     public ModelAndView createPage(Principal principal) {
-        ModelAndView modelAndView = new ModelAndView("memo/create");
+        ModelAndView modelAndView = new ModelAndView("memo/edit");
         modelAndView.addAllObjects(service.renderCreate());
         modelAndView.addObject("greeting", indexService.getGreeting());
         modelAndView.addObject("unreadMessage", messageService.unreadMessages());

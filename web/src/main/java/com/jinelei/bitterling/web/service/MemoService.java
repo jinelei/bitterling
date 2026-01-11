@@ -111,9 +111,10 @@ public class MemoService extends BaseService<MemoDomain, Long> {
 
     public Map<String, ?> renderCreate() {
         final Map<String, Object> props = new HashMap<>();
-        Iterable<MemoDomain> all = findAll();
-        List<MemoDomain> list = StreamSupport.stream(all.spliterator(), false).toList();
-        props.put("memoList", list);
+        MemoDomain.DetailResponse memo = memoConvertor.toResponse(new MemoDomain());
+        memo = memoConvertor.transTags(memo, new ArrayList<>());
+        memo = memoConvertor.transContentRender(memo);
+        props.put("memo", memo);
         props.put("tagList", List.of(
                 new TagDto(1L, "fa-briefcase", "工作", (int) Math.round(Math.random() * 10)),
                 new TagDto(2L, "fa-home", "生活", (int) Math.round(Math.random() * 10)),
