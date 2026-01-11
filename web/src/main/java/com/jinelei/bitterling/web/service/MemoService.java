@@ -1,10 +1,10 @@
 package com.jinelei.bitterling.web.service;
 
-import com.jinelei.bitterling.core.domain.EmbeddedRecordDomain;
 import com.jinelei.bitterling.core.exception.BusinessException;
 import com.jinelei.bitterling.core.helper.LongIdGenerator;
 import com.jinelei.bitterling.core.repository.BaseRepository;
 import com.jinelei.bitterling.core.service.BaseService;
+import com.jinelei.bitterling.web.convert.MemoConvertor;
 import com.jinelei.bitterling.web.domain.MemoDomain;
 import com.jinelei.bitterling.web.domain.MemoTagDomain;
 import com.jinelei.bitterling.web.domain.MemoTagRelateRecordDomain;
@@ -23,7 +23,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 @Service
@@ -32,12 +31,14 @@ public class MemoService extends BaseService<MemoDomain, Long> {
     private final MemoTagRelateService memoTagRelateService;
     private final Parser parser;
     private final HtmlRenderer renderer;
+    private final MemoConvertor memoConvertor;
     private final LongIdGenerator idGenerator = new LongIdGenerator();
 
-    public MemoService(BaseRepository<MemoDomain, Long> repository, Validator validator, MemoTagService memoTagService, MemoTagRelateService memoTagRelateService) {
+    public MemoService(BaseRepository<MemoDomain, Long> repository, Validator validator, MemoTagService memoTagService, MemoTagRelateService memoTagRelateService, MemoConvertor memoConvertor) {
         super(repository, validator);
         this.memoTagService = memoTagService;
         this.memoTagRelateService = memoTagRelateService;
+        this.memoConvertor = memoConvertor;
         MutableDataSet options = new MutableDataSet();
         parser = Parser.builder(options).build();
         renderer = HtmlRenderer.builder(options).build();
@@ -55,7 +56,7 @@ public class MemoService extends BaseService<MemoDomain, Long> {
                 .toList();
         final Map<Long, List<MemoTagDomain>> memoTagListById = originMemoTagRelateList.parallelStream()
                 .collect(Collectors.groupingBy(i -> i.getId().getMemoId(), Collectors.mapping(l -> tagById.get(l.getId().getTagId()), Collectors.toList())));
-        final List<MemoDomain> memoList = repository.findAll((Specification<MemoDomain>) (r, q, cb) -> {
+        final List<MemoDomain.DetailResponse> memoList = repository.findAll((Specification<MemoDomain>) (r, q, cb) -> {
                     final List<Predicate> predicates = new ArrayList<>();
                     final List<Long> ids = new ArrayList<>();
                     Optional.ofNullable(request).map(MemoPageRequest::getId).ifPresent(ids::add);
@@ -75,7 +76,8 @@ public class MemoService extends BaseService<MemoDomain, Long> {
                     }
                     return cb.and(predicates.toArray(Predicate[]::new));
                 }).stream()
-                .peek(it -> Optional.of(memoTagListById.get(it.getId())).ifPresent(it::setTags))
+                .map(memoConvertor::toResponse)
+                .map(it -> memoConvertor.transTags(it, memoTagListById.getOrDefault(it.id(), new ArrayList<>())))
                 .toList();
         props.put("memoList", memoList);
         final Map<Long, Long> memoCountByTagId = originMemoTagRelateList.parallelStream()
@@ -93,7 +95,9 @@ public class MemoService extends BaseService<MemoDomain, Long> {
     public Map<String, Object> renderDetail(MemoPageRequest request) {
         final Map<String, Object> props = new HashMap<>();
         Optional<MemoDomain> optById = repository.findById(Optional.ofNullable(request).map(MemoPageRequest::getId).orElseThrow(() -> new BusinessException("id不能为空")));
-        final MemoDomain memo = optById.orElseThrow(() -> new BusinessException("备忘不能为空"));
+        MemoDomain.DetailResponse memo = optById.map(memoConvertor::toResponse).orElseThrow(() -> new BusinessException("备忘不能为空"));
+        memo = memoConvertor.transTags(memo, new ArrayList<>());
+        memo = memoConvertor.transContentRender(memo);
         props.put("memo", memo);
         props.put("tagList", List.of(
                 new TagDto(1L, "fa-briefcase", "工作", (int) Math.round(Math.random() * 10)),
@@ -132,10 +136,17 @@ public class MemoService extends BaseService<MemoDomain, Long> {
         return domain;
     }
 
-    @Override
-    public MemoDomain save(MemoDomain entity) {
+    public MemoDomain create(MemoDomain.CreateRequest request) {
+        MemoDomain entity = memoConvertor.fromRequest(request);
         entity.setId(idGenerator.generateId());
         entity.setCreateTime(LocalDateTime.now());
+        entity.setUpdateTime(LocalDateTime.now());
+        return super.save(entity);
+    }
+
+    public MemoDomain update(MemoDomain.UpdateRequest request) {
+        MemoDomain entity = findById(request.id()).orElseThrow(() -> new BusinessException("备忘未找到"));
+        memoConvertor.merge(entity, request);
         entity.setUpdateTime(LocalDateTime.now());
         return super.save(entity);
     }

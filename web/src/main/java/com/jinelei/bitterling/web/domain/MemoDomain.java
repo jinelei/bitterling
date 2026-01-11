@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
@@ -27,32 +28,46 @@ public class MemoDomain extends RecordDomain<Long> {
     @Column(name = "content")
     @Schema(description = "备忘内容")
     private String content;
-    @Transient
-    @Schema(description = "备忘内容")
-    private transient String contentRender;
-    @Transient
-    @Schema(description = "备忘标签")
-    private transient List<MemoTagDomain> tags;
 
     public record CreateRequest(
-            @NotNull(message = "标题不能为空") String title,
+            @NotBlank(message = "标题不能为空") String title,
             @NotBlank(message = "副标题不能为空") String subTitle,
             @NotBlank(message = "内容不能为空") String content,
-            @NotBlank(message = "排序不能为空") Integer orderNumber
+            @NotNull(message = "排序不能为空") Integer orderNumber
 
     ) {
     }
 
-    public record UpdateRequest(
-            @NotNull(message = "ID不能为空") Long id,
-            @NotNull(message = "标题不能为空") String title,
-            @NotBlank(message = "副标题不能为空") String subTitle,
-            @NotBlank(message = "内容不能为空") String content,
-            @NotBlank(message = "排序不能为空") Integer orderNumber) {
-    }
-
     public record DeleteRequest(
             @NotNull(message = "ID不能为空") Long id) {
+    }
+
+    public record UpdateRequest(
+            @NotNull(message = "ID不能为空") Long id,
+            @NotBlank(message = "标题不能为空") String title,
+            @NotBlank(message = "副标题不能为空") String subTitle,
+            @NotBlank(message = "内容不能为空") String content,
+            @NotNull(message = "排序不能为空") Integer orderNumber) {
+    }
+
+    public record ListQueryRequest(
+            @NotNull(message = "ID不能为空") Long id,
+            @NotBlank(message = "标题不能为空") String title,
+            @NotBlank(message = "副标题不能为空") String subTitle,
+            @NotBlank(message = "内容不能为空") String content,
+            @NotNull(message = "排序不能为空") Integer orderNumber) {
+    }
+
+    public record DetailResponse(
+            Long id,
+            String title,
+            String subTitle,
+            String content,
+            String contentRender,
+            List<MemoTagDomain> tags,
+            Integer orderNumber,
+            LocalDateTime createTime,
+            LocalDateTime updateTime) {
     }
 
 }

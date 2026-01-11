@@ -17,8 +17,8 @@
 <main class="flex-grow mx-auto flex flex-row items-start container">
     <div class="mx-auto p-5 w-full bg-white rounded p-3 lg:p-4">
         <form id="form" th:action="@{/memo/update}" method="post" class="space-y-6">
-            <div>
-                <label for="title" class="block text-gray-700 font-medium mb-2">
+            <div class="flex flex-row hidden">
+                <label for="title" class="w-48 block text-gray-700 font-medium">
                     ID <span class="text-red-500">*</span>
                 </label>
                 <input
@@ -30,8 +30,8 @@
                         placeholder="id"
                 >
             </div>
-            <div>
-                <label for="title" class="block text-gray-700 font-medium mb-2">
+            <div class="flex flex-row items-center justify-center">
+                <label for="title" class="w-32 text-right pr-4 font-medium text-gray-700">
                     标题 <span class="text-red-500">*</span>
                 </label>
                 <input
@@ -40,11 +40,11 @@
                         name="title"
                         th:value="${memo != null ? memo.title : ''}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200"
-                        placeholder="请输入备忘录标题（例如：2026年工作计划）"
+                        placeholder="请输入备忘录标题"
                 >
             </div>
-            <div>
-                <label for="subTitle" class="block text-gray-700 font-medium mb-2">
+            <div class="flex flex-row items-center justify-center">
+                <label for="subTitle" class="w-32 text-right pr-4 font-medium text-gray-700">
                     副标题
                 </label>
                 <input
@@ -53,152 +53,73 @@
                         name="subTitle"
                         th:value="${memo != null ? memo.subTitle : ''}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200"
-                        placeholder="请输入备忘录副标题（可选，例如：部门年度目标拆解）"
+                        placeholder="请输入备忘录副标题"
                 >
             </div>
-            <div>
-                <label for="tag" class="block text-gray-700 font-medium mb-2">
-                    标签 <span class="text-red-500">*</span>
-                </label>
-                <select
-                        id="tag"
-                        name="tag"
-                        th:value="${memo != null ? memo.tags : ''}"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200 appearance-none bg-white"
-                >
-                    <option value="" disabled selected>请选择备忘录标签</option>
-                    <option value="工作">工作</option>
-                    <option value="生活">生活</option>
-                    <option value="学习">学习</option>
-                    <option value="重要">重要</option>
-                    <option value="临时">临时</option>
-                </select>
+            <div class="flex flex-row">
+                <div class="flex-grow flex flex-row items-center justify-center">
+                    <label for="orderNumber" class="w-32 text-right pr-4 font-medium text-gray-700">
+                        排序值
+                    </label>
+                    <input
+                            type="number"
+                            id="orderNumber"
+                            name="orderNumber"
+                            th:value="${memo != null ? memo.orderNumber : ''}"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200"
+                            placeholder="请输入排序值"
+                    >
+                </div>
+                <div class="flex-grow flex flex-row items-center justify-center">
+                    <label for="tag" class="w-32 text-right pr-4 font-medium text-gray-700">
+                        标签 <span class="text-red-500">*</span>
+                    </label>
+                    <select
+                            id="tag"
+                            name="tag"
+                            th:value="${memo != null ? memo.tags : ''}"
+                            class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200 appearance-none bg-white"
+                    >
+                        <option value="" disabled selected>请选择备忘录标签</option>
+                        <option value="工作">工作</option>
+                        <option value="生活">生活</option>
+                        <option value="学习">学习</option>
+                        <option value="重要">重要</option>
+                        <option value="临时">临时</option>
+                    </select>
+                </div>
             </div>
             <div>
-                <label for="content" class="block text-gray-700 font-medium mb-2">
-                    内容 <span class="text-red-500">*</span>
-                </label>
                 <textarea
                         id="content"
                         name="content"
-                        th:value="${memo != null ? memo.content : ''}"
                         rows="8"
+                        th:value="${memo.content}"
+                        th:inline="text"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200 resize-y"
                         placeholder="请输入备忘录详细内容，支持换行输入..."
-                ></textarea>
+                >[[${memo.content}]]
+                </textarea>
             </div>
             <div class="flex justify-end space-x-4 pt-2">
                 <button
-                        type="reset"
-                        class="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition duration-200"
-                        onclick="resetPreview()"
-                >
-                    重置
+                        th:action="@{/memo}"
+                        class="px-3 py-2 bg-gray-200 text-black rounded-lg hover:bg-gray-300 transition duration-200">
+                    取消
                 </button>
                 <button
                         type="submit"
-                        class="px-6 py-3 bg-primary text-white rounded-lg hover:bg-primary/90 transition duration-200"
-                >
-                    保存备忘录
+                        class="px-3 py-2 bg-primary/70 text-white rounded-lg hover:bg-primary transition duration-200">
+                    保存
                 </button>
             </div>
         </form>
-        <div id="submitTip" style="margin-top: 20px; color: #666;"></div>
     </div>
 </main>
 
 <th:block th:replace="~{layout/base :: footer}"></th:block>
-
 <th:block>
     <script>
-        function formDataToJson(formData) {
-            const jsonData = {};
-            for (const [key, value] of formData.entries()) {
-                // 处理多值字段（如复选框）
-                if (jsonData.hasOwnProperty(key)) {
-                    if (!Array.isArray(jsonData[key])) {
-                        jsonData[key] = [jsonData[key]];
-                    }
-                    jsonData[key].push(value);
-                } else {
-                    jsonData[key] = value;
-                }
-            }
-            return jsonData;
-        }
-
-        function submit() {
-            const form = document.getElementById('form');
-            const formData = new FormData(form);
-            const jsonData = formDataToJson(formData);
-            console.log("json data", jsonData);
-            fetch('[[@{/memo/update}]]', {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(jsonData)
-            }).then(response => {
-                if (!response.ok) {
-                    throw new Error(`HTTP 错误！状态码：${response.status}`);
-                }
-                return response.json();
-            }).then(data => {
-                console.log("提交成功，后端返回：", data);
-                alert("数据提交成功！");
-            }).catch(error => {
-                console.error("提交失败：", error);
-                alert("数据提交失败，请重试！");
-            });
-        }
-
-        const form = document.getElementById('form');
-        const submitTip = document.getElementById('submitTip');
-
-        // form.addEventListener('submit', async (e) => {
-        //     e.preventDefault();
-        //     try {
-        //         const formData = new FormData(form);
-        //         const jsonData = formDataToJson(formData);
-        //         // if (!jsonData.username || !jsonData.age) {
-        //         //     submitTip.textContent = '用户名和年龄不能为空！';
-        //         //     submitTip.style.color = 'red';
-        //         //     return;
-        //         // }
-        //         submitTip.textContent = '正在提交...';
-        //         submitTip.style.color = '#666';
-        //         const response = await fetch('[[@{/memo/update}]]', {
-        //             method: 'POST',
-        //             headers: {
-        //                 'Content-Type': 'application/json',
-        //             },
-        //             credentials: "same-origin",
-        //             body: JSON.stringify(jsonData)
-        //         });
-        //         if (!response.ok) {
-        //             throw new Error(`请求失败：${response.status} ${response.statusText}`);
-        //         }
-        //         const result = await response.json();
-        //         submitTip.textContent = '提交成功！后端返回：' + JSON.stringify(result);
-        //         submitTip.style.color = 'green';
-        //         form.reset();
-        //     } catch (error) {
-        //         submitTip.textContent = '提交失败：' + error.message;
-        //         submitTip.style.color = 'red';
-        //         console.error('提交异常：', error);
-        //     }
-        // });
-
-
-        function resetPreview() {
-            setTimeout(() => {
-                document.getElementById('previewArea').innerHTML = `
-                    <div class="text-center text-gray-400 py-10">
-                        填写表单内容，此处将实时预览备忘录效果
-                    </div>
-                `;
-            }, 100);
-        }
     </script>
 </th:block>
 

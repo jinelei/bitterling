@@ -21,7 +21,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.security.InvalidParameterException;
 import java.security.Principal;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,17 +32,15 @@ public class MemoController extends BaseController {
     private final MemoService service;
     private final IndexService indexService;
     private final MessageService messageService;
-    private final MemoConvertor memoConvertor;
 
     public MemoController(MemoService service, IndexService indexService, MessageService messageService) {
         this.service = service;
         this.indexService = indexService;
         this.messageService = messageService;
-        this.memoConvertor = SpringBeanUtils.getBean(MemoConvertor.class);
     }
 
     @GetMapping(value = {"", "/", "/index"})
-    public ModelAndView index(MemoPageRequest request, Principal principal) {
+    public ModelAndView indexPage(MemoPageRequest request, Principal principal) {
         log.info("index request: {}", request);
         ModelAndView modelAndView = new ModelAndView("memo/index");
         modelAndView.addAllObjects(service.renderIndex(request));
@@ -55,7 +52,7 @@ public class MemoController extends BaseController {
     }
 
     @GetMapping(value = {"/{id}"})
-    public ModelAndView detail(@PathVariable("id") Long id, MemoPageRequest request, Principal principal) {
+    public ModelAndView detailPage(@PathVariable("id") Long id, MemoPageRequest request, Principal principal) {
         log.info("detail request: {}, {}", id, request);
         ModelAndView modelAndView = new ModelAndView("memo/detail");
         Optional.ofNullable(id).orElseThrow(() -> new BusinessException("id不能为空"));
@@ -69,7 +66,7 @@ public class MemoController extends BaseController {
     }
 
     @GetMapping(value = {"/edit/{id}"})
-    public ModelAndView edit(@PathVariable("id") Long id, MemoPageRequest request, Principal principal) {
+    public ModelAndView editPage(@PathVariable("id") Long id, MemoPageRequest request, Principal principal) {
         log.info("edit request: {}, {}", id, request);
         ModelAndView modelAndView = new ModelAndView("memo/edit");
         Optional.ofNullable(id).orElseThrow(() -> new BusinessException("id不能为空"));
@@ -83,7 +80,7 @@ public class MemoController extends BaseController {
     }
 
     @GetMapping(value = {"/create"})
-    public ModelAndView create(Principal principal) {
+    public ModelAndView createPage(Principal principal) {
         ModelAndView modelAndView = new ModelAndView("memo/create");
         modelAndView.addAllObjects(service.renderCreate());
         modelAndView.addObject("greeting", indexService.getGreeting());
@@ -93,40 +90,35 @@ public class MemoController extends BaseController {
         return modelAndView;
     }
 
-    @RequestMapping("create")
+    @PostMapping("create")
     @Operation(summary = "新增备忘", description = "新增备忘")
     public RedirectView create(@Valid MemoDomain.CreateRequest req) {
         log.info("create: {}", req);
-        MemoDomain entity = memoConvertor.fromCreate(req);
-        this.service.save(entity);
+        this.service.create(req);
         return new RedirectView("/memo");
     }
 
-    @RequestMapping("update")
+    @PostMapping("update")
     @Operation(summary = "更新备忘", description = "根据id更新备忘")
-    public RedirectView update(MemoDomain req) {
+    public RedirectView update(@Valid MemoDomain.UpdateRequest req) {
         log.info("update: {}", req);
-        req.setUpdateTime(LocalDateTime.now());
-        this.service.save(req);
+        this.service.update(req);
         return new RedirectView("/memo");
     }
 
-    @ResponseBody
     @PostMapping("delete")
     @Operation(summary = "删除备忘", description = "根据id删除备忘")
-    public GenericResult<String> delete(@RequestBody MemoDomain req) {
+    public GenericResult<String> delete(@RequestBody MemoDomain.DeleteRequest req) {
         log.info("delete: {}", req);
-        Long id = Optional.ofNullable(req).map(MemoDomain::getId)
+        Long id = Optional.ofNullable(req).map(MemoDomain.DeleteRequest::id)
                 .orElseThrow(() -> new InvalidParameterException("需要删除的ID不能为空"));
         this.service.deleteById(id);
         return GenericResult.success("success");
     }
 
-    @ResponseBody
     @PostMapping("list")
     @Operation(summary = "查询备忘列表", description = "查询备忘列表")
-    public GenericResult<List<MemoDomain>> list(
-            @RequestBody MemoDomain req) {
+    public GenericResult<List<MemoDomain>> list(@RequestBody MemoDomain.ListQueryRequest req) {
         log.info("list: {}", req);
         TimeTracker.getInstance().mark("查询备忘列表");
         Iterable<MemoDomain> all = this.service.findAll();
