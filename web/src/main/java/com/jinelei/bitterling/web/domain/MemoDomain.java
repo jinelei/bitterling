@@ -34,8 +34,8 @@ public class MemoDomain extends RecordDomain<Long> {
             @NotBlank(message = "标题不能为空") String title,
             @NotBlank(message = "副标题不能为空") String subTitle,
             @NotBlank(message = "内容不能为空") String content,
-            @NotNull(message = "排序不能为空") Integer orderNumber
-
+            @NotNull(message = "排序不能为空") Integer orderNumber,
+            List<Long> tagIds
     ) {
     }
 
@@ -48,7 +48,8 @@ public class MemoDomain extends RecordDomain<Long> {
             @NotBlank(message = "标题不能为空") String title,
             @NotBlank(message = "副标题不能为空") String subTitle,
             @NotBlank(message = "内容不能为空") String content,
-            @NotNull(message = "排序不能为空") Integer orderNumber) {
+            @NotNull(message = "排序不能为空") Integer orderNumber,
+            List<Long> tagIds) {
     }
 
     public record ListQueryRequest(
@@ -66,6 +67,7 @@ public class MemoDomain extends RecordDomain<Long> {
             String content,
             String contentRender,
             List<MemoTagDomain> tags,
+            List<Long> tagIds,
             Integer orderNumber,
             LocalDateTime createTime,
             LocalDateTime updateTime) {
