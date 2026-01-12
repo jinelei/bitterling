@@ -19,6 +19,7 @@ import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.Validator;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -34,7 +35,8 @@ public class MemoService extends BaseService<MemoDomain, Long> {
     private final MemoConvertor memoConvertor;
     private final LongIdGenerator idGenerator = new LongIdGenerator();
 
-    public MemoService(BaseRepository<MemoDomain, Long> repository, Validator validator, MemoTagService memoTagService, MemoTagRelateService memoTagRelateService, MemoConvertor memoConvertor) {
+    public MemoService(BaseRepository<MemoDomain, Long> repository, Validator validator, MemoTagService memoTagService,
+            MemoTagRelateService memoTagRelateService, MemoConvertor memoConvertor) {
         super(repository, validator);
         this.memoTagService = memoTagService;
         this.memoTagRelateService = memoTagRelateService;
@@ -50,32 +52,37 @@ public class MemoService extends BaseService<MemoDomain, Long> {
                 .filter(i -> Objects.nonNull(i.getId()))
                 .filter(i -> Objects.nonNull(i.getTitle()))
                 .collect(Collectors.toMap(MemoTagDomain::getId, i -> i));
-        final List<MemoTagRelateRecordDomain> originMemoTagRelateList = StreamSupport.stream(memoTagRelateService.findAll().spliterator(), true)
+        final List<MemoTagRelateRecordDomain> originMemoTagRelateList = StreamSupport
+                .stream(memoTagRelateService.findAll().spliterator(), true)
                 .filter(i -> Optional.ofNullable(i.getId()).map(MemoTagPrimaryKey::getMemoId).isPresent())
                 .filter(i -> Optional.ofNullable(i.getId()).map(MemoTagPrimaryKey::getTagId).isPresent())
                 .toList();
         final Map<Long, List<MemoTagDomain>> memoTagListById = originMemoTagRelateList.parallelStream()
-                .collect(Collectors.groupingBy(i -> i.getId().getMemoId(), Collectors.mapping(l -> tagById.get(l.getId().getTagId()), Collectors.toList())));
+                .collect(Collectors.groupingBy(i -> i.getId().getMemoId(),
+                        Collectors.mapping(l -> tagById.get(l.getId().getTagId()), Collectors.toList())));
         final List<MemoDomain.DetailResponse> memoList = repository.findAll((Specification<MemoDomain>) (r, q, cb) -> {
-                    final List<Predicate> predicates = new ArrayList<>();
-                    final List<Long> ids = new ArrayList<>();
-                    Optional.ofNullable(request).map(MemoPageRequest::getId).ifPresent(ids::add);
-                    Optional.ofNullable(request).map(MemoPageRequest::getTagId)
-                            .map(id -> memoTagRelateService.getRepository().findAll((Specification<MemoTagRelateRecordDomain>) (r1, q1, cb1) -> cb1.equal(r1.get("id").get("tagId"), id)))
-                            .stream()
-                            .flatMap(List::stream)
-                            .map(MemoTagRelateRecordDomain::getId)
-                            .map(MemoTagPrimaryKey::getMemoId)
-                            .distinct()
-                            .forEach(ids::add);
-                    if (Optional.ofNullable(request).map(MemoPageRequest::getId).isPresent() || Optional.ofNullable(request).map(MemoPageRequest::getTagId).isPresent()) {
-                        Optional.of(ids)
-                                .filter(l -> !l.isEmpty())
-                                .map(l -> r.get("id").in(l))
-                                .ifPresentOrElse(predicates::add, cb::disjunction);
-                    }
-                    return cb.and(predicates.toArray(Predicate[]::new));
-                }).stream()
+            final List<Predicate> predicates = new ArrayList<>();
+            final List<Long> ids = new ArrayList<>();
+            Optional.ofNullable(request).map(MemoPageRequest::getId).ifPresent(ids::add);
+            Optional.ofNullable(request).map(MemoPageRequest::getTagId)
+                    .map(id -> memoTagRelateService.getRepository()
+                            .findAll((Specification<MemoTagRelateRecordDomain>) (r1, q1, cb1) -> cb1
+                                    .equal(r1.get("id").get("tagId"), id)))
+                    .stream()
+                    .flatMap(List::stream)
+                    .map(MemoTagRelateRecordDomain::getId)
+                    .map(MemoTagPrimaryKey::getMemoId)
+                    .distinct()
+                    .forEach(ids::add);
+            if (Optional.ofNullable(request).map(MemoPageRequest::getId).isPresent()
+                    || Optional.ofNullable(request).map(MemoPageRequest::getTagId).isPresent()) {
+                Optional.of(ids)
+                        .filter(l -> !l.isEmpty())
+                        .map(l -> r.get("id").in(l))
+                        .ifPresentOrElse(predicates::add, cb::disjunction);
+            }
+            return cb.and(predicates.toArray(Predicate[]::new));
+        }).stream()
                 .map(memoConvertor::toResponse)
                 .map(it -> memoConvertor.transTags(it, memoTagListById.getOrDefault(it.id(), new ArrayList<>())))
                 .toList();
@@ -94,20 +101,20 @@ public class MemoService extends BaseService<MemoDomain, Long> {
 
     public Map<String, Object> renderDetail(MemoPageRequest request) {
         final Map<String, Object> props = new HashMap<>();
-        Optional<MemoDomain> optById = repository.findById(Optional.ofNullable(request).map(MemoPageRequest::getId).orElseThrow(() -> new BusinessException("id不能为空")));
-        MemoDomain.DetailResponse memo = optById.map(memoConvertor::toResponse).orElseThrow(() -> new BusinessException("备忘不能为空"));
+        Optional<MemoDomain> optById = repository.findById(Optional.ofNullable(request).map(MemoPageRequest::getId)
+                .orElseThrow(() -> new BusinessException("id不能为空")));
+        MemoDomain.DetailResponse memo = optById.map(memoConvertor::toResponse)
+                .orElseThrow(() -> new BusinessException("备忘不能为空"));
         memo = memoConvertor.transTags(memo, new ArrayList<>());
         memo = memoConvertor.transContentRender(memo);
         props.put("memo", memo);
         props.put("tagList", List.of(
                 new TagDto(1L, "fa-briefcase", "工作", (int) Math.round(Math.random() * 10)),
                 new TagDto(2L, "fa-home", "生活", (int) Math.round(Math.random() * 10)),
-                new TagDto(3L, "fa-book", "学习", (int) Math.round(Math.random() * 10))
-        ));
+                new TagDto(3L, "fa-book", "学习", (int) Math.round(Math.random() * 10))));
         log.info("renderDetail: {}", props);
         return props;
     }
-
 
     public Map<String, ?> renderCreate() {
         final Map<String, Object> props = new HashMap<>();
@@ -118,8 +125,7 @@ public class MemoService extends BaseService<MemoDomain, Long> {
         props.put("tagList", List.of(
                 new TagDto(1L, "fa-briefcase", "工作", (int) Math.round(Math.random() * 10)),
                 new TagDto(2L, "fa-home", "生活", (int) Math.round(Math.random() * 10)),
-                new TagDto(3L, "fa-book", "学习", (int) Math.round(Math.random() * 10))
-        ));
+                new TagDto(3L, "fa-book", "学习", (int) Math.round(Math.random() * 10))));
         log.info("renderCreate: {}", props);
         return props;
     }
@@ -149,6 +155,15 @@ public class MemoService extends BaseService<MemoDomain, Long> {
         memoConvertor.merge(entity, request);
         entity.setUpdateTime(LocalDateTime.now());
         return super.save(entity);
+    }
+
+    @Transactional
+    public void deleteById(Long id) {
+        MemoDomain entity = findById(id).orElseThrow(() -> new BusinessException("备忘未找到"));
+        super.deleteById(id);
+        log.info("删除备忘成功: {}", entity);
+        // 级联删除所有关联的tag
+        memoTagRelateService.deleteByMemoId(id);
     }
 
 }
