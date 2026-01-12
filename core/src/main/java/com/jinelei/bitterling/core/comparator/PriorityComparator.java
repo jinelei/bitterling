@@ -1,4 +1,4 @@
-package com.jinelei.bitterling.comparator;
+package com.jinelei.bitterling.core.comparator;
 import java.util.*;
 import java.util.Comparator;
 
