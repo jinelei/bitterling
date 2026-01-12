@@ -55,8 +55,7 @@
                            placeholder="请输入排序值">
                 </div>
                 <div class="flex-grow flex flex-row items-center justify-center">
-                    <span th:text="${memo != null ? memo.tags : ''}"></span>
-                    <label for="tag" class="w-32 text-right pr-4 font-medium text-gray-700">
+                    <label for="tagIds" class="w-32 text-right pr-4 font-medium text-gray-700">
                         标签 <span class="text-red-500">*</span>
                     </label>
                     <select id="tagIds" name="tagIds" multiple
