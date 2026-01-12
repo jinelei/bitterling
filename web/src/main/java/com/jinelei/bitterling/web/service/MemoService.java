@@ -101,8 +101,9 @@ public class MemoService extends BaseService<MemoDomain, Long> {
 
     public Map<String, Object> renderDetail(MemoPageRequest request) {
         final Map<String, Object> props = new HashMap<>();
-        Optional<MemoDomain> optById = repository.findById(Optional.ofNullable(request).map(MemoPageRequest::getId)
-                .orElseThrow(() -> new BusinessException("id不能为空")));
+        Optional<MemoDomain> optById = Optional.ofNullable(request).map(MemoPageRequest::getId)
+                .map(repository::findById)
+                .orElseThrow(() -> new BusinessException("id不能为空"));
         MemoDomain.DetailResponse memo = optById.map(memoConvertor::toResponse)
                 .orElseThrow(() -> new BusinessException("备忘不能为空"));
         memo = memoConvertor.transTags(memo, new ArrayList<>());
@@ -162,8 +163,8 @@ public class MemoService extends BaseService<MemoDomain, Long> {
         MemoDomain entity = findById(id).orElseThrow(() -> new BusinessException("备忘未找到"));
         super.deleteById(id);
         log.info("删除备忘成功: {}", entity);
-        // 级联删除所有关联的tag
-        memoTagRelateService.deleteByMemoId(id);
+        long deleteByMemoId = memoTagRelateService.deleteByMemoId(id);
+        log.info("删除备忘标签成功: {}", deleteByMemoId);
     }
 
 }

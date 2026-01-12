@@ -1,11 +1,7 @@
 package com.jinelei.bitterling.web.controller;
 
 import com.jinelei.bitterling.core.controller.BaseController;
-import com.jinelei.bitterling.core.domain.result.GenericResult;
 import com.jinelei.bitterling.core.exception.BusinessException;
-import com.jinelei.bitterling.core.helper.TimeTracker;
-import com.jinelei.bitterling.web.config.SpringBeanUtils;
-import com.jinelei.bitterling.web.convert.MemoConvertor;
 import com.jinelei.bitterling.web.domain.MemoDomain;
 import com.jinelei.bitterling.web.domain.dto.MemoPageRequest;
 import com.jinelei.bitterling.web.service.MemoService;
@@ -21,8 +17,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import java.security.InvalidParameterException;
 import java.security.Principal;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
 @Controller
