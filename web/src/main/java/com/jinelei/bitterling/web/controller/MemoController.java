@@ -39,7 +39,7 @@ public class MemoController extends BaseController {
         this.messageService = messageService;
     }
 
-    @GetMapping(value = {"", "/", "/index"})
+    @GetMapping(value = { "", "/", "/index" })
     public ModelAndView indexPage(MemoPageRequest request, Principal principal) {
         log.info("index request: {}", request);
         ModelAndView modelAndView = new ModelAndView("memo/index");
@@ -51,7 +51,7 @@ public class MemoController extends BaseController {
         return modelAndView;
     }
 
-    @GetMapping(value = {"/{id}"})
+    @GetMapping(value = { "/{id}" })
     public ModelAndView detailPage(@PathVariable("id") Long id, MemoPageRequest request, Principal principal) {
         log.info("detail request: {}, {}", id, request);
         ModelAndView modelAndView = new ModelAndView("memo/detail");
@@ -65,7 +65,7 @@ public class MemoController extends BaseController {
         return modelAndView;
     }
 
-    @GetMapping(value = {"/edit/{id}"})
+    @GetMapping(value = { "/edit/{id}" })
     public ModelAndView editPage(@PathVariable("id") Long id, MemoPageRequest request, Principal principal) {
         log.info("edit request: {}, {}", id, request);
         ModelAndView modelAndView = new ModelAndView("memo/edit");
@@ -79,7 +79,7 @@ public class MemoController extends BaseController {
         return modelAndView;
     }
 
-    @GetMapping(value = {"/create"})
+    @GetMapping(value = { "/create" })
     public ModelAndView createPage(Principal principal) {
         ModelAndView modelAndView = new ModelAndView("memo/edit");
         modelAndView.addAllObjects(service.renderCreate());
@@ -106,37 +106,13 @@ public class MemoController extends BaseController {
         return new RedirectView("/memo");
     }
 
-    @PostMapping("delete")
+    @GetMapping("delete/{id}")
     @Operation(summary = "删除备忘", description = "根据id删除备忘")
-    public GenericResult<String> delete(@RequestBody MemoDomain.DeleteRequest req) {
-        log.info("delete: {}", req);
-        Long id = Optional.ofNullable(req).map(MemoDomain.DeleteRequest::id)
-                .orElseThrow(() -> new InvalidParameterException("需要删除的ID不能为空"));
+    public RedirectView deleteById(@PathVariable("id") Long id) {
+        log.info("delete: {}", id);
+        Optional.ofNullable(id).orElseThrow(() -> new InvalidParameterException("需要删除的ID不能为空"));
         this.service.deleteById(id);
-        return GenericResult.success("success");
-    }
-
-    @PostMapping("list")
-    @Operation(summary = "查询备忘列表", description = "查询备忘列表")
-    public GenericResult<List<MemoDomain>> list(@RequestBody MemoDomain.ListQueryRequest req) {
-        log.info("list: {}", req);
-        TimeTracker.getInstance().mark("查询备忘列表");
-        Iterable<MemoDomain> all = this.service.findAll();
-        TimeTracker.getInstance().mark("查询备忘列表").printTotalTime("查询备忘列表");
-        List<MemoDomain> list = new ArrayList<>();
-        all.forEach(list::add);
-        return GenericResult.success(list);
-    }
-
-    @ResponseBody
-    @GetMapping("render/{id}")
-    @Operation(summary = "查询备忘渲染", description = "查询备忘渲染")
-    public GenericResult<MemoDomain> render(@PathVariable("id") Long id) {
-        log.info("render: {}", id);
-        TimeTracker.getInstance().mark("查询备忘列表");
-        MemoDomain byId = this.service.findById(id).orElseThrow(() -> new BusinessException("未找到备忘"));
-        TimeTracker.getInstance().mark("查询备忘列表").printTotalTime("查询备忘列表");
-        return GenericResult.success(byId);
+        return new RedirectView("/memo");
     }
 
 }
