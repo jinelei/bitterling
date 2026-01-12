@@ -31,8 +31,6 @@ import java.util.stream.StreamSupport;
 public class MemoService extends BaseService<MemoRepository, MemoDomain, Long> {
     private final MemoTagService memoTagService;
     private final MemoTagRelateService memoTagRelateService;
-    private final Parser parser;
-    private final HtmlRenderer renderer;
     private final MemoConvertor memoConvertor;
     private final LongIdGenerator idGenerator = new LongIdGenerator();
 
@@ -42,9 +40,6 @@ public class MemoService extends BaseService<MemoRepository, MemoDomain, Long> {
         this.memoTagService = memoTagService;
         this.memoTagRelateService = memoTagRelateService;
         this.memoConvertor = memoConvertor;
-        MutableDataSet options = new MutableDataSet();
-        parser = Parser.builder(options).build();
-        renderer = HtmlRenderer.builder(options).build();
     }
 
     public Map<String, Object> renderIndex(MemoPageRequest request) {
@@ -114,7 +109,6 @@ public class MemoService extends BaseService<MemoRepository, MemoDomain, Long> {
                 new TagDto(1L, "fa-briefcase", "工作", (int) Math.round(Math.random() * 10)),
                 new TagDto(2L, "fa-home", "生活", (int) Math.round(Math.random() * 10)),
                 new TagDto(3L, "fa-book", "学习", (int) Math.round(Math.random() * 10))));
-        log.info("renderDetail: {}", props);
         return props;
     }
 
@@ -128,21 +122,7 @@ public class MemoService extends BaseService<MemoRepository, MemoDomain, Long> {
                 new TagDto(1L, "fa-briefcase", "工作", (int) Math.round(Math.random() * 10)),
                 new TagDto(2L, "fa-home", "生活", (int) Math.round(Math.random() * 10)),
                 new TagDto(3L, "fa-book", "学习", (int) Math.round(Math.random() * 10))));
-        log.info("renderCreate: {}", props);
         return props;
-    }
-
-    public MemoDomain renderContent(MemoDomain domain) {
-        Optional.ofNullable(domain).ifPresent(i -> {
-            Optional.ofNullable(i.getContent()).ifPresent(j -> {
-                if (j == null || j.isBlank()) {
-                    return;
-                }
-                Node document = parser.parse(j);
-                i.setContent(renderer.render(document));
-            });
-        });
-        return domain;
     }
 
     public MemoDomain create(MemoDomain.CreateRequest request) {
