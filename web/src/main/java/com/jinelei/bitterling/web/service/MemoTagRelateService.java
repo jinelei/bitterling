@@ -13,7 +13,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 @Service
-public class MemoTagRelateService extends BaseService<MemoTagRelateRecordDomain, MemoTagPrimaryKey> {
+public class MemoTagRelateService
+        extends BaseService<MemoTagRelateRepository, MemoTagRelateRecordDomain, MemoTagPrimaryKey> {
 
     public MemoTagRelateService(MemoTagRelateRepository repository,
             Validator validator) {

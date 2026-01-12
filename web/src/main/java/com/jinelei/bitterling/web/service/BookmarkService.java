@@ -10,17 +10,17 @@ import java.util.stream.StreamSupport;
 
 import org.springframework.stereotype.Service;
 
-import com.jinelei.bitterling.core.repository.BaseRepository;
 import com.jinelei.bitterling.core.service.BaseService;
 import com.jinelei.bitterling.web.domain.BookmarkDomain;
 import com.jinelei.bitterling.web.enums.BookmarkType;
+import com.jinelei.bitterling.web.repository.BookmarkRepository;
 
 import jakarta.validation.Validator;
 
 @Service
-public class BookmarkService extends BaseService<BookmarkDomain, Long> {
+public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDomain, Long> {
 
-    public BookmarkService(BaseRepository<BookmarkDomain, Long> repository, Validator validator) {
+    public BookmarkService(BookmarkRepository repository, Validator validator) {
         super(repository, validator);
     }
 

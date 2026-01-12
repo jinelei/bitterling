@@ -8,18 +8,18 @@ import java.util.Set;
 
 import org.springframework.stereotype.Service;
 
-import com.jinelei.bitterling.core.repository.BaseRepository;
 import com.jinelei.bitterling.core.service.BaseService;
 import com.jinelei.bitterling.web.domain.MessageDomain;
+import com.jinelei.bitterling.web.repository.MessageRepository;
 
 import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.Validator;
 
 @Service
-public class MessageService extends BaseService<MessageDomain, Long> {
+public class MessageService extends BaseService<MessageRepository, MessageDomain, Long> {
     protected static String MSG_TITLE_USER_LOGIN = "用户登录";
 
-    public MessageService(BaseRepository<MessageDomain, Long> repository, Validator validator) {
+    public MessageService(MessageRepository repository, Validator validator) {
         super(repository, validator);
     }
 

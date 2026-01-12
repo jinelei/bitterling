@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
-import com.jinelei.bitterling.core.helper.LongIdGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
@@ -19,18 +18,18 @@ import jakarta.validation.Validator;
 /**
  * 基础服务
  */
-public abstract class BaseService<ENT extends BaseDomain<ID>, ID> {
-    protected final BaseRepository<ENT, ID> repository;
+public abstract class BaseService<REP extends BaseRepository<ENT, ID>, ENT extends BaseDomain<ID>, ID> {
+    protected final REP repository;
     protected final Validator validator;
     protected final Logger log;
 
-    public BaseService(BaseRepository<ENT, ID> repository, Validator validator) {
+    public BaseService(REP repository, Validator validator) {
         this.repository = repository;
         this.validator = validator;
         this.log = LoggerFactory.getLogger(this.getClass());
     }
 
-    public BaseRepository<ENT, ID> getRepository() {
+    public REP getRepository() {
         return repository;
     }
 

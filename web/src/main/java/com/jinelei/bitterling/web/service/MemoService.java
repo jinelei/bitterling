@@ -11,6 +11,7 @@ import com.jinelei.bitterling.web.domain.MemoTagRelateRecordDomain;
 import com.jinelei.bitterling.web.domain.dto.MemoPageRequest;
 import com.jinelei.bitterling.web.domain.dto.TagDto;
 import com.jinelei.bitterling.web.domain.pk.MemoTagPrimaryKey;
+import com.jinelei.bitterling.web.repository.MemoRepository;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.ast.Node;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 @Service
-public class MemoService extends BaseService<MemoDomain, Long> {
+public class MemoService extends BaseService<MemoRepository, MemoDomain, Long> {
     private final MemoTagService memoTagService;
     private final MemoTagRelateService memoTagRelateService;
     private final Parser parser;
@@ -35,7 +36,7 @@ public class MemoService extends BaseService<MemoDomain, Long> {
     private final MemoConvertor memoConvertor;
     private final LongIdGenerator idGenerator = new LongIdGenerator();
 
-    public MemoService(BaseRepository<MemoDomain, Long> repository, Validator validator, MemoTagService memoTagService,
+    public MemoService(MemoRepository repository, Validator validator, MemoTagService memoTagService,
             MemoTagRelateService memoTagRelateService, MemoConvertor memoConvertor) {
         super(repository, validator);
         this.memoTagService = memoTagService;
