@@ -58,14 +58,16 @@
                                 <span class="font-bold m-4 p-2 rounded-lg bg-gray-100"><i class="fa fa-edit"></i></span>
                             </a>
                             <a th:href="@{/memo/delete/{id}(id=${memo.id})}" class="z-1000">
-                                <span class="font-bold m-4 p-2 rounded-lg bg-gray-100"><i class="fa fa-trash"></i></span>
+                                <span class="font-bold m-4 p-2 rounded-lg bg-gray-100"><i
+                                        class="fa fa-trash"></i></span>
                             </a>
                         </span>
                     </li>
                 </ul>
             </div>
 
-            <a th:href="@{/memo/create}" class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg hover:bg-blue-700 active:scale-95 transition-all duration-300 animate-bounce-slow z-50">
+            <a th:href="@{/memo/create}"
+                class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg hover:bg-blue-700 active:scale-95 transition-all duration-300 animate-bounce-slow z-50">
                 <i class="fa fa-solid fa-plus text-xl"></i>
             </a>
 
