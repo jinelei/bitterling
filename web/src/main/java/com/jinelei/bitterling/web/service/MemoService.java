@@ -2,7 +2,6 @@ package com.jinelei.bitterling.web.service;
 
 import com.jinelei.bitterling.core.domain.RecordDomain;
 import com.jinelei.bitterling.core.exception.BusinessException;
-import com.jinelei.bitterling.core.helper.LongIdGenerator;
 import com.jinelei.bitterling.core.service.BaseService;
 import com.jinelei.bitterling.web.convert.MemoConvertor;
 import com.jinelei.bitterling.web.convert.MemoTagConvertor;
@@ -29,7 +28,6 @@ public class MemoService extends BaseService<MemoRepository, MemoDomain, Long> {
         private final MemoTagRelateService memoTagRelateService;
         private final MemoConvertor memoConvertor;
         private final MemoTagConvertor memoTagConvertor;
-        private final LongIdGenerator idGenerator = new LongIdGenerator();
 
         public MemoService(MemoRepository repository, Validator validator, MemoTagService memoTagService,
                         MemoTagRelateService memoTagRelateService, MemoConvertor memoConvertor,
@@ -41,7 +39,7 @@ public class MemoService extends BaseService<MemoRepository, MemoDomain, Long> {
                 this.memoTagConvertor = memoTagConvertor;
         }
 
-        public Map<String, Object> renderIndex(MemoPageRequest request) {
+        public Map<String, ?> renderIndex(MemoPageRequest request) {
                 final Map<String, Object> props = new HashMap<>();
                 final Map<Long, MemoTagDomain> tagById = StreamSupport
                                 .stream(memoTagService.findAll().spliterator(), true)
@@ -106,7 +104,7 @@ public class MemoService extends BaseService<MemoRepository, MemoDomain, Long> {
                 return props;
         }
 
-        public Map<String, Object> renderDetail(MemoPageRequest request) {
+        public Map<String, ?> renderDetail(MemoPageRequest request) {
                 final Map<String, Object> props = new HashMap<>();
                 final Optional<MemoDomain> optById = Optional.ofNullable(request).map(MemoPageRequest::getId)
                                 .map(repository::findById)

@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import java.security.InvalidParameterException;
-import java.security.Principal;
 import java.util.Optional;
 
 @Controller
@@ -38,46 +36,46 @@ public class MemoController extends BaseController {
     }
 
     @GetMapping(value = { "", "/", "/index" })
-    public ModelAndView indexPage(MemoPageRequest request, Principal principal) {
+    public ModelAndView indexPage(MemoPageRequest request) {
         ModelAndView modelAndView = new ModelAndView("memo/index");
         modelAndView.addAllObjects(service.renderIndex(request));
+        modelAndView.addObject("title", indexService.getTitle());
         modelAndView.addObject("greeting", indexService.getGreeting());
         modelAndView.addObject("unreadMessage", messageService.unreadMessages());
-        modelAndView.addObject("username", Optional.ofNullable(principal).map(Principal::getName).orElse("匿名用户"));
         return modelAndView;
     }
 
     @GetMapping(value = { "/{id}" })
-    public ModelAndView detailPage(@PathVariable("id") Long id, MemoPageRequest request, Principal principal) {
+    public ModelAndView detailPage(@PathVariable("id") Long id, MemoPageRequest request) {
         ModelAndView modelAndView = new ModelAndView("memo/detail");
         Optional.ofNullable(id).orElseThrow(() -> new BusinessException("id不能为空"));
         Optional.ofNullable(request).ifPresent(r -> r.setId(id));
         modelAndView.addAllObjects(service.renderDetail(request));
+        modelAndView.addObject("title", indexService.getTitle());
         modelAndView.addObject("greeting", indexService.getGreeting());
         modelAndView.addObject("unreadMessage", messageService.unreadMessages());
-        modelAndView.addObject("username", Optional.ofNullable(principal).map(Principal::getName).orElse("匿名用户"));
         return modelAndView;
     }
 
     @GetMapping(value = { "/edit/{id}" })
-    public ModelAndView editPage(@PathVariable("id") Long id, MemoPageRequest request, Principal principal) {
+    public ModelAndView editPage(@PathVariable("id") Long id, MemoPageRequest request) {
         ModelAndView modelAndView = new ModelAndView("memo/edit");
         Optional.ofNullable(id).orElseThrow(() -> new BusinessException("id不能为空"));
         Optional.ofNullable(request).ifPresent(r -> r.setId(id));
         modelAndView.addAllObjects(service.renderDetail(request));
+        modelAndView.addObject("title", indexService.getTitle());
         modelAndView.addObject("greeting", indexService.getGreeting());
         modelAndView.addObject("unreadMessage", messageService.unreadMessages());
-        modelAndView.addObject("username", Optional.ofNullable(principal).map(Principal::getName).orElse("匿名用户"));
         return modelAndView;
     }
 
     @GetMapping(value = { "/create" })
-    public ModelAndView createPage(Principal principal) {
+    public ModelAndView createPage() {
         ModelAndView modelAndView = new ModelAndView("memo/edit");
         modelAndView.addAllObjects(service.renderCreate());
+        modelAndView.addObject("title", indexService.getTitle());
         modelAndView.addObject("greeting", indexService.getGreeting());
         modelAndView.addObject("unreadMessage", messageService.unreadMessages());
-        modelAndView.addObject("username", Optional.ofNullable(principal).map(Principal::getName).orElse("匿名用户"));
         return modelAndView;
     }
 
@@ -97,8 +95,7 @@ public class MemoController extends BaseController {
 
     @GetMapping("delete/{id}")
     @Operation(summary = "删除备忘", description = "根据id删除备忘")
-    public RedirectView deleteById(@PathVariable("id") Long id) {
-        Optional.ofNullable(id).orElseThrow(() -> new InvalidParameterException("需要删除的ID不能为空"));
+    public RedirectView deleteById(@PathVariable(value = "id", required = true) Long id) {
         this.service.deleteById(id);
         return new RedirectView("/memo");
     }

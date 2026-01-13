@@ -44,6 +44,7 @@ public class BookmarkController extends BaseController {
     public ModelAndView index(Principal principal) {
         ModelAndView modelAndView = new ModelAndView("bookmark");
         modelAndView.addAllObjects(service.renderIndex());
+        modelAndView.addObject("title", indexService.getTitle());
         modelAndView.addObject("greeting", indexService.getGreeting());
         modelAndView.addObject("unreadMessage", messageService.unreadMessages());
         modelAndView.addObject("username", Optional.ofNullable(principal).map(Principal::getName).orElse("匿名用户"));

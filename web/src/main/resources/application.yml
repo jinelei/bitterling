@@ -92,6 +92,7 @@ springdoc:
     path: /api-docs
   paths-to-match: /**
 bitterling:
+  title: 自留地
   administrator:
     username: asdf
     password: asdf

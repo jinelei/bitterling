@@ -6,6 +6,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import com.jinelei.bitterling.core.controller.BaseController;
 import com.jinelei.bitterling.web.service.BookmarkService;
+import com.jinelei.bitterling.web.service.IndexService;
 
 /**
  * 首页控制器
@@ -16,20 +17,29 @@ import com.jinelei.bitterling.web.service.BookmarkService;
  */
 @Controller
 public class IndexController extends BaseController {
+    private final IndexService indexService;
     private final BookmarkService bookmarkService;
 
-    public IndexController(BookmarkService bookmarkService) {
+    public IndexController(IndexService indexService, BookmarkService bookmarkService) {
+        this.indexService = indexService;
         this.bookmarkService = bookmarkService;
     }
 
-    @GetMapping(value = {"/", "/index"})
+    @GetMapping(value = { "/", "/index" })
     public ModelAndView index() {
-        return new ModelAndView("index", bookmarkService.renderIndex());
+        ModelAndView modelAndView = new ModelAndView("index");
+        modelAndView.addAllObjects(bookmarkService.renderIndex());
+        modelAndView.addObject("title", indexService.getTitle());
+        modelAndView.addObject("greeting", indexService.getGreeting());
+        return modelAndView;
     }
 
-    @GetMapping(value = {"/about"})
+    @GetMapping(value = { "/about" })
     public ModelAndView about() {
-        return new ModelAndView("about");
+        ModelAndView modelAndView = new ModelAndView("about");
+        modelAndView.addObject("title", indexService.getTitle());
+        modelAndView.addObject("greeting", indexService.getGreeting());
+        return modelAndView;
     }
 
 }
