@@ -5,6 +5,7 @@ import com.jinelei.bitterling.core.exception.BusinessException;
 import com.jinelei.bitterling.web.domain.MemoDomain;
 import com.jinelei.bitterling.web.domain.dto.MemoPageRequest;
 import com.jinelei.bitterling.web.service.MemoService;
+import com.jinelei.bitterling.web.service.MemoTagService;
 import com.jinelei.bitterling.web.service.IndexService;
 import com.jinelei.bitterling.web.service.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,13 +25,16 @@ import java.util.Optional;
 @Tag(name = "备忘管理", description = "备忘相关接口")
 public class MemoController extends BaseController {
     private final MemoService service;
+    private final MemoTagService memoTagService;
     private final IndexService indexService;
     private final MessageService messageService;
 
-    public MemoController(MemoService service, IndexService indexService, MessageService messageService) {
+    public MemoController(MemoService service, IndexService indexService, MessageService messageService,
+            MemoTagService memoTagService) {
         this.service = service;
         this.indexService = indexService;
         this.messageService = messageService;
+        this.memoTagService = memoTagService;
     }
 
     @GetMapping(value = { "", "/", "/index" })
