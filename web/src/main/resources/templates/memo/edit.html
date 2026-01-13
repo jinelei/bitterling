@@ -80,7 +80,7 @@
                         取消
                     </button>
                     <button type="submit"
-                        class="px-3 py-2 bg-primary text-white rounded-lg hover:text-white text-black transition duration-200">
+                        class="px-3 py-2 bg-primary rounded-lg hover:text-white text-black transition duration-200">
                         保存
                     </button>
                 </div>
@@ -94,10 +94,7 @@
             const tagContainer = document.getElementById('tagContainer');
             const tagIds = document.getElementById('tagIds');
 
-            console.log("tagIds.value", tagIds.value, typeof tagIds.value, Array.from(tagIds.value), typeof Array.from(tagIds.value));
-
             let selectedTagValues = new Set(JSON.parse(tagIds.value));
-            console.log("selectedTagValues", selectedTagValues);
 
             function initTagEvents() {
                 const tagItems = document.querySelectorAll('.tag-item');
@@ -108,15 +105,11 @@
                         const text = this.textContent.trim();
 
                         if (selectedTagValues.has(value)) {
-                            console.log("selectedTagValues delete before", selectedTagValues);
                             selectedTagValues.delete(value);
-                            console.log("selectedTagValues delete after", selectedTagValues);
                             this.classList.remove('bg-primary', 'text-white');
                             this.classList.add('bg-gray', 'text-black');
                         } else {
-                            console.log("selectedTagValues add before", selectedTagValues);
                             selectedTagValues.add(value);
-                            console.log("selectedTagValues add after", selectedTagValues);
                             this.classList.remove('bg-gray', 'text-white');
                             this.classList.add('bg-primary', 'text-white');
                         }
@@ -124,12 +117,12 @@
                         updateHiddenInputValue();
                     });
                 });
+                updateHiddenInputValue();
             }
 
             function updateHiddenInputValue() {
                 const valuesArray = Array.from(selectedTagValues);
                 tagIds.value = valuesArray;
-                console.log('表单提交的标签值：', tagIds.value);
             }
 
             document.addEventListener('DOMContentLoaded', initTagEvents);
