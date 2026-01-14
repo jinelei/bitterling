@@ -113,14 +113,17 @@
             function initSearchAction() {
                 document.getElementById('form').addEventListener('submit', function (e) {
                     e.preventDefault();
-                    const keyword = encodeURIComponent(document.getElementById('searchKeyword').value.trim());
+                    const searchKeyword = document.getElementById('searchKeyword');
+                    const keyword = encodeURIComponent(searchKeyword.value.trim());
                     const actionJson = JSON.stringify({
                         pluginId: "Send_Message",
                         payload: { text: decodeURIComponent(keyword) }
                     });
                     const encodedAction = encodeURIComponent(actionJson);
                     const doubaoUrl = `https://www.doubao.com/chat/url-action?action=${encodedAction}`;
+                    searchKeyword.value = "";
                     window.open(doubaoUrl, '_blank');
+
                 });
             }
             function initBackgroudScale() {
