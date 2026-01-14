@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="zh-CN" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,22 +14,45 @@
 
 <body class="min-h-screen flex flex-col items-center justify-center">
 
-<div class="w-full">
-    <th:block th:replace="~{layout/base :: navbar('index')}"></th:block>
-</div>
+    <main class="bg-page dark:bg-page-dark fixed top-0 left-0 w-screen h-screen z-[-1] overflow-hidden">
 
-<main class="bg-page dark:bg-page-dark flex-grow w-full py-6 px-3 container">
+        <!-- 背景 -->
+        <img th:src="@{/images/backgroud.jpg}" class="w-full h-full object-cover" alt="背景图">
+        <div class="absolute inset-0 bg-black/50"></div>
 
-</main>
+        <!-- 时间栏 -->
+        <h1 id="time" class="fixed top-10 w-full z-10 flex items-center justify-center text-bold text-white"></h1>
+        <h2 id="date" class="fixed top-20 w-full z-10 flex items-center justify-center text-bold text-white"></h2>
 
-<div class="bg-page dark:bg-page-dark w-full z-10 flex items-center justify-center py-3">
-    <th:block th:replace="~{layout/base :: footer}"></th:block>
-</div>
+    </main>
 
-<th:block>
-    <script>
-    </script>
-</th:block>
+    <div class="fixed bottom-5 w-full z-10 flex items-center justify-center">
+        <th:block th:replace="~{layout/base :: footer}"></th:block>
+    </div>
+
+    <th:block>
+        <script>
+            function updateRealTime() {
+                const now = new Date();
+                const hours = now.getHours().toString().padStart(2, '0');
+                const minutes = now.getMinutes().toString().padStart(2, '0');
+                const seconds = now.getSeconds().toString().padStart(2, '0');
+                const timeStr = `${hours}:${minutes}:${seconds}`;
+                const year = now.getFullYear();
+                const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                const day = now.getDate().toString().padStart(2, '0');
+                const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+                const weekDay = weekDays[now.getDay()];
+                const dateStr = `${year}年${month}月${day}日 ${weekDay}`;
+                document.getElementById('time').textContent = timeStr;
+                document.getElementById('date').textContent = dateStr;
+            }
+            document.addEventListener('DOMContentLoaded', function () {
+                updateRealTime();
+                setInterval(updateRealTime, 1000);
+            });
+        </script>
+    </th:block>
 
 </body>
 
