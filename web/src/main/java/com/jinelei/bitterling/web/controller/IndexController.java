@@ -34,6 +34,15 @@ public class IndexController extends BaseController {
         return modelAndView;
     }
 
+    @GetMapping(value = { "/backup" })
+    public ModelAndView backup() {
+        ModelAndView modelAndView = new ModelAndView("index");
+        modelAndView.addAllObjects(bookmarkService.renderIndex());
+        modelAndView.addObject("title", indexService.getTitle());
+        modelAndView.addObject("greeting", indexService.getGreeting());
+        return modelAndView;
+    }
+
     @GetMapping(value = { "/about" })
     public ModelAndView about() {
         ModelAndView modelAndView = new ModelAndView("about");

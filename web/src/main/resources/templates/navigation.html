@@ -17,19 +17,17 @@
     <main class="bg-page dark:bg-page-dark fixed top-0 left-0 w-screen h-screen overflow-hidden">
 
         <!-- 背景 -->
-        <img th:src="@{/images/backgroud.jpg}" class="w-full h-full object-cover z-[-2]" alt="背景图">
+        <img id="imageBackgroud" th:src="@{/images/backgroud.jpg}"
+            class="w-full h-full object-cover z-[-2] transition-transform duration-300 ease-in-out scale-100" alt="背景图">
 
-        <div class="fixed top-10 w-full z-[100] flex flex-col items-center justify-center ">
+        <div class="fixed top-10 w-full flex flex-col items-center justify-center ">
             <!-- 时间栏 -->
             <h1 id="time" class="text-bold text-white text-[clamp(3rem,3.5rem,4rem)]">
             </h1>
             <h2 id="date" class="text-bold text-white/50">
             </h2>
             <!-- 搜索栏 -->
-
-            <!-- th:action="@{https://www.google.com.hk/search?q=${searchKeyword}}" -->
-            <form id="form" method="get" target="_blank"
-                class="relative mt-10 w-100 z-[100] w-[clamp(20rem,40vw,50rem)]">
+            <form id="form" method="get" target="_blank" class="relative mt-10 w-100 w-[clamp(20rem,40vw,50rem)]">
                 <!-- 搜索输入框 -->
                 <input id="searchKeyword" type="text" placeholder="请输入搜索内容..."
                     class="w-full px-5 py-3 text-base text-gray-100 bg-black/50 hover:bg-black/70 backdrop-blur-md -webkit-backdrop-blur-md rounded-full shadow-sm outline-none">
@@ -41,10 +39,24 @@
             </form>
         </div>
 
-
     </main>
 
-    <div class="fixed bottom-5 w-full z-10 flex items-center justify-center text-white/80">
+    <div class="fixed bottom-8 flex items-center justify-center rounded-lg p-1 bg-black/30">
+        <div class="flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem]">
+            <i class="fa fa-compass"></i>
+        </div>
+        <!-- <a href="#" id="theme"
+            class="flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem]">
+            <i id="theme-icon" th:class="'fa fa-moon-o'"></i>
+        </a> -->
+        <a th:each="bookmark : ${bookmarkByTags[__${tag?:'收藏'}__]}" th:href="${bookmark.url}" target="_blank"
+            class="flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem]"
+            th:attr="data-category=${bookmark.parentId}" th:data-name="${bookmark.name}">
+            <i th:class="'fa ' + ${bookmark.icon}" th:style="'color: ' + ${bookmark.color}"></i>
+        </a>
+    </div>
+
+    <div class="fixed bottom-2 w-full flex items-center justify-center text-white/80">
         <th:block th:replace="~{layout/base :: footer}"></th:block>
     </div>
 
@@ -65,22 +77,62 @@
                 document.getElementById('time').textContent = timeStr;
                 document.getElementById('date').textContent = dateStr;
             }
+            function initThemeSwitch() {
+                const themeToggle = document.getElementById('theme');
+                const themeIcon = document.getElementById('theme-icon');
+                if (!!themeToggle) {
+                    if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                        document.documentElement.classList.add('dark');
+                        themeIcon.classList.remove('fa-moon-o');
+                        themeIcon.classList.add('fa-sun-o');
+                    } else {
+                        document.documentElement.classList.remove('dark');
+                        themeIcon.classList.remove('fa-sun-o');
+                        themeIcon.classList.add('fa-moon-o');
+                    }
+                    themeToggle.addEventListener('click', () => {
+                        document.documentElement.classList.toggle('dark');
+                        localStorage.theme = document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+                        if (localStorage.theme === 'dark') {
+                            themeIcon.classList.remove('fa-moon-o');
+                            themeIcon.classList.add('fa-sun-o');
+                        } else {
+                            themeIcon.classList.remove('fa-sun-o');
+                            themeIcon.classList.add('fa-moon-o');
+                        }
+                    });
+                }
+            }
+            function initSearch() {
+                document.getElementById('form').addEventListener('submit', function (e) {
+                    e.preventDefault();
+                    const keyword = encodeURIComponent(document.getElementById('searchKeyword').value.trim());
+                    const actionJson = JSON.stringify({
+                        pluginId: "Send_Message",
+                        payload: { text: decodeURIComponent(keyword) }
+                    });
+                    const encodedAction = encodeURIComponent(actionJson);
+                    const doubaoUrl = `https://www.doubao.com/chat/url-action?action=${encodedAction}`;
+                    console.log("doubaoUrl", doubaoUrl);
+                    window.open(doubaoUrl, '_blank');
+                });
+            }
             document.addEventListener('DOMContentLoaded', function () {
                 updateRealTime();
                 setInterval(updateRealTime, 1000);
+                initThemeSwitch();
+                initSearch();
             });
-            document.getElementById('form').addEventListener('submit', function (e) {
-                e.preventDefault();
-                const keyword = encodeURIComponent(document.getElementById('searchKeyword').value.trim());
-                const actionJson = JSON.stringify({
-                    pluginId: "Send_Message",
-                    payload: { text: decodeURIComponent(keyword) }
-                });
-                const encodedAction = encodeURIComponent(actionJson);
-                const doubaoUrl = `https://www.doubao.com/chat/url-action?action=${encodedAction}`;
-                console.log("doubaoUrl", doubaoUrl);
-                window.open(doubaoUrl, '_blank');
-            });
+            let searchInput = document.getElementById("searchKeyword");
+            let imageBackgroud = document.getElementById("imageBackgroud");
+            searchInput.addEventListener('focus', function () {
+                imageBackgroud.classList.remove('scale-100');
+                imageBackgroud.classList.add('scale-110');
+            })
+            searchInput.addEventListener('blur', function () {
+                imageBackgroud.classList.add('scale-100');
+                imageBackgroud.classList.remove('scale-110');
+            })
         </script>
     </th:block>
 
