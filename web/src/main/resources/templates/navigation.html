@@ -14,19 +14,37 @@
 
 <body class="min-h-screen flex flex-col items-center justify-center">
 
-    <main class="bg-page dark:bg-page-dark fixed top-0 left-0 w-screen h-screen z-[-1] overflow-hidden">
+    <main class="bg-page dark:bg-page-dark fixed top-0 left-0 w-screen h-screen overflow-hidden">
 
         <!-- 背景 -->
-        <img th:src="@{/images/backgroud.jpg}" class="w-full h-full object-cover" alt="背景图">
-        <div class="absolute inset-0 bg-black/50"></div>
+        <img th:src="@{/images/backgroud.jpg}" class="w-full h-full object-cover z-[-2]" alt="背景图">
 
-        <!-- 时间栏 -->
-        <h1 id="time" class="fixed top-10 w-full z-10 flex items-center justify-center text-bold text-white"></h1>
-        <h2 id="date" class="fixed top-20 w-full z-10 flex items-center justify-center text-bold text-white"></h2>
+        <div class="fixed top-10 w-full z-[100] flex flex-col items-center justify-center ">
+            <!-- 时间栏 -->
+            <h1 id="time" class="text-bold text-white text-[clamp(3rem,3.5rem,4rem)]">
+            </h1>
+            <h2 id="date" class="text-bold text-white/50">
+            </h2>
+            <!-- 搜索栏 -->
+
+            <!-- th:action="@{https://www.google.com.hk/search?q=${searchKeyword}}" -->
+            <form id="form" method="get" target="_blank"
+                class="relative mt-10 w-100 z-[100] w-[clamp(20rem,40vw,50rem)]">
+                <!-- 搜索输入框 -->
+                <input id="searchKeyword" type="text" placeholder="请输入搜索内容..."
+                    class="w-full px-5 py-3 text-base text-gray-100 bg-black/50 hover:bg-black/70 backdrop-blur-md -webkit-backdrop-blur-md rounded-full shadow-sm outline-none">
+                <!-- 搜索按钮 -->
+                <button type="submit"
+                    class="absolute right-1 top-1 bottom-1 w-10 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90 active:bg-primary/80 transition-all">
+                    <i class="fa fa-search"></i>
+                </button>
+            </form>
+        </div>
+
 
     </main>
 
-    <div class="fixed bottom-5 w-full z-10 flex items-center justify-center">
+    <div class="fixed bottom-5 w-full z-10 flex items-center justify-center text-white/80">
         <th:block th:replace="~{layout/base :: footer}"></th:block>
     </div>
 
@@ -50,6 +68,18 @@
             document.addEventListener('DOMContentLoaded', function () {
                 updateRealTime();
                 setInterval(updateRealTime, 1000);
+            });
+            document.getElementById('form').addEventListener('submit', function (e) {
+                e.preventDefault();
+                const keyword = encodeURIComponent(document.getElementById('searchKeyword').value.trim());
+                const actionJson = JSON.stringify({
+                    pluginId: "Send_Message",
+                    payload: { text: decodeURIComponent(keyword) }
+                });
+                const encodedAction = encodeURIComponent(actionJson);
+                const doubaoUrl = `https://www.doubao.com/chat/url-action?action=${encodedAction}`;
+                console.log("doubaoUrl", doubaoUrl);
+                window.open(doubaoUrl, '_blank');
             });
         </script>
     </th:block>
