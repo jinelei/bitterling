@@ -22,9 +22,9 @@
 
         <div class="fixed top-10 w-full flex flex-col items-center justify-center ">
             <!-- 时间栏 -->
-            <h1 id="time" class="text-bold text-white text-[clamp(3rem,3.5rem,4rem)]">
+            <h1 id="time" class="cursor-default text-bold text-white text-[clamp(3rem,3.5rem,4rem)]">
             </h1>
-            <h2 id="date" class="text-bold text-white/50">
+            <h2 id="date" class="cursor-default text-bold text-white/50">
             </h2>
             <!-- 搜索栏 -->
             <form id="form" method="get" target="_blank" class="relative mt-10 w-100 w-[clamp(20rem,40vw,50rem)]">
@@ -41,7 +41,7 @@
 
     </main>
 
-    <div class="fixed bottom-8 flex items-center justify-center rounded-lg p-1 bg-black/30">
+    <div class="fixed bottom-8 flex items-center justify-center rounded-lg bg-black/30">
         <div class="flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem]">
             <i class="fa fa-compass"></i>
         </div>
@@ -62,6 +62,8 @@
 
     <th:block>
         <script>
+            let docTime = document.getElementById('time');
+            let docDate = document.getElementById('date');
             function updateRealTime() {
                 const now = new Date();
                 const hours = now.getHours().toString().padStart(2, '0');
@@ -74,8 +76,8 @@
                 const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
                 const weekDay = weekDays[now.getDay()];
                 const dateStr = `${year}年${month}月${day}日 ${weekDay}`;
-                document.getElementById('time').textContent = timeStr;
-                document.getElementById('date').textContent = dateStr;
+                docTime.textContent = timeStr;
+                docDate.textContent = dateStr;
             }
             function initThemeSwitch() {
                 const themeToggle = document.getElementById('theme');
@@ -103,7 +105,7 @@
                     });
                 }
             }
-            function initSearch() {
+            function initSearchAction() {
                 document.getElementById('form').addEventListener('submit', function (e) {
                     e.preventDefault();
                     const keyword = encodeURIComponent(document.getElementById('searchKeyword').value.trim());
@@ -113,26 +115,58 @@
                     });
                     const encodedAction = encodeURIComponent(actionJson);
                     const doubaoUrl = `https://www.doubao.com/chat/url-action?action=${encodedAction}`;
-                    console.log("doubaoUrl", doubaoUrl);
                     window.open(doubaoUrl, '_blank');
+                });
+            }
+            function initBackgroudScale() {
+                let searchInput = document.getElementById("searchKeyword");
+                let imageBackgroud = document.getElementById("imageBackgroud");
+                searchInput.addEventListener('focus', function () {
+                    imageBackgroud.classList.remove('scale-100');
+                    imageBackgroud.classList.add('scale-110');
+                })
+                searchInput.addEventListener('blur', function () {
+                    imageBackgroud.classList.add('scale-100');
+                    imageBackgroud.classList.remove('scale-110');
+                })
+            }
+            function copyDateTime() {
+                console.log('copy date time');
+                docTime.addEventListener('click', async () => {
+                    try {
+                        const now = new Date();
+                        const hours = now.getHours().toString().padStart(2, '0');
+                        const minutes = now.getMinutes().toString().padStart(2, '0');
+                        const seconds = now.getSeconds().toString().padStart(2, '0');
+                        const timeStr = `${hours}:${minutes}:${seconds}`;
+                        await navigator.clipboard.writeText(timeStr);
+                    } catch (err) {
+                        alert('复制失败，请手动复制！');
+                    }
+                });
+                docDate.addEventListener('click', async () => {
+                    try {
+                        const now = new Date();
+                        const hours = now.getHours().toString().padStart(2, '0');
+                        const minutes = now.getMinutes().toString().padStart(2, '0');
+                        const seconds = now.getSeconds().toString().padStart(2, '0');
+                        const year = now.getFullYear();
+                        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+                        const day = now.getDate().toString().padStart(2, '0');
+                        const dateStr = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+                        await navigator.clipboard.writeText(dateStr);
+                    } catch (err) {
+                        alert('复制失败，请手动复制！');
+                    }
                 });
             }
             document.addEventListener('DOMContentLoaded', function () {
                 updateRealTime();
+                copyDateTime();
                 setInterval(updateRealTime, 1000);
                 initThemeSwitch();
-                initSearch();
+                initSearchAction();
             });
-            let searchInput = document.getElementById("searchKeyword");
-            let imageBackgroud = document.getElementById("imageBackgroud");
-            searchInput.addEventListener('focus', function () {
-                imageBackgroud.classList.remove('scale-100');
-                imageBackgroud.classList.add('scale-110');
-            })
-            searchInput.addEventListener('blur', function () {
-                imageBackgroud.classList.add('scale-100');
-                imageBackgroud.classList.remove('scale-110');
-            })
         </script>
     </th:block>
 
