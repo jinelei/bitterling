@@ -11,7 +11,7 @@ import com.jinelei.bitterling.web.service.IndexService;
 /**
  * 首页控制器
  *
- * @author zhenlei
+ * @author jinelei
  * @version 1.0.0
  * @date 2025-12-28
  */
@@ -27,7 +27,7 @@ public class IndexController extends BaseController {
 
     @GetMapping(value = { "/", "/index" })
     public ModelAndView index() {
-        ModelAndView modelAndView = new ModelAndView("index");
+        ModelAndView modelAndView = new ModelAndView("navigation");
         modelAndView.addAllObjects(bookmarkService.renderIndex());
         modelAndView.addObject("title", indexService.getTitle());
         modelAndView.addObject("greeting", indexService.getGreeting());

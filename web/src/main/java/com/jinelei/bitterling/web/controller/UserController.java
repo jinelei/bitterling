@@ -10,7 +10,7 @@ import com.jinelei.bitterling.core.controller.BaseController;
 /**
  * 首页控制器
  *
- * @author zhenlei
+ * @author jinelei
  * @version 1.0.0
  * @date 2025-12-28
  */
