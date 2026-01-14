@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title th:text="个人导航"></title>
+    <title th:text="自留地"></title>
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
     <script th:src="@{/js/tailwind.min.js}"></script>
     <script th:src="@{/js/root.js}"></script>
@@ -42,17 +42,22 @@
     </main>
 
     <div class="fixed bottom-8 flex items-center justify-center rounded-lg bg-black/30">
-        <div class="flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem]">
-            <i class="fa fa-compass"></i>
-        </div>
+        <a th:href="@{/bookmark}"
+            class="flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem] hover:scale-110 hover:text-red-500 transition-transform duration-300 ease-in-out scale-100">
+            <i class="fa fa-book"></i>
+        </a>
         <!-- <a href="#" id="theme"
             class="flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem]">
             <i id="theme-icon" th:class="'fa fa-moon-o'"></i>
         </a> -->
         <a th:each="bookmark : ${bookmarkByTags[__${tag?:'收藏'}__]}" th:href="${bookmark.url}" target="_blank"
-            class="flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem]"
+            th:class="'flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem] hover:scale-110 transition-transform duration-300 ease-in-out scale-100 ' + ${'hover:text-' + bookmark.color + '-500'}"
             th:attr="data-category=${bookmark.parentId}" th:data-name="${bookmark.name}">
-            <i th:class="'fa ' + ${bookmark.icon}" th:style="'color: ' + ${bookmark.color}"></i>
+            <i th:class="'fa ' + ${bookmark.icon}"></i>
+        </a>
+        <a th:href="@{/about}"
+            class="flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem] hover:scale-110 hover:text-red-500 transition-transform duration-300 ease-in-out scale-100">
+            <i class="fa fa-plane"></i>
         </a>
     </div>
 
@@ -131,7 +136,6 @@
                 })
             }
             function copyDateTime() {
-                console.log('copy date time');
                 docTime.addEventListener('click', async () => {
                     try {
                         const now = new Date();
@@ -165,6 +169,7 @@
                 copyDateTime();
                 setInterval(updateRealTime, 1000);
                 initThemeSwitch();
+                initBackgroudScale();
                 initSearchAction();
             });
         </script>
