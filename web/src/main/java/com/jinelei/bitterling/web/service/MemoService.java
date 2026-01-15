@@ -138,6 +138,7 @@ public class MemoService extends BaseService<MemoRepository, MemoDomain, Long> {
                 MemoDomain entity = memoConvertor.fromRequest(request);
                 entity.setCreateTime(LocalDateTime.now());
                 entity.setUpdateTime(LocalDateTime.now());
+                entity.setOrderNumber(Optional.ofNullable(entity.getOrderNumber()).orElse(0));
                 memoTagRelateService.createByMemoId(entity.getId(), request.tagIds());
                 return super.save(entity);
         }

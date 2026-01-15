@@ -39,7 +39,7 @@
             <div class="flex-grow w-full top-0">
                 <ul id="memoList" class="space-y-2">
                     <li th:each="memo : ${memoList}" class="border-b border-gray-200">
-                        <span class="flex-1 flex flex-row items-center hover:bg-gray-50">
+                        <span class="flex-1 flex flex-row items-center hover:bg-gray-50 transition-all duration-300">
                             <a th:href="@{/memo/{id}(id=${memo.id})}"
                                 class="tag-btn w-full flex flex-col items-start justify-between p-3 transition-all">
                                 <span class="flex-1 flex flex-row">
@@ -55,11 +55,11 @@
                                     th:text="${#temporals.format(memo.updateTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
                             </a>
                             <a th:href="@{/memo/edit/{id}(id=${memo.id})}"
-                                class="z-1000 bg-gray-100 hover:bg-primary/100 hover:text-white rounded-lg flex items-center justify-center text-center w-[3rem] h-[3rem]">
+                                class="z-1000 bg-gray-100 hover:bg-primary/100 hover:text-white rounded-lg flex items-center justify-center text-center w-[3rem] h-[3rem] transition-all duration-300">
                                 <i class="fa fa-edit"></i>
                             </a>
-                            <a th:href="@{/memo/delete/{id}(id=${memo.id})}"
-                                class="z-1000 bg-gray-100 hover:bg-primary/100 hover:text-white rounded-lg flex items-center justify-center text-center w-[3rem] h-[3rem] ml-2">
+                            <a onclick="showDeleteModal(this)" th:data-value="${memo.id}" th:data-title="${memo.title}"
+                                class="z-1000 bg-gray-100 hover:bg-primary/100 hover:text-white rounded-lg flex items-center justify-center text-center w-[3rem] h-[3rem] transition-all duration-300 ml-2">
                                 <i class="fa fa-trash"></i>
                             </a>
                         </span>
@@ -72,38 +72,68 @@
                 <i class="fa fa-solid fa-plus text-xl"></i>
             </a>
 
+            <div id="deleteModal" class="fixed inset-0 hidden items-center justify-center bg-black/50 z-50">
+                <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
+                    <h3 class="text-lg font-semibold text-gray-800">确认删除</h3>
+                    <p class="mt-2 text-gray-600" id="modalMessage">确定要删除这条记录吗？此操作不可撤销。</p>
+                    <div class="mt-4 flex justify-end space-x-3">
+                        <button onclick="hideDeleteModal()"
+                            class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300 transition-colors">
+                            取消
+                        </button>
+                        <button onclick="confirmDelete()"
+                            class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 transition-colors">
+                            确认删除
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+
             <th:block th:replace="~{layout/base :: footer}"></th:block>
         </main>
     </div>
 
     <th:block>
         <script>
-            function mockMemo() {
-                fetch('[[@{/memo/mock}]]', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json; charset=utf-8',
-                    },
-                    body: JSON.stringify({
-                        title: 'mockMemo'
-                    })
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`请求失败：${response.status} ${response.statusText}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // 处理成功返回的数据
-                        console.log("接口返回结果：", data);
-                        alert("调用成功！返回数据：" + JSON.stringify(data));
-                    })
-                    .catch(error => {
-                        console.error("请求异常：", error);
-                        alert("调用失败：" + error.message);
-                    });
+            let currentRecordId = null;
+            const modal = document.getElementById('deleteModal');
+            const modalMessage = document.getElementById('modalMessage');
+
+            function showDeleteModal(e) {
+                console.log('element', e);
+                currentRecordId = e.dataset.value;
+                let currentRecordTitle = e.dataset.title;
+                modalMessage.textContent = `确定要删除 ID 为 ${currentRecordTitle} 的记录吗？此操作不可撤销！`;
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
             }
+
+            function hideDeleteModal() {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = '';
+                currentRecordId = null;
+            }
+
+            function confirmDelete() {
+                if (currentRecordId) {
+                    window.open("/memo/delete/" + currentRecordId, "_self");
+                    hideDeleteModal();
+                }
+            }
+
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    hideDeleteModal();
+                }
+            });
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
+                    hideDeleteModal();
+                }
+            });
         </script>
     </th:block>
 
