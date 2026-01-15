@@ -16,54 +16,39 @@
 
     <th:block th:replace="~{layout/base :: navbar('memo')}"></th:block>
 
-    <main class="flex-grow mx-auto flex flex-row items-start container">
-        <div class="mx-auto p-5 w-full bg-white rounded p-3 lg:p-4">
+    <main class="flex-grow mx-auto flex flex-row items-center justify-center container">
+        <div class="mx-auto bg-white rounded p-3 lg:p-4 flex flex-row items-center">
             <form id="form" th:with="updateUrl=@{/memo/update}, createUrl=@{/memo/create}"
-                th:action="${memo.id != null ? updateUrl : createUrl}" method="post" class="space-y-6">
+                th:action="${memo.id != null ? updateUrl : createUrl}" method="post" class="space-y-1 lg:w-[70vw] w-[90vw]">
                 <div class="flex flex-row hidden">
-                    <label for="title" class="w-48 block text-gray-700 font-medium">
-                        ID <span class="text-red-500">*</span>
-                    </label>
                     <input type="text" id="id" name="id" th:value="${memo != null ? memo.id : ''}"
                         class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200"
                         placeholder="id">
                 </div>
                 <div class="flex flex-row items-center justify-center">
-                    <label for="title" class="w-32 text-right pr-4 font-medium text-gray-700">
-                        标题 <span class="text-red-500">*</span>
-                    </label>
                     <input type="text" id="title" name="title" th:value="${memo != null ? memo.title : ''}"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200"
+                        class="w-full px-3 py-2 border-0 focus:border-0 transition duration-200 text-4xl font-bold text-gray-800"
                         placeholder="请输入备忘录标题">
                 </div>
                 <div class="flex flex-row items-center justify-center">
-                    <label for="subTitle" class="w-32 text-right pr-4 font-medium text-gray-700">
-                        副标题
-                    </label>
                     <input type="text" id="subTitle" name="subTitle" th:value="${memo != null ? memo.subTitle : ''}"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200"
+                        class="w-full px-3 py-2 border-0 focus:border-0 transition duration-200 text-1xl font-bold text-gray-500"
                         placeholder="请输入备忘录副标题">
                 </div>
                 <div class="flex flex-row items-center justify-between">
                     <div class="flex-grow-2 flex flex-row items-center justify-start">
-                        <label for="tagIds" class="w-32 text-right pr-4 font-medium text-gray-700">
-                            标签 <span class="text-red-500">*</span>
-                        </label>
                         <input type="hidden" id="tagIds" name="tagIds" th:value="${memo.tagIds}">
                         <div id="tagContainer" class="flex flex-wrap gap-2 py-2">
                             <span th:each="singleTag : ${tagList}" th:value="${singleTag.id}"
                                 th:text="${singleTag.title}" th:attr="data-value=${singleTag.id}"
-                                th:class="'tag-item inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer transition-all duration-200 bg-gray text-black hover:bg-primary/90 ' + ${memo != null and not #lists.isEmpty(memo.tagIds) and #lists.contains(memo.tagIds, singleTag.id) ? 'bg-primary text-white' : ''}">
+                                th:class="'tag-item inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer transition-all duration-200 bg-gray text-black hover:bg-primary/90 ' + ${memo != null and not #lists.isEmpty(memo.tagIds) and #lists.contains(memo.tagIds, singleTag.id) ? 'bg-primary/90 text-white' : 'bg-primary/10'}">
                                 默认标签
                             </span>
                         </div>
                     </div>
-                    <div class="flex flex-row items-center justify-center">
-                        <label for="orderNumber" class="w-32 text-right pr-4 font-medium text-gray-700">
-                            排序值
-                        </label>
+                    <div class="flex flex-row items-center justify-center hidden">
                         <input type="number" id="orderNumber" name="orderNumber"
-                            th:value="${memo != null ? memo.orderNumber : ''}"
+                            th:value="${memo != null ? memo.orderNumber : '0'}"
                             class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200"
                             placeholder="请输入排序值">
                     </div>
@@ -106,12 +91,12 @@
 
                         if (selectedTagValues.has(value)) {
                             selectedTagValues.delete(value);
-                            this.classList.remove('bg-primary', 'text-white');
-                            this.classList.add('bg-gray', 'text-black');
+                            this.classList.remove('bg-primary/90', 'text-white');
+                            this.classList.add('bg-primary/10', 'text-black');
                         } else {
                             selectedTagValues.add(value);
-                            this.classList.remove('bg-gray', 'text-white');
-                            this.classList.add('bg-primary', 'text-white');
+                            this.classList.remove('bg-primary/10', 'text-black');
+                            this.classList.add('bg-primary/90', 'text-white');
                         }
 
                         updateHiddenInputValue();
