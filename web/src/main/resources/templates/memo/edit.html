@@ -12,68 +12,69 @@
     <link th:href="@{/css/root.css}" rel="stylesheet">
 </head>
 
-<body class=" bg-gray-50">
+<body class="min-h-screen flex flex-col items-center justify-center">
 
-    <th:block th:replace="~{layout/base :: navbar('memo')}"></th:block>
+    <div class="w-full">
+        <th:block th:replace="~{layout/base :: navbar('memo')}"></th:block>
+    </div>
 
-    <main class="flex-grow mx-auto flex flex-row items-center justify-center container">
-        <div class="mx-auto bg-white rounded p-3 lg:p-4 flex flex-row items-center">
-            <form id="form" th:with="updateUrl=@{/memo/update}, createUrl=@{/memo/create}"
-                th:action="${memo.id != null ? updateUrl : createUrl}" method="post" class="space-y-1 lg:w-[70vw] w-[90vw]">
-                <div class="flex flex-row hidden">
-                    <input type="text" id="id" name="id" th:value="${memo != null ? memo.id : ''}"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200"
-                        placeholder="id">
-                </div>
-                <div class="flex flex-row items-center justify-center">
-                    <input type="text" id="title" name="title" th:value="${memo != null ? memo.title : ''}"
-                        class="w-full px-3 py-2 border-0 focus:border-0 transition duration-200 text-4xl font-bold text-gray-800"
-                        placeholder="请输入备忘录标题">
-                </div>
-                <div class="flex flex-row items-center justify-center">
-                    <input type="text" id="subTitle" name="subTitle" th:value="${memo != null ? memo.subTitle : ''}"
-                        class="w-full px-3 py-2 border-0 focus:border-0 transition duration-200 text-1xl font-bold text-gray-500"
-                        placeholder="请输入备忘录副标题">
-                </div>
-                <div class="flex flex-row items-center justify-between">
-                    <div class="flex-grow-2 flex flex-row items-center justify-start">
-                        <input type="hidden" id="tagIds" name="tagIds" th:value="${memo.tagIds}">
-                        <div id="tagContainer" class="flex flex-wrap gap-2 py-2">
-                            <span th:each="singleTag : ${tagList}" th:value="${singleTag.id}"
-                                th:text="${singleTag.title}" th:attr="data-value=${singleTag.id}"
-                                th:class="'tag-item inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer transition-all duration-200 bg-gray text-black hover:bg-primary/90 ' + ${memo != null and not #lists.isEmpty(memo.tagIds) and #lists.contains(memo.tagIds, singleTag.id) ? 'bg-primary/90 text-white' : 'bg-primary/10'}">
-                                默认标签
-                            </span>
-                        </div>
-                    </div>
-                    <div class="flex flex-row items-center justify-center hidden">
-                        <input type="number" id="orderNumber" name="orderNumber"
-                            th:value="${memo != null ? memo.orderNumber : '0'}"
-                            class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200"
-                            placeholder="请输入排序值">
+    <main class="flex-grow mx-auto flex flex-col items-center justify-start">
+        <form id="form" th:with="updateUrl=@{/memo/update}, createUrl=@{/memo/create}"
+            th:action="${memo.id != null ? updateUrl : createUrl}" method="post"
+            class="space-y-1 lg:w-[70vw] w-[90vw] h-full flex flex-col items-center justify-start rounded p-3 lg:p-4 flex flex-row items-center">
+            <div class="flex flex-row hidden">
+                <input type="text" id="id" name="id" th:value="${memo != null ? memo.id : ''}"
+                    class="w-full px-3 py-2 border-0 border-0 focus:ring-0 focus:outline-none transition duration-200"
+                    placeholder="id">
+            </div>
+            <div class="flex flex-row lg:w-[70vw] w-[90vw] items-center justify-center">
+                <input type="text" id="title" name="title" th:value="${memo != null ? memo.title : ''}"
+                    class="w-full px-3 py-2 border-0 focus:ring-0 focus:outline-none transition duration-200 text-4xl font-bold text-gray-800"
+                    placeholder="请输入备忘录标题">
+            </div>
+            <div class="flex flex-row lg:w-[70vw] w-[90vw] items-center justify-center">
+                <input type="text" id="subTitle" name="subTitle" th:value="${memo != null ? memo.subTitle : ''}"
+                    class="w-full px-3 py-2 border-0 focus:ring-0 focus:outline-none transition duration-200 text-1xl font-bold text-gray-500"
+                    placeholder="请输入备忘录副标题">
+            </div>
+            <div class="flex flex-row lg:w-[70vw] w-[90vw] items-center justify-between">
+                <div class="flex-grow-2 flex flex-row items-center justify-start">
+                    <input type="hidden" id="tagIds" name="tagIds" th:value="${memo.tagIds}">
+                    <div id="tagContainer" class="flex flex-wrap gap-2 py-2">
+                        <span th:each="singleTag : ${tagList}" th:value="${singleTag.id}" th:text="${singleTag.title}"
+                            th:attr="data-value=${singleTag.id}"
+                            th:class="'tag-item inline-flex items-center px-3 py-1.5 rounded-full text-sm font-medium cursor-pointer transition-all duration-200 bg-gray text-black hover:bg-primary/90 ' + ${memo != null and not #lists.isEmpty(memo.tagIds) and #lists.contains(memo.tagIds, singleTag.id) ? 'bg-primary/90 text-white' : 'bg-primary/10'}">
+                            默认标签
+                        </span>
                     </div>
                 </div>
-                <div>
-                    <textarea id="content" name="content" rows="8" th:value="${memo.content}" th:inline="text"
-                        class="w-full px-3 py-2 border border-gray-300 rounded-lg form-input-focus transition duration-200 resize-y"
-                        placeholder="请输入备忘录详细内容，支持换行输入...">[[${memo.content}]]
-                </textarea>
+                <div class="flex flex-row lg:w-[70vw] w-[90vw] items-center justify-center hidden">
+                    <input type="number" id="orderNumber" name="orderNumber"
+                        th:value="${memo != null ? memo.orderNumber : '0'}"
+                        class="w-full px-3 py-2 border-0 focus:ring-0 focus:outline-none transition duration-200"
+                        placeholder="请输入排序值">
                 </div>
-                <div class="flex justify-end space-x-4 pt-2">
-                    <button th:action="@{/memo}"
-                        class="px-3 py-2 bg-gray-200 text-black rounded-lg hover:bg-gray-300 transition duration-200">
-                        取消
-                    </button>
-                    <button type="submit"
-                        class="px-3 py-2 bg-primary rounded-lg hover:text-white text-black transition duration-200">
-                        保存
-                    </button>
-                </div>
-            </form>
-        </div>
+            </div>
+            <div class="flex flex-row lg:w-[70vw] w-[90vw] h-[60vh] items-center justify-center flex-1">
+                <textarea id="content" name="content" rows="8" th:value="${memo.content}" th:inline="text"
+                    class="w-full px-3 py-2 mt-5 border-0 focus:ring-0 focus:outline-none transition duration-200 transition-height duration-100 ease-in-out box-border min-h-[100vh] overflow-hidden !overflow-y-hidden [scrollbar-width:none] [-ms-overflow-style:none]"
+                    placeholder="请输入备忘录详细内容，支持换行输入...">[[${memo.content}]]</textarea>
+            </div>
+            <div class="flex justify-end space-x-4 pt-2">
+                <button th:action="@{/memo}"
+                    class="px-3 py-2 bg-gray-200 text-black rounded-lg hover:bg-gray-300 transition duration-200">
+                    取消
+                </button>
+                <button type="submit"
+                    class="px-3 py-2 bg-primary rounded-lg hover:text-white text-black transition duration-200">
+                    保存
+                </button>
+            </div>
+        </form>
+
+        <th:block th:replace="~{layout/base :: footer}"></th:block>
     </main>
 
-    <th:block th:replace="~{layout/base :: footer}"></th:block>
     <th:block>
         <script>
             const tagContainer = document.getElementById('tagContainer');
@@ -110,7 +111,41 @@
                 tagIds.value = valuesArray;
             }
 
-            document.addEventListener('DOMContentLoaded', initTagEvents);
+            const getExactHeight = (el) => {
+                const style = window.getComputedStyle(el);
+                const paddingTop = parseFloat(style.paddingTop) || 0;
+                const paddingBottom = parseFloat(style.paddingBottom) || 0;
+                const borderTop = parseFloat(style.borderTopWidth) || 0;
+                const borderBottom = parseFloat(style.borderBottomWidth) || 0;
+                const offset = paddingTop + paddingBottom + borderTop + borderBottom;
+                el.style.height = 'auto';
+                const contentHeight = el.scrollHeight - offset;
+                console.log('height', Math.max(contentHeight, parseFloat(style.minHeight) || 40) + 'px');
+                return Math.max(contentHeight, parseFloat(style.minHeight) || 40) + 'px';
+            };
+
+            const autoAdaptHeight = () => {
+                const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                const textarea = document.getElementById('content');
+                textarea.style.height = getExactHeight(textarea);
+                window.scrollTo(0, scrollTop);
+            };
+
+            document.addEventListener('DOMContentLoaded', () => {
+                initTagEvents();
+                autoAdaptHeight();
+
+                const textarea = document.getElementById('content');
+                textarea.addEventListener('input', autoAdaptHeight);
+                textarea.addEventListener('paste', autoAdaptHeight);
+                textarea.addEventListener('focus', autoAdaptHeight);
+                textarea.addEventListener('keydown', (e) => {
+                    if (['Enter', 'Backspace', 'Delete'].includes(e.key)) {
+                        setTimeout(autoAdaptHeight, 0);
+                    }
+                });
+            });
+            window.addEventListener('resize', autoAdaptHeight);
         </script>
     </th:block>
 
