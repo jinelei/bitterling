@@ -119,7 +119,7 @@
                 const borderBottom = parseFloat(style.borderBottomWidth) || 0;
                 const offset = paddingTop + paddingBottom + borderTop + borderBottom;
                 el.style.height = 'auto';
-                const contentHeight = el.scrollHeight - offset;
+                const contentHeight = el.scrollHeight - offset + 10;
                 console.log('height', Math.max(contentHeight, parseFloat(style.minHeight) || 40) + 'px');
                 return Math.max(contentHeight, parseFloat(style.minHeight) || 40) + 'px';
             };
