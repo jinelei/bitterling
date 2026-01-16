@@ -44,7 +44,11 @@
     <div class="fixed bottom-8 flex items-center justify-center rounded-lg bg-black/30">
         <a th:href="@{/memo}"
             class="flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem] hover:scale-110 hover:text-red-500 transition-transform duration-300 ease-in-out scale-100">
-            <i class="fa fa-book"></i>
+            <i class="fa fa-inbox"></i>
+        </a>
+        <a href="https://code.jinelei.com:9443" target="_blank"
+            class="flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem] hover:scale-110 hover:text-red-500 transition-transform duration-300 ease-in-out scale-100">
+            <i class="fa fa-terminal"></i>
         </a>
         <a th:each="bookmark : ${bookmarkByTags[__${tag?:'收藏'}__]}" th:href="${bookmark.url}" target="_blank"
             th:class="'flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem] hover:scale-110 transition-transform duration-300 ease-in-out scale-100 ' + ${'hover:text-' + bookmark.color + '-500'}"
@@ -53,7 +57,7 @@
         </a>
         <a th:href="@{/about}"
             class="flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem] hover:scale-110 hover:text-red-500 transition-transform duration-300 ease-in-out scale-100">
-            <i class="fa fa-plane"></i>
+            <i class="fa fa-user"></i>
         </a>
     </div>
 
