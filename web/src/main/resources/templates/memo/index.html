@@ -8,7 +8,6 @@
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
     <script th:src="@{/js/tailwind.min.js}"></script>
     <script th:src="@{/js/root.js}"></script>
-    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
     <link th:href="@{/css/root.css}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css" />
     <script type="module"
@@ -28,7 +27,7 @@
                     <li th:each="tag : ${tagList}" class="border-b border-gray-200">
                         <a th:href="@{/memo(tagId=${tag.id})}"
                             th:class="'tag-btn w-full flex items-center justify-between p-3 hover:bg-gray-150 transition-all ' + ${currentTagId == tag.id ? 'bg-gray-100' : ''}">
-                            <i th:class="'fa mr-2 ' + ${tag.icon}"></i>
+                            <sl-icon class="mr-2" th:name="${tag.icon}"></sl-icon>
                             <span th:text="${tag.title}"></span>
                             <span th:text="${tag.count}"
                                 class="bg-primary/20 rounded-full w-6 h-6 flex items-center justify-center text-xs">0</span>
