@@ -24,7 +24,6 @@ public class MessageService extends BaseService<MessageRepository, MessageDomain
     }
 
     public void userLoginNotify(String receiveUser) {
-        log.info("userLoginNotify: {}", receiveUser);
         final MessageDomain message = MessageDomain.ofSystemNotify(MSG_TITLE_USER_LOGIN, String.format("登录时间: %s",
                 LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd hh:mm:ss"))), receiveUser);
         Set<jakarta.validation.ConstraintViolation<MessageDomain>> violations = validator.validate(message);

@@ -16,6 +16,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 
+@SuppressWarnings("unused")
 @Service
 public class MemoTagRelateService
         extends BaseService<MemoTagRelateRepository, MemoTagRelateRecordDomain, MemoTagPrimaryKey> {

@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
+@SuppressWarnings("unused")
 @Service
 public class MemoTagService extends BaseService<MemoTagRepository, MemoTagDomain, Long> {
     private final MemoTagRelateService memoTagRelateService;
@@ -28,8 +29,7 @@ public class MemoTagService extends BaseService<MemoTagRepository, MemoTagDomain
         Optional.ofNullable(memoId).orElseThrow(() -> new BusinessException("备忘id不能为空"));
         List<MemoTagRelateRecordDomain> memoTagRelateList = memoTagRelateService.findByMemoId(memoId);
         Iterable<MemoTagDomain> tags = repository.findAllById(memoTagRelateList.stream().map(EmbeddedRecordDomain::getId).map(MemoTagPrimaryKey::getTagId).distinct().toList());
-        List<MemoTagDomain> list = StreamSupport.stream(tags.spliterator(), false).toList();
-        return list;
+        return StreamSupport.stream(tags.spliterator(), false).toList();
     }
 
 }
