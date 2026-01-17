@@ -8,8 +8,10 @@
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
     <script th:src="@{/js/tailwind.min.js}"></script>
     <script th:src="@{/js/root.js}"></script>
-    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
     <link th:href="@{/css/root.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css" />
+    <script type="module"
+            src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
 </head>
 
 <body class="min-h-screen flex flex-col items-center justify-center">
@@ -61,14 +63,8 @@
                     placeholder="请输入备忘录详细内容，支持换行输入...">[[${memo.content}]]</textarea>
             </div>
             <div class="lg:w-[70vw] w-[90vw] flex justify-end space-x-4 pt-2">
-                <button th:action="@{/memo}"
-                    class="px-3 py-2 bg-gray-200 text-black rounded-lg hover:bg-gray-300 transition duration-200">
-                    取消
-                </button>
-                <button type="submit"
-                    class="px-3 py-2 bg-primary rounded-lg hover:text-white text-black transition duration-200">
-                    保存
-                </button>
+                <sl-button th:href="@{/memo}" variant="default">取消</sl-button>
+                <sl-button type="submit" variant="primary">保存</sl-button>
             </div>
         </form>
 
@@ -120,7 +116,6 @@
                 const offset = paddingTop + paddingBottom + borderTop + borderBottom;
                 el.style.height = 'auto';
                 const contentHeight = el.scrollHeight - offset + 10;
-                console.log('height', Math.max(contentHeight, parseFloat(style.minHeight) || 40) + 'px');
                 return Math.max(contentHeight, parseFloat(style.minHeight) || 40) + 'px';
             };
 

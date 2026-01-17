@@ -11,7 +11,7 @@
     <link th:href="@{/css/root.css}" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css" />
     <script type="module"
-        src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
+            src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
     <th:block th:fragment="styles">
     </th:block>
 </head>
@@ -45,10 +45,6 @@
                         <a th:href="@{/memo}"
                             th:class="'py-1 inline-flex items-center border-0 border-b-2 hover:bg-primary/10 dark:text-white ' + ${activeMenu == 'memo' ? 'border-red-500' : ''}">
                             备忘
-                        </a>
-                        <a th:href="@{/bookmark}"
-                            th:class="'py-1 inline-flex items-center border-0 border-b-2 hover:bg-primary/10 dark:text-white ' + ${activeMenu == 'bookmark' ? 'border-red-500' : ''}">
-                            书签
                         </a>
                         <a th:href="@{/about}"
                             th:class="'py-1 inline-flex items-center border-0 border-b-2 hover:bg-primary/10 dark:text-white ' + ${activeMenu == 'about' ? 'border-red-500' : ''}">

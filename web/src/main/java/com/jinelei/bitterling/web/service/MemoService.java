@@ -100,7 +100,6 @@ public class MemoService extends BaseService<MemoRepository, MemoDomain, Long> {
                                 .toList();
                 props.put("tagList", tagList);
                 props.put("currentTagId", request.getTagId());
-                log.info("renderIndex: {}", props);
                 return props;
         }
 

@@ -40,7 +40,6 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
         itemByFolderId.put("全部", map.get(BookmarkType.ITEM));
         props.put("tags", map.get(BookmarkType.FOLDER));
         props.put("bookmarkByTags", itemByFolderId);
-        log.info("renderIndex: {}", props);
         return props;
     }
 
