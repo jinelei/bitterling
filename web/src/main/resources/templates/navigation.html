@@ -8,8 +8,10 @@
     <link rel="icon" th:href="@{/favicon.ico}" type="image/x-icon">
     <script th:src="@{/js/tailwind.min.js}"></script>
     <script th:src="@{/js/root.js}"></script>
-    <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
     <link th:href="@{/css/root.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css" />
+    <script type="module"
+        src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
 </head>
 
 <body class="min-h-screen flex flex-col items-center justify-center">
@@ -34,7 +36,7 @@
                 <!-- 搜索按钮 -->
                 <button type="submit"
                     class="absolute right-1 top-1 bottom-1 w-10 rounded-full bg-primary text-white flex items-center justify-center hover:bg-primary/90 active:bg-primary/80 transition-all">
-                    <i class="fa fa-search"></i>
+                    <sl-icon name="search-heart-fill"></sl-icon>
                 </button>
             </form>
         </div>
@@ -44,20 +46,20 @@
     <div class="fixed bottom-8 flex items-center justify-center rounded-lg bg-black/30">
         <a th:href="@{/memo}"
             class="flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem] hover:scale-110 hover:text-red-500 transition-transform duration-300 ease-in-out scale-100">
-            <i class="fa fa-inbox"></i>
+            <sl-icon name="book-half"></sl-icon>
         </a>
         <a href="https://code.jinelei.com:9443" target="_blank"
             class="flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem] hover:scale-110 hover:text-red-500 transition-transform duration-300 ease-in-out scale-100">
-            <i class="fa fa-terminal"></i>
+            <sl-icon name="file-earmark-code-fill"></sl-icon>
         </a>
         <a th:each="bookmark : ${bookmarkByTags[__${tag?:'收藏'}__]}" th:href="${bookmark.url}" target="_blank"
             th:class="'flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem] hover:scale-110 transition-transform duration-300 ease-in-out scale-100 ' + ${'hover:text-' + bookmark.color + '-500'}"
             th:attr="data-category=${bookmark.parentId}" th:data-name="${bookmark.name}">
-            <i th:class="'fa ' + ${bookmark.icon}"></i>
+            <sl-icon th:name="${bookmark.icon}"></sl-icon>
         </a>
         <a th:href="@{/about}"
             class="flex items-center justify-center bg-black/50 text-white rounded-lg m-2 p-3 text-[1rem] hover:scale-110 hover:text-red-500 transition-transform duration-300 ease-in-out scale-100">
-            <i class="fa fa-user"></i>
+            <sl-icon name="person-rolodex"></sl-icon>
         </a>
     </div>
 
@@ -67,8 +69,6 @@
 
     <th:block>
         <script>
-            let docTime = document.getElementById('time');
-            let docDate = document.getElementById('date');
             function updateRealTime() {
                 const now = new Date();
                 const hours = now.getHours().toString().padStart(2, '0');
@@ -81,8 +81,8 @@
                 const weekDays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
                 const weekDay = weekDays[now.getDay()];
                 const dateStr = `${year}年${month}月${day}日 ${weekDay}`;
-                docTime.textContent = timeStr;
-                docDate.textContent = dateStr;
+                document.getElementById('time').textContent = timeStr;
+                document.getElementById('date').textContent = dateStr;
             }
             function initThemeSwitch() {
                 const themeToggle = document.getElementById('theme');
@@ -139,7 +139,7 @@
                 })
             }
             function copyDateTime() {
-                docTime.addEventListener('click', async () => {
+                document.getElementById('time').addEventListener('click', async () => {
                     try {
                         const now = new Date();
                         const hours = now.getHours().toString().padStart(2, '0');
@@ -151,7 +151,7 @@
                         alert('复制失败，请手动复制！');
                     }
                 });
-                docDate.addEventListener('click', async () => {
+                document.getElementById('date').addEventListener('click', async () => {
                     try {
                         const now = new Date();
                         const hours = now.getHours().toString().padStart(2, '0');

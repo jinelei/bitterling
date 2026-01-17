@@ -48,9 +48,8 @@
                                 <span class="flex-1 flex flex-row">
                                     <span class="mr-4" th:text="${memo.title}"></span>
                                     <span class="text-gray-400" th:if="${memo.tags}" th:each="tag : ${memo.tags}">
-                                        <span
-                                            class="py-1 px-1 mr-2 bg-gray-400 hover:bg-gray-500 text-white text-xs rounded"
-                                            th:text="${tag.title}"></span>
+                                        <sl-tag variant="success" th:text="${tag.title}" size="small"
+                                            class="mr-2"></sl-tag>
                                     </span>
                                 </span>
                                 <span th:text="${memo.subTitle}" class="text-gray-400 text-xs mt-1"></span>
