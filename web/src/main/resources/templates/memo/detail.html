@@ -24,11 +24,10 @@
                 th:text="${#temporals.format(memo.updateTime, 'yyyy-MM-dd HH:mm:ss')}">更新时间占位</div>
         </div>
         <div class="flex flex-row items-center justify-start mt-5">
-            <span th:each="singleTag : ${memo.tags}" th:value="${singleTag.id}" th:text="${singleTag.title}"
-                th:attr="data-value=${singleTag.id}"
-                class="tag-item items-center px-3 py-1.5 mx-1 rounded-full text-sm font-medium cursor-pointer transition-all duration-200 bg-gray text-black hover:bg-primary/90 bg-primary/90 text-white">
-                默认标签
-            </span>
+            <sl-tag variant="success" size="small"
+                class="px-3 py-1 mx-1 rounded-full text-sm cursor-pointer bg-primary/90 text-white"
+                th:each="singleTag : ${memo.tags}" th:value="${singleTag.id}" th:text="${singleTag.title}"
+                th:attr="data-value=${singleTag.id}"></sl-tag>
         </div>
         <div class="mt-5" th:utext="${memo.contentRender}"></div>
     </main>
