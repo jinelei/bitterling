@@ -10,6 +10,9 @@
     <script th:src="@{/js/root.js}"></script>
     <link th:href="@{/css/font-awesome.min.css}" rel="stylesheet">
     <link th:href="@{/css/root.css}" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css" />
+    <script type="module"
+        src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
 </head>
 
 <body class="min-h-screen flex flex-col items-center justify-center">
@@ -62,6 +65,7 @@
                                 class="z-1000 bg-gray-100 hover:bg-primary/100 hover:text-white rounded-lg flex items-center justify-center text-center w-[3rem] h-[3rem] transition-all duration-300 ml-2">
                                 <i class="fa fa-trash"></i>
                             </a>
+                            <sl-button>Click me</sl-button>
                         </span>
                     </li>
                 </ul>
