@@ -57,42 +57,29 @@
                                 <span class="text-gray-400 text-xs mt-1"
                                     th:text="${#temporals.format(memo.updateTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
                             </a>
-                            <a th:href="@{/memo/edit/{id}(id=${memo.id})}"
-                                class="z-1000 bg-gray-100 hover:bg-primary/100 hover:text-white rounded-lg flex items-center justify-center text-center w-[3rem] h-[3rem] transition-all duration-300">
-                                <i class="fa fa-edit"></i>
-                            </a>
-                            <a onclick="showDeleteModal(this)" th:data-value="${memo.id}" th:data-title="${memo.title}"
-                                class="z-1000 bg-gray-100 hover:bg-primary/100 hover:text-white rounded-lg flex items-center justify-center text-center w-[3rem] h-[3rem] transition-all duration-300 ml-2">
-                                <i class="fa fa-trash"></i>
-                            </a>
-                            <sl-button>Click me</sl-button>
+                            <sl-tooltip content="编辑记录">
+                                <sl-icon-button name="pencil-square" label="pencil-square" class="ml-3 text-blue-500"
+                                    th:href="@{/memo/edit/{id}(id=${memo.id})}" th:data-value="${memo.id}"
+                                    th:data-title="${memo.title}" variant="danger" size="small"></sl-icon-button>
+                            </sl-tooltip>
+                            <sl-tooltip content="删除记录">
+                                <sl-icon-button name="trash" label="trash" class="text-red-500"
+                                    th:data-value="${memo.id}" th:data-title="${memo.title}" variant="danger"
+                                    size="small"></sl-icon-button>
+                            </sl-tooltip>
                         </span>
                     </li>
                 </ul>
             </div>
 
-            <a th:href="@{/memo/create}"
-                class="fixed bottom-6 right-6 w-14 h-14 rounded-full bg-blue-600 text-white flex items-center justify-center shadow-lg hover:bg-blue-700 active:scale-95 transition-all duration-300 animate-bounce-slow z-50">
-                <i class="fa fa-solid fa-plus text-xl"></i>
-            </a>
+            <sl-icon-button name="plus-lg" label="Settings" th:href="@{/memo/create}"
+                class="fixed bottom-6 right-6 text-[1.5rem] text-white rounded-full bg-primary shadow-lg transition-all duration-300 animate-bounce-slow z-50">
+            </sl-icon-button>
 
-            <div id="deleteModal" class="fixed inset-0 hidden items-center justify-center bg-black/50 z-50">
-                <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-lg">
-                    <h3 class="text-lg font-semibold text-gray-800">确认删除</h3>
-                    <p class="mt-2 text-gray-600" id="modalMessage">确定要删除这条记录吗？此操作不可撤销。</p>
-                    <div class="mt-4 flex justify-end space-x-3">
-                        <button onclick="hideDeleteModal()"
-                            class="px-4 py-2 text-gray-700 bg-gray-200 rounded hover:bg-gray-300 transition-colors">
-                            取消
-                        </button>
-                        <button onclick="confirmDelete()"
-                            class="px-4 py-2 text-white bg-red-500 rounded hover:bg-red-600 transition-colors">
-                            确认删除
-                        </button>
-                    </div>
-                </div>
-            </div>
-
+            <sl-dialog label="删除提示" class="dialog-overview">
+                确定要删除这条记录吗？此操作不可撤销。
+                <sl-button slot="footer" variant="danger">确认删除</sl-button>
+            </sl-dialog>
 
             <th:block th:replace="~{layout/base :: footer}"></th:block>
         </main>
@@ -101,43 +88,31 @@
     <th:block>
         <script>
             let currentRecordId = null;
-            const modal = document.getElementById('deleteModal');
-            const modalMessage = document.getElementById('modalMessage');
 
-            function showDeleteModal(e) {
-                console.log('element', e);
-                currentRecordId = e.dataset.value;
-                let currentRecordTitle = e.dataset.title;
-                modalMessage.textContent = `确定要删除 ID 为 ${currentRecordTitle} 的记录吗？此操作不可撤销！`;
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
-                document.body.style.overflow = 'hidden';
+            function initDeleteConfirm() {
+                const dialog = document.querySelector('.dialog-overview');
+                const closeButton = dialog.querySelector('sl-button[slot="footer"]');
+                closeButton.addEventListener('click', () => dialog.hide());
+
+                document.querySelectorAll('[name="trash"]').forEach(element => {
+                    const dialog = document.querySelector('.dialog-overview');
+                    element.addEventListener('click', (e) => {
+                        currentRecordId = e?.target?.dataset?.value;
+                        dialog.show();
+                    });
+                })
+                document.querySelectorAll('[label="删除提示"]').forEach(element => {
+                    element.addEventListener('click', () => {
+                        dialog.hide();
+                        if (currentRecordId) {
+                            window.open("/memo/delete/" + currentRecordId, "_self");
+                        }
+                    });
+                })
             }
 
-            function hideDeleteModal() {
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
-                document.body.style.overflow = '';
-                currentRecordId = null;
-            }
+            initDeleteConfirm();
 
-            function confirmDelete() {
-                if (currentRecordId) {
-                    window.open("/memo/delete/" + currentRecordId, "_self");
-                    hideDeleteModal();
-                }
-            }
-
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    hideDeleteModal();
-                }
-            });
-            document.addEventListener('keydown', (e) => {
-                if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-                    hideDeleteModal();
-                }
-            });
         </script>
     </th:block>
 
