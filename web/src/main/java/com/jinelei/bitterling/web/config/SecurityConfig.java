@@ -15,11 +15,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;
 
 import com.jinelei.bitterling.web.service.MessageService;
 
 @Configuration
 @EnableWebSecurity
+@EnableJdbcHttpSession(maxInactiveIntervalInSeconds = 1800)
 public class SecurityConfig {
     private final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
