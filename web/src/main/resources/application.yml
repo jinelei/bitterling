@@ -84,9 +84,8 @@ spring:
       path-patterns: "/**"
 logging:
   level:
-    root: warn
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql: TRACE
+    root: WARN
+    org.hibernate.SQL: WARN
     com.jinelei.bitterling: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss.SSS} [%thread] %-5level %logger{50} - %msg%n"
