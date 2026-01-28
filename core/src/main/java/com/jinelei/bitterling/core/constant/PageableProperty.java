@@ -2,11 +2,11 @@ package com.jinelei.bitterling.core.constant;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(name = "默认分页配置")
+@Schema(name = "PageableProperty", description = "默认分页配置")
 public class PageableProperty {
-    @Schema(name = "默认分页页码")
+    @Schema(name = "DEFAULT_PAGE_NO", description = "默认分页页码")
     public static Integer DEFAULT_PAGE_NO = 1;
-    @Schema(name = "默认分页大小")
+    @Schema(name = "DEFAULT_PAGE_SIZE", description = "默认分页大小")
     public static Integer DEFAULT_PAGE_SIZE = 10;
 
     public void setDefaultPageNo(Integer defaultPageNo) {

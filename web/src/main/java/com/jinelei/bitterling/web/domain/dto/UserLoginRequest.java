@@ -4,13 +4,13 @@ import java.io.Serializable;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(name = "用户登录请求")
+@Schema(name = "UserLoginRequest", description = "用户登录请求")
 public class UserLoginRequest implements Serializable {
-    @Schema(name = "用户名")
+    @Schema(name = "username", description = "用户名")
     private String username;
-    @Schema(name = "密码")
+    @Schema(name = "password", description = "密码")
     private String password;
-    @Schema(name = "是否记住登录")
+    @Schema(name = "rememberMe", description = "是否记住登录")
     Boolean rememberMe;
 
     public String getUsername() {

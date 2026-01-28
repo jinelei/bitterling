@@ -12,7 +12,7 @@ import lombok.ToString;
 @Data
 @ToString
 @EqualsAndHashCode
-@Schema(name = "通用响应对象")
+@Schema(name = "GenericResult", description = "通用响应对象")
 @SuppressWarnings("unused")
 @JsonPropertyOrder({"code", "message", "data"})
 public class GenericResult<T> {
@@ -22,11 +22,11 @@ public class GenericResult<T> {
     public static final String MESSAGE_FAILURE_INTERNAL = "内部错误";
     public static final String MESSAGE_FAILURE_BUSINESS = "业务错误";
 
-    @Schema(name = "错误代码")
+    @Schema(name = "code", description = "错误代码")
     protected Integer code;
-    @Schema(name = "错误信息")
+    @Schema(name = "message", description = "错误信息")
     protected String message;
-    @Schema(name = "响应数据")
+    @Schema(name = "data", description = "响应数据")
     protected T data;
 
     public static <T> GenericResult<T> success(T data) {

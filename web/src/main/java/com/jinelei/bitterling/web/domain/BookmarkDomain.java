@@ -20,24 +20,24 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "BOOKMARK")
-@Schema(title = "书签领域对象", description = "书签领域对象")
+@Schema(name = "BookmarkDomain", description = "书签领域对象")
 public class BookmarkDomain extends TreeRecordDomain<Long> implements TreeView<BookmarkDomain, Long> {
     @Column(name = "name", unique = true)
-    @Schema(description = "书签名称")
+    @Schema(name = "name", description = "书签名称")
     private String name;
     @Column(name = "type")
-    @Schema(description = "书签类型")
+    @Schema(name = "type", description = "书签类型")
     private BookmarkType type;
     @Column(name = "url")
-    @Schema(description = "书签地址")
+    @Schema(name = "url", description = "书签地址")
     private String url;
     @Column(name = "icon")
-    @Schema(description = "书签图标")
+    @Schema(name = "icon", description = "书签图标")
     private String icon;
     @Column(name = "color")
-    @Schema(description = "书签颜色")
+    @Schema(name = "color", description = "书签颜色")
     private String color;
     @Transient
-    @Schema(description = "子级")
+    @Schema(name = "children", description = "子级")
     protected transient List<BookmarkDomain> children;
 }

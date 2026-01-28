@@ -1,9 +1,8 @@
 package com.jinelei.bitterling.web.controller;
 
 import com.jinelei.bitterling.core.controller.BaseController;
-import com.jinelei.bitterling.core.exception.BusinessException;
+import com.jinelei.bitterling.core.domain.result.GenericResult;
 import com.jinelei.bitterling.web.domain.MemoDomain;
-import com.jinelei.bitterling.web.domain.dto.MemoPageRequest;
 import com.jinelei.bitterling.web.service.MemoService;
 import com.jinelei.bitterling.web.service.MemoTagService;
 import com.jinelei.bitterling.web.service.IndexService;
@@ -11,14 +10,9 @@ import com.jinelei.bitterling.web.service.MessageService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
-import java.util.Optional;
-
-@Controller
+@RestController
 @RequestMapping("/memo")
 @Tag(name = "备忘管理", description = "备忘相关接口")
 public class MemoController extends BaseController {
@@ -28,76 +22,32 @@ public class MemoController extends BaseController {
     private final MessageService messageService;
 
     public MemoController(MemoService service, IndexService indexService, MessageService messageService,
-            MemoTagService memoTagService) {
+                          MemoTagService memoTagService) {
         this.service = service;
         this.indexService = indexService;
         this.messageService = messageService;
         this.memoTagService = memoTagService;
     }
 
-    @GetMapping(value = { "", "/", "/index" })
-    public ModelAndView indexPage(MemoPageRequest request) {
-        ModelAndView modelAndView = new ModelAndView("memo/index");
-        modelAndView.addAllObjects(service.renderIndex(request));
-        modelAndView.addObject("title", indexService.getTitle());
-        modelAndView.addObject("greeting", indexService.getGreeting());
-        modelAndView.addObject("unreadMessage", messageService.unreadMessages());
-        return modelAndView;
-    }
-
-    @GetMapping(value = { "/{id}" })
-    public ModelAndView detailPage(@PathVariable("id") Long id, MemoPageRequest request) {
-        ModelAndView modelAndView = new ModelAndView("memo/detail");
-        Optional.ofNullable(id).orElseThrow(() -> new BusinessException("id不能为空"));
-        Optional.ofNullable(request).ifPresent(r -> r.setId(id));
-        modelAndView.addAllObjects(service.renderDetail(request));
-        modelAndView.addObject("title", indexService.getTitle());
-        modelAndView.addObject("greeting", indexService.getGreeting());
-        modelAndView.addObject("unreadMessage", messageService.unreadMessages());
-        return modelAndView;
-    }
-
-    @GetMapping(value = { "/edit/{id}" })
-    public ModelAndView editPage(@PathVariable("id") Long id, MemoPageRequest request) {
-        ModelAndView modelAndView = new ModelAndView("memo/edit");
-        Optional.ofNullable(id).orElseThrow(() -> new BusinessException("id不能为空"));
-        Optional.ofNullable(request).ifPresent(r -> r.setId(id));
-        modelAndView.addAllObjects(service.renderDetail(request));
-        modelAndView.addObject("title", indexService.getTitle());
-        modelAndView.addObject("greeting", indexService.getGreeting());
-        modelAndView.addObject("unreadMessage", messageService.unreadMessages());
-        return modelAndView;
-    }
-
-    @GetMapping(value = { "/create" })
-    public ModelAndView createPage() {
-        ModelAndView modelAndView = new ModelAndView("memo/edit");
-        modelAndView.addAllObjects(service.renderCreate());
-        modelAndView.addObject("title", indexService.getTitle());
-        modelAndView.addObject("greeting", indexService.getGreeting());
-        modelAndView.addObject("unreadMessage", messageService.unreadMessages());
-        return modelAndView;
-    }
-
     @PostMapping("create")
-    @Operation(summary = "新增备忘", description = "新增备忘")
-    public RedirectView create(@Valid MemoDomain.CreateRequest req) {
+    @Operation(operationId = "memoCreate", summary = "新增备忘", description = "新增备忘")
+    public GenericResult<String> create(@Valid MemoDomain.CreateRequest req) {
         this.service.create(req);
-        return new RedirectView("/memo");
+        return GenericResult.success("新增成功");
     }
 
     @PostMapping("update")
-    @Operation(summary = "更新备忘", description = "根据id更新备忘")
-    public RedirectView update(@Valid MemoDomain.UpdateRequest req) {
+    @Operation(operationId = "memoUpdate", summary = "更新备忘", description = "根据id更新备忘")
+    public GenericResult<String> update(@Valid MemoDomain.UpdateRequest req) {
         this.service.update(req);
-        return new RedirectView("/memo");
+        return GenericResult.success("更新成功");
     }
 
-    @GetMapping("delete/{id}")
-    @Operation(summary = "删除备忘", description = "根据id删除备忘")
-    public RedirectView deleteById(@PathVariable(value = "id", required = true) Long id) {
+    @PostMapping("delete/{id}")
+    @Operation(operationId = "memoDelete", summary = "删除备忘", description = "根据id删除备忘")
+    public GenericResult<String> deleteById(@PathVariable(value = "id", required = true) Long id) {
         this.service.deleteById(id);
-        return new RedirectView("/memo");
+        return GenericResult.success("删除成功");
     }
 
 }

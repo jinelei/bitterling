@@ -16,11 +16,12 @@ import lombok.ToString;
 @Data
 @ToString
 @EqualsAndHashCode
+@Schema(name = "MemoTagPrimaryKey", description = "备忘关联联合主键")
 public class MemoTagPrimaryKey {
     @Column(name = "memo_id")
-    @Schema(description = "备忘id")
+    @Schema(name = "memoId", description = "备忘id")
     private Long memoId;
     @Column(name = "tag_id")
-    @Schema(description = "备忘标签id")
+    @Schema(name = "tagId", description = "备忘标签id")
     private Long tagId;
 }

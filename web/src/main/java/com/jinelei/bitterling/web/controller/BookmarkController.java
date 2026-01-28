@@ -36,39 +36,24 @@ public class BookmarkController extends BaseController {
         this.messageService = messageService;
     }
 
-    @GetMapping(value = {"", "/", "/index"})
-    public ModelAndView index(Principal principal) {
-        ModelAndView modelAndView = new ModelAndView("bookmark");
-        modelAndView.addAllObjects(service.renderIndex());
-        modelAndView.addObject("title", indexService.getTitle());
-        modelAndView.addObject("greeting", indexService.getGreeting());
-        modelAndView.addObject("unreadMessage", messageService.unreadMessages());
-        modelAndView.addObject("username", Optional.ofNullable(principal).map(Principal::getName).orElse("匿名用户"));
-        log.info("modelAndView: {}", modelAndView);
-        return modelAndView;
-    }
-
-    @ResponseBody
     @PostMapping("create")
-    @Operation(summary = "新增书签", description = "新增书签")
+    @Operation(operationId = "bookmarkCreate", summary = "新增书签", description = "新增书签")
     public GenericResult<String> create(@RequestBody BookmarkDomain req) {
         log.info("create: {}", req);
         this.service.save(req);
         return GenericResult.success("success");
     }
 
-    @ResponseBody
     @PostMapping("update")
-    @Operation(summary = "更新书签", description = "根据id更新书签")
+    @Operation(operationId = "bookmarkUpdate", summary = "更新书签", description = "根据id更新书签")
     public GenericResult<String> update(@RequestBody BookmarkDomain req) {
         log.info("update: {}", req);
         this.service.save(req);
         return GenericResult.success("success");
     }
 
-    @ResponseBody
     @PostMapping("delete")
-    @Operation(summary = "删除书签", description = "根据id删除书签")
+    @Operation(operationId = "bookmarkDelete", summary = "删除书签", description = "根据id删除书签")
     public GenericResult<String> delete(@RequestBody BookmarkDomain req) {
         log.info("delete: {}", req);
         Long id = Optional.ofNullable(req).map(BookmarkDomain::getId)
@@ -77,9 +62,8 @@ public class BookmarkController extends BaseController {
         return GenericResult.success("success");
     }
 
-    @ResponseBody
     @PostMapping("list")
-    @Operation(summary = "查询书签列表", description = "查询书签列表")
+    @Operation(operationId = "bookmarkList", summary = "查询书签列表", description = "查询书签列表")
     public GenericResult<List<BookmarkDomain>> list(@RequestBody BookmarkDomain req) {
         log.info("list: {}", req);
         TimeTracker.getInstance().mark("查询书签列表");
@@ -90,9 +74,8 @@ public class BookmarkController extends BaseController {
         return GenericResult.success(list);
     }
 
-    @ResponseBody
     @PostMapping("tree")
-    @Operation(summary = "查询书签树", description = "查询书签树")
+    @Operation(operationId = "bookmarkTree", summary = "查询书签树", description = "查询书签树")
     public GenericResult<List<BookmarkDomain>> tree(@RequestBody BookmarkDomain req) {
         log.info("tree: {}", req);
         TimeTracker.getInstance().mark("查询书签树");

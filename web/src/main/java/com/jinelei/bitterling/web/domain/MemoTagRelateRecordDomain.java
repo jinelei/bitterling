@@ -15,7 +15,7 @@ import java.io.Serializable;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "MEMO_TAG_RELATE")
-@Schema(title = "备忘标签关联领域对象", description = "备忘标签关联领域对象")
+@Schema(name = "MemoTagRelateRecordDomain", description = "备忘标签关联领域对象")
 public class MemoTagRelateRecordDomain extends EmbeddedRecordDomain<MemoTagPrimaryKey> implements Serializable {
 
 }

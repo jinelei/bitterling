@@ -13,16 +13,16 @@ import lombok.ToString;
 @Data
 @ToString
 @EqualsAndHashCode(callSuper = true)
-@Schema(name = "分页响应对象")
+@Schema(name = "PageableResult", description = "分页响应对象")
 @SuppressWarnings("unused")
 @JsonPropertyOrder({"code", "message", "pageNo", "pageSize", "total", "data"})
 public class PageableResult<T extends Collection<?>> extends GenericResult<T> {
     public static final Integer DEFAULT_TOTAL = 0;
-    @Schema(name = "分页页码")
+    @Schema(name = "pageNo", description = "分页页码")
     protected Integer pageNo;
-    @Schema(name = "分页大小")
+    @Schema(name = "pageSize", description = "分页大小")
     protected Integer pageSize;
-    @Schema(name = "总计")
+    @Schema(name = "total", description = "总计")
     protected Integer total;
 
     public static <T extends Collection<?>> PageableResult<T> of(T data) {

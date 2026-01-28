@@ -13,23 +13,23 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "MEMO_TAG")
-@Schema(title = "备忘标签领域对象", description = "备忘标签领域对象")
+@Schema(name = "MemoTagDomain", description = "备忘标签领域对象")
 public class MemoTagDomain extends RecordDomain<Long> {
     @Column(name = "title")
-    @Schema(description = "备忘标签标题")
+    @Schema(name = "title", description = "备忘标签标题")
     private String title;
     @Column(name = "icon")
-    @Schema(description = "备忘标签图标")
+    @Schema(name = "icon", description = "备忘标签图标")
     private String icon;
 
-    @Schema(title = "普通备忘对象")
+    @Schema(name = "Response", description = "普通备忘对象")
     public record Response(
             @NotNull(message = "备忘标签id不能为空") Long id,
             @NotNull(message = "备忘标签标题不能为空") String title,
             @NotNull(message = "备忘标签图标不能为空") String icon) {
     }
 
-    @Schema(title = "带总数备忘对象")
+    @Schema(name = "CountResponse", description = "带总数备忘对象")
     public record CountResponse(
             @NotNull(message = "备忘标签id不能为空") Long id,
             @NotNull(message = "备忘标签标题不能为空") String title,

@@ -20,28 +20,28 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Table(name = "MESSAGE")
-@Schema(title = "消息领域对象", description = "消息领域对象")
+@Schema(name = "MessageDomain", description = "消息领域对象")
 public class MessageDomain extends RecordDomain<Long> {
     @Column(name = "send_user")
-    @Schema(description = "发送人")
+    @Schema(name = "sendUser", description = "发送人")
     private String sendUser;
     @Column(name = "receive_user")
-    @Schema(description = "接收人")
+    @Schema(name = "receiveUser", description = "接收人")
     private String receiveUser;
     @Column(name = "group_id")
-    @Schema(description = "消息组")
+    @Schema(name = "groupId", description = "消息组")
     private String groupId;
     @Column(name = "title")
-    @Schema(description = "消息标题")
+    @Schema(name = "title", description = "消息标题")
     private String title;
     @Column(name = "type")
-    @Schema(description = "消息类型")
+    @Schema(name = "type", description = "消息类型")
     private MessageType type = MessageType.NOTIFY;
     @Column(name = "content")
-    @Schema(description = "消息内容")
+    @Schema(name = "content", description = "消息内容")
     private String content;
     @Column(name = "read_state")
-    @Schema(description = "读取状态")
+    @Schema(name = "readState", description = "读取状态")
     private Boolean readState = Boolean.FALSE;
 
     public static MessageDomain ofSystemNotify(String title, String content, String receiveUser) {
