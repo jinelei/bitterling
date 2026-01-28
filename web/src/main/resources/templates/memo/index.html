@@ -9,110 +9,111 @@
     <script th:src="@{/js/tailwind.min.js}"></script>
     <script th:src="@{/js/root.js}"></script>
     <link th:href="@{/css/root.css}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css" />
-    <script type="module"
-            src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
+    <link rel="stylesheet" th:href="@{/shoelace/themes/light.css}"/>
+    <script type="module" th:src="@{/shoelace/shoelace-autoloader.js}"></script>
 </head>
 
 <body class="min-h-screen flex flex-col items-center justify-center">
 
-    <div class="w-full">
-        <th:block th:replace="~{layout/base :: navbar('memo')}"></th:block>
-    </div>
+<div class="w-full">
+    <th:block th:replace="~{layout/base :: navbar('memo')}"></th:block>
+</div>
 
-    <div class="flex flex-grow h-[calc(100vh-64px)] container lg:w-[70vw] w-[90vw]">
-        <aside class="w-64 bg-white sidebar-shadow sticky top-0 flex flex-col hidden md:block">
-            <div class="flex-grow overflow-y-auto p-4">
-                <ul id="tagList" class="space-y-2">
-                    <li th:each="tag : ${tagList}" class="border-b border-gray-200">
-                        <a th:href="@{/memo(tagId=${tag.id})}"
-                            th:class="'tag-btn w-full flex items-center justify-between p-3 hover:bg-gray-150 transition-all ' + ${currentTagId == tag.id ? 'bg-gray-100' : ''}">
-                            <sl-icon class="mr-2" th:name="${tag.icon}"></sl-icon>
-                            <span th:text="${tag.title}"></span>
-                            <span th:text="${tag.count}"
-                                class="bg-primary/20 rounded-full w-6 h-6 flex items-center justify-center text-xs">0</span>
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </aside>
+<div class="flex flex-grow h-[calc(100vh-64px)] container lg:w-[70vw] w-[90vw]">
+    <aside class="w-64 bg-white sidebar-shadow sticky top-0 flex flex-col hidden md:block">
+        <div class="flex-grow overflow-y-auto p-4">
+            <ul id="tagList" class="space-y-2">
+                <li th:each="tag : ${tagList}" class="border-b border-gray-200">
+                    <a th:href="@{/memo(tagId=${tag.id})}"
+                       th:class="'tag-btn w-full flex items-center justify-between p-3 hover:bg-gray-150 transition-all ' + ${currentTagId == tag.id ? 'bg-gray-100' : ''}">
+                        <sl-icon class="mr-2" th:name="${tag.icon}"></sl-icon>
+                        <span th:text="${tag.title}"></span>
+                        <span th:text="${tag.count}"
+                              class="bg-primary/20 rounded-full w-6 h-6 flex items-center justify-center text-xs">0</span>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </aside>
 
-        <main class="bg-white mx-auto py-6 p-3 flex-grow flex flex-col items-center">
-            <div class="flex-grow w-full top-0">
-                <ul id="memoList" class="space-y-2">
-                    <li th:each="memo : ${memoList}" class="border-b border-gray-200">
+    <main class="bg-white mx-auto py-6 p-3 flex-grow flex flex-col items-center">
+        <div class="flex-grow w-full top-0">
+            <ul id="memoList" class="space-y-2">
+                <li th:each="memo : ${memoList}" class="border-b border-gray-200">
                         <span class="flex-1 flex flex-row items-center hover:bg-gray-50 transition-all duration-300">
                             <a th:href="@{/memo/{id}(id=${memo.id})}"
-                                class="tag-btn w-full flex flex-col items-start justify-between p-3 transition-all">
+                               class="tag-btn w-full flex flex-col items-start justify-between p-3 transition-all">
                                 <span class="flex-1 flex flex-row">
                                     <span class="mr-4" th:text="${memo.title}"></span>
                                     <span class="text-gray-400" th:if="${memo.tags}" th:each="tag : ${memo.tags}">
                                         <sl-tag variant="success" th:text="${tag.title}" size="small"
-                                            class="mr-2"></sl-tag>
+                                                class="mr-2"></sl-tag>
                                     </span>
                                 </span>
                                 <span th:text="${memo.subTitle}" class="text-gray-400 text-xs mt-1"></span>
                                 <span class="text-gray-400 text-xs mt-1"
-                                    th:text="${#temporals.format(memo.updateTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
+                                      th:text="${#temporals.format(memo.updateTime, 'yyyy-MM-dd HH:mm:ss')}"></span>
                             </a>
                             <sl-tooltip content="编辑记录">
                                 <sl-icon-button name="pencil-square" label="pencil-square" class="ml-3 text-blue-500"
-                                    th:href="@{/memo/edit/{id}(id=${memo.id})}" th:data-value="${memo.id}"
-                                    th:data-title="${memo.title}" variant="danger" size="small"></sl-icon-button>
+                                                th:href="@{/memo/edit/{id}(id=${memo.id})}" th:data-value="${memo.id}"
+                                                th:data-title="${memo.title}" variant="danger"
+                                                size="small"></sl-icon-button>
                             </sl-tooltip>
                             <sl-tooltip content="删除记录">
                                 <sl-icon-button name="trash" label="trash" class="text-red-500"
-                                    th:data-value="${memo.id}" th:data-title="${memo.title}" variant="danger"
-                                    size="small"></sl-icon-button>
+                                                th:data-value="${memo.id}" th:data-title="${memo.title}"
+                                                variant="danger"
+                                                size="small"></sl-icon-button>
                             </sl-tooltip>
                         </span>
-                    </li>
-                </ul>
-            </div>
+                </li>
+            </ul>
+        </div>
 
-            <sl-icon-button name="plus-lg" label="Settings" th:href="@{/memo/create}"
-                class="fixed bottom-6 right-6 text-[1.5rem] text-white rounded-full bg-primary shadow-lg transition-all duration-300 animate-bounce-slow z-50">
-            </sl-icon-button>
+        <sl-icon-button name="plus-lg" label="Settings" th:href="@{/memo/create}"
+                        class="fixed bottom-6 right-6 text-[1.5rem] text-white rounded-full bg-primary shadow-lg transition-all duration-300 animate-bounce-slow z-50">
+        </sl-icon-button>
 
-            <sl-dialog label="删除提示" class="dialog-overview">
-                确定要删除这条记录吗？此操作不可撤销。
-                <sl-button slot="footer" variant="danger">确认删除</sl-button>
-            </sl-dialog>
+        <sl-dialog label="删除提示" class="dialog-overview">
+            确定要删除这条记录吗？此操作不可撤销。
+            <sl-button slot="footer" variant="danger">确认删除</sl-button>
+        </sl-dialog>
 
-            <th:block th:replace="~{layout/base :: footer}"></th:block>
-        </main>
-    </div>
+        <th:block th:replace="~{layout/base :: footer}"></th:block>
+    </main>
+</div>
 
-    <th:block>
-        <script>
-            let currentRecordId = null;
+<th:block>
+    <script>
+        let currentRecordId = null;
 
-            function initDeleteConfirm() {
+        function initDeleteConfirm() {
+            const dialog = document.querySelector('.dialog-overview');
+            const closeButton = dialog.querySelector('sl-button[slot="footer"]');
+            closeButton.addEventListener('click', () => dialog.hide());
+
+            document.querySelectorAll('[name="trash"]').forEach(element => {
                 const dialog = document.querySelector('.dialog-overview');
-                const closeButton = dialog.querySelector('sl-button[slot="footer"]');
-                closeButton.addEventListener('click', () => dialog.hide());
+                element.addEventListener('click', (e) => {
+                    currentRecordId = e?.target?.dataset?.value;
+                    dialog.show();
+                });
+            })
+            document.querySelectorAll('[label="删除提示"]').forEach(element => {
+                element.addEventListener('click', () => {
+                    dialog.hide();
+                    if (currentRecordId) {
+                        window.open("/memo/delete/" + currentRecordId, "_self");
+                    }
+                });
+            })
+        }
 
-                document.querySelectorAll('[name="trash"]').forEach(element => {
-                    const dialog = document.querySelector('.dialog-overview');
-                    element.addEventListener('click', (e) => {
-                        currentRecordId = e?.target?.dataset?.value;
-                        dialog.show();
-                    });
-                })
-                document.querySelectorAll('[label="删除提示"]').forEach(element => {
-                    element.addEventListener('click', () => {
-                        dialog.hide();
-                        if (currentRecordId) {
-                            window.open("/memo/delete/" + currentRecordId, "_self");
-                        }
-                    });
-                })
-            }
+        initDeleteConfirm();
 
-            initDeleteConfirm();
-
-        </script>
-    </th:block>
+    </script>
+</th:block>
 
 </body>
 

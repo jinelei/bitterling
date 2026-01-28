@@ -9,134 +9,133 @@
     <script th:src="@{/js/tailwind.min.js}"></script>
     <script th:src="@{/js/root.js}"></script>
     <link th:href="@{/css/root.css}" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/themes/light.css" />
-    <script type="module"
-            src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.20.1/cdn/shoelace-autoloader.js"></script>
+    <link rel="stylesheet" th:href="@{/shoelace/themes/light.css}"/>
+    <script type="module" th:src="@{/shoelace/shoelace-autoloader.js}"></script>
 </head>
 
 <body class="min-h-screen flex flex-col items-center justify-center">
 
-    <div class="w-full">
-        <th:block th:replace="~{layout/base :: navbar('about')}"></th:block>
-    </div>
+<div class="w-full">
+    <th:block th:replace="~{layout/base :: navbar('about')}"></th:block>
+</div>
 
-    <main class="min-h-screen w-full flex flex-col items-center justify-center bg-gray-50">
-        <header class="w-full bg-gradient-to-r from-primary/90 to-primary py-20 md:py-28 text-white">
-            <div class="px-4 text-center">
-                <img src="https://picsum.photos/200/200" alt="个人头像"
-                    class="w-32 h-32 rounded-full mx-auto border-4 border-white/50 mb-6">
-                <h2 class="text-3xl md:text-4xl font-bold mb-3">jinelei</h2>
-                <p class="text-xl md:text-2xl text-white/90 mb-6">后端开发工程师 / 专注高可用系统构建</p>
-                <p class="max-w-2xl mx-auto text-white/80">
-                    专注于后端服务的设计、开发与优化，擅长构建高并发、高可用的分布式系统，注重代码质量与系统性能，持续探索云原生与微服务技术落地。</p>
-            </div>
-        </header>
-
-        <section class="container bg-white mt-4">
-            <h3 class="text-2xl md:text-3xl font-bold mb-8 mt-4 text-center">个人简介</h3>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                <div class="px-4">
-                    <p class="mb-4 leading-relaxed">
-                        大家好！我是jinelei，一名拥有 8 年后端开发经验的工程师，毕业于江西理工大学大学软件工程专业。
-                    </p>
-                    <p class="mb-4 leading-relaxed">
-                        我深耕 Java 技术栈，精通 Spring Boot/Spring Cloud 微服务生态，熟悉分布式架构、缓存、消息队列等核心中间件，
-                        擅长从 0 到 1 搭建后端服务体系，同时具备数据库优化、服务监控、性能调优的实战经验。
-                    </p>
-                    <p class="leading-relaxed">
-                        工作之余，我喜欢研究开源框架源码、撰写技术沉淀文档，也热爱徒步和骑行，相信「技术深度+工程实践」的结合才能打造稳定可靠的系统。
-                    </p>
-                </div>
-                <div class="bg-gray-50 rounded-xl p-6 shadow-sm">
-                    <h4 class="font-semibold text-lg mb-4 text-secondary">基本信息</h4>
-                    <ul class="space-y-3">
-                        <li class="flex items-center">
-                            <i class="fa fa-user text-primary w-6"></i>
-                            <span>姓名：jinelei</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fa fa-birthday-cake text-primary w-6"></i>
-                            <span>出生：1993-02-28</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fa fa-map-marker text-primary w-6"></i>
-                            <span>城市：重庆市</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fa fa-graduation-cap text-primary w-6"></i>
-                            <span>学历：本科</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fa fa-briefcase text-primary w-6"></i>
-                            <span>职业：后端开发工程师</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fa fa-envelope text-primary w-6"></i>
-                            <span>邮箱：jinelei@163.com</span>
-                        </li>
-                        <li class="flex items-center">
-                            <i class="fa fa-github text-primary w-6"></i>
-                            <span>GitHub：github.com/jinelei</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-        </section>
-
-        <section class="container bg-gray-50 mt-4">
-            <h3 class="text-2xl md:text-3xl font-bold mb-4 text-center">技能栈</h3>
-            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- 后端核心 -->
-                <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
-                    <div class="text-primary text-2xl mb-4"><i class="fa fa-code"></i></div>
-                    <h4 class="font-semibold text-lg mb-3">后端核心</h4>
-                    <div class="flex flex-wrap gap-2 mb-3">
-                        <span class="skill-tag">Java</span>
-                        <span class="skill-tag">Golang</span>
-                        <span class="skill-tag">Spring Boot</span>
-                        <span class="skill-tag">Spring Cloud</span>
-                        <span class="skill-tag">MyBatis</span>
-                    </div>
-                    <p class="text-gray-600 text-sm">精通 Java 核心语法与并发编程，熟练使用 Spring 生态构建微服务，掌握 Go
-                        语言进行高性能服务开发。</p>
-                </div>
-
-                <!-- 中间件与数据库 -->
-                <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
-                    <div class="text-primary text-2xl mb-4"><i class="fa fa-database"></i></div>
-                    <h4 class="font-semibold text-lg mb-3">中间件与数据库</h4>
-                    <div class="flex flex-wrap gap-2 mb-3">
-                        <span class="skill-tag">MySQL</span>
-                        <span class="skill-tag">Redis</span>
-                        <span class="skill-tag">RabbitMQ</span>
-                        <span class="skill-tag">Elasticsearch</span>
-                        <span class="skill-tag">Docker</span>
-                    </div>
-                    <p class="text-gray-600 text-sm">精通 MySQL 索引优化与事务，熟练使用 Redis
-                        做缓存/分布式锁，掌握消息队列与搜索引擎的落地应用。</p>
-                </div>
-
-                <!-- 工程化与运维 -->
-                <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
-                    <div class="text-primary text-2xl mb-4"><i class="fa fa-cogs"></i></div>
-                    <h4 class="font-semibold text-lg mb-3">工程化与运维</h4>
-                    <div class="flex flex-wrap gap-2 mb-3">
-                        <span class="skill-tag">Git</span>
-                        <span class="skill-tag">Jenkins</span>
-                        <span class="skill-tag">K8s</span>
-                        <span class="skill-tag">Prometheus</span>
-                        <span class="skill-tag">Nginx</span>
-                    </div>
-                    <p class="text-gray-600 text-sm">熟悉 CI/CD
-                        流程搭建，掌握容器化部署与k8s编排，能搭建完善的监控告警体系保障系统稳定性。</p>
-                </div>
-            </div>
-        </section>
-
-        <div class="bg-page dark:bg-page-dark w-full z-10 flex items-center justify-center py-3">
-            <th:block th:replace="~{layout/base :: footer}"></th:block>
+<main class="min-h-screen w-full flex flex-col items-center justify-center bg-gray-50">
+    <header class="w-full bg-gradient-to-r from-primary/90 to-primary py-20 md:py-28 text-white">
+        <div class="px-4 text-center">
+            <img src="https://picsum.photos/200/200" alt="个人头像"
+                 class="w-32 h-32 rounded-full mx-auto border-4 border-white/50 mb-6">
+            <h2 class="text-3xl md:text-4xl font-bold mb-3">jinelei</h2>
+            <p class="text-xl md:text-2xl text-white/90 mb-6">后端开发工程师 / 专注高可用系统构建</p>
+            <p class="max-w-2xl mx-auto text-white/80">
+                专注于后端服务的设计、开发与优化，擅长构建高并发、高可用的分布式系统，注重代码质量与系统性能，持续探索云原生与微服务技术落地。</p>
         </div>
-    </main>
+    </header>
+
+    <section class="container bg-white mt-4">
+        <h3 class="text-2xl md:text-3xl font-bold mb-8 mt-4 text-center">个人简介</h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+            <div class="px-4">
+                <p class="mb-4 leading-relaxed">
+                    大家好！我是jinelei，一名拥有 8 年后端开发经验的工程师，毕业于江西理工大学大学软件工程专业。
+                </p>
+                <p class="mb-4 leading-relaxed">
+                    我深耕 Java 技术栈，精通 Spring Boot/Spring Cloud 微服务生态，熟悉分布式架构、缓存、消息队列等核心中间件，
+                    擅长从 0 到 1 搭建后端服务体系，同时具备数据库优化、服务监控、性能调优的实战经验。
+                </p>
+                <p class="leading-relaxed">
+                    工作之余，我喜欢研究开源框架源码、撰写技术沉淀文档，也热爱徒步和骑行，相信「技术深度+工程实践」的结合才能打造稳定可靠的系统。
+                </p>
+            </div>
+            <div class="bg-gray-50 rounded-xl p-6 shadow-sm">
+                <h4 class="font-semibold text-lg mb-4 text-secondary">基本信息</h4>
+                <ul class="space-y-3">
+                    <li class="flex items-center">
+                        <i class="fa fa-user text-primary w-6"></i>
+                        <span>姓名：jinelei</span>
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fa fa-birthday-cake text-primary w-6"></i>
+                        <span>出生：1993-02-28</span>
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fa fa-map-marker text-primary w-6"></i>
+                        <span>城市：重庆市</span>
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fa fa-graduation-cap text-primary w-6"></i>
+                        <span>学历：本科</span>
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fa fa-briefcase text-primary w-6"></i>
+                        <span>职业：后端开发工程师</span>
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fa fa-envelope text-primary w-6"></i>
+                        <span>邮箱：jinelei@163.com</span>
+                    </li>
+                    <li class="flex items-center">
+                        <i class="fa fa-github text-primary w-6"></i>
+                        <span>GitHub：github.com/jinelei</span>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </section>
+
+    <section class="container bg-gray-50 mt-4">
+        <h3 class="text-2xl md:text-3xl font-bold mb-4 text-center">技能栈</h3>
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- 后端核心 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
+                <div class="text-primary text-2xl mb-4"><i class="fa fa-code"></i></div>
+                <h4 class="font-semibold text-lg mb-3">后端核心</h4>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="skill-tag">Java</span>
+                    <span class="skill-tag">Golang</span>
+                    <span class="skill-tag">Spring Boot</span>
+                    <span class="skill-tag">Spring Cloud</span>
+                    <span class="skill-tag">MyBatis</span>
+                </div>
+                <p class="text-gray-600 text-sm">精通 Java 核心语法与并发编程，熟练使用 Spring 生态构建微服务，掌握 Go
+                    语言进行高性能服务开发。</p>
+            </div>
+
+            <!-- 中间件与数据库 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
+                <div class="text-primary text-2xl mb-4"><i class="fa fa-database"></i></div>
+                <h4 class="font-semibold text-lg mb-3">中间件与数据库</h4>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="skill-tag">MySQL</span>
+                    <span class="skill-tag">Redis</span>
+                    <span class="skill-tag">RabbitMQ</span>
+                    <span class="skill-tag">Elasticsearch</span>
+                    <span class="skill-tag">Docker</span>
+                </div>
+                <p class="text-gray-600 text-sm">精通 MySQL 索引优化与事务，熟练使用 Redis
+                    做缓存/分布式锁，掌握消息队列与搜索引擎的落地应用。</p>
+            </div>
+
+            <!-- 工程化与运维 -->
+            <div class="bg-white rounded-xl p-6 shadow-sm card-hover">
+                <div class="text-primary text-2xl mb-4"><i class="fa fa-cogs"></i></div>
+                <h4 class="font-semibold text-lg mb-3">工程化与运维</h4>
+                <div class="flex flex-wrap gap-2 mb-3">
+                    <span class="skill-tag">Git</span>
+                    <span class="skill-tag">Jenkins</span>
+                    <span class="skill-tag">K8s</span>
+                    <span class="skill-tag">Prometheus</span>
+                    <span class="skill-tag">Nginx</span>
+                </div>
+                <p class="text-gray-600 text-sm">熟悉 CI/CD
+                    流程搭建，掌握容器化部署与k8s编排，能搭建完善的监控告警体系保障系统稳定性。</p>
+            </div>
+        </div>
+    </section>
+
+    <div class="bg-page dark:bg-page-dark w-full z-10 flex items-center justify-center py-3">
+        <th:block th:replace="~{layout/base :: footer}"></th:block>
+    </div>
+</main>
 
 
 </body>
