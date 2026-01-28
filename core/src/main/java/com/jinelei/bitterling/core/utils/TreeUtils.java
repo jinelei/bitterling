@@ -1,4 +1,4 @@
-package com.jinelei.bitterling.core.helper;
+package com.jinelei.bitterling.core.utils;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -14,8 +14,8 @@ import org.springframework.util.CollectionUtils;
 
 import com.jinelei.bitterling.core.domain.view.TreeView;
 
-public class TreeHelper {
-    private static final Logger log = LoggerFactory.getLogger(TreeHelper.class);
+public class TreeUtils {
+    private static final Logger log = LoggerFactory.getLogger(TreeUtils.class);
 
     /**
      * 列表转树形列表

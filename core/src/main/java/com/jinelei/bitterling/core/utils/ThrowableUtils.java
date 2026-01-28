@@ -1,9 +1,9 @@
-package com.jinelei.bitterling.core.helper;
+package com.jinelei.bitterling.core.utils;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
 
-public class ThrowableHelper {
+public class ThrowableUtils {
     
     /**
      * 获取异常的完整堆栈信息字符串

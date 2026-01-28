@@ -2,6 +2,9 @@ package com.jinelei.bitterling.web.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jinelei.bitterling.core.domain.result.GenericResult;
+import com.jinelei.bitterling.web.config.security.JwtAuthenticationFilter;
+import com.jinelei.bitterling.web.utils.JwtTokenUtil;
+import jakarta.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,9 +19,12 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
 import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;
 
 import com.jinelei.bitterling.web.service.MessageService;
@@ -87,7 +93,7 @@ public class SecurityConfig {
                         .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
-                        .logoutSuccessUrl("/login?logout=true")
+                        .logoutSuccessHandler(logoutSuccessHandler())
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID", "REMEMBER_ME")
                         .permitAll())
@@ -111,9 +117,12 @@ public class SecurityConfig {
                     source.registerCorsConfiguration("/**", config);
                     c.configurationSource(source);
                 })
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint()))
                 .rememberMe(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(AbstractHttpConfigurer::disable)
+                .addFilterBefore(SpringBeanUtils.getBean(JwtAuthenticationFilter.class), UsernamePasswordAuthenticationFilter.class);
+
         ;
 
         return http.build();
@@ -137,7 +146,31 @@ public class SecurityConfig {
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
         return (request, response, authentication) -> {
             SpringBeanUtils.getBean(MessageService.class).userLoginNotify(authentication.getName());
-            GenericResult<String> message = GenericResult.of(200, "登录成功", "账号或密码错误");
+            final String jwtToken = SpringBeanUtils.getBean(JwtTokenUtil.class).generateToken(authentication.getName());
+            GenericResult<String> message = GenericResult.of(200, "登录成功", jwtToken);
+            SpringBeanUtils.getBean(ObjectMapper.class).writeValue(response.getWriter(), message);
+        };
+    }
+
+    /**
+     * 自定义登出成功处理器
+     */
+    @Bean
+    public LogoutSuccessHandler logoutSuccessHandler() {
+        return (request, response, authentication) -> {
+            SpringBeanUtils.getBean(MessageService.class).userLoginNotify(authentication.getName());
+            GenericResult<String> message = GenericResult.of(200, "登出成功", "");
+            SpringBeanUtils.getBean(ObjectMapper.class).writeValue(response.getWriter(), message);
+        };
+    }
+
+    /**
+     * 自定义校验失败处理器
+     */
+    @Bean
+    public AuthenticationEntryPoint authenticationEntryPoint() {
+        return (request, response, authentication) -> {
+            GenericResult<String> message = GenericResult.of(401, "用户未登录", authentication.getMessage());
             SpringBeanUtils.getBean(ObjectMapper.class).writeValue(response.getWriter(), message);
         };
     }

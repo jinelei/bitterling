@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import com.jinelei.bitterling.core.domain.result.GenericResult;
 import com.jinelei.bitterling.core.exception.BusinessException;
-import com.jinelei.bitterling.core.helper.ThrowableHelper;
+import com.jinelei.bitterling.core.utils.ThrowableUtils;
 
 import java.util.stream.Collectors;
 
@@ -25,7 +25,7 @@ public abstract class BaseExceptionHandler {
      */
     @ExceptionHandler(BusinessException.class)
     public GenericResult<String> handleBusinessException(BusinessException e) {
-        log.debug("全局捕获业务异常: {}", ThrowableHelper.getStackTraceAsString(e));
+        log.debug("全局捕获业务异常: {}", ThrowableUtils.getStackTraceAsString(e));
         return GenericResult.failure(e.getCode(), GenericResult.MESSAGE_FAILURE_BUSINESS, e.getMessage());
     }
 
@@ -34,7 +34,7 @@ public abstract class BaseExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public GenericResult<String> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
-        log.debug("全局捕获校验异常: {}", ThrowableHelper.getStackTraceAsString(e));
+        log.debug("全局捕获校验异常: {}", ThrowableUtils.getStackTraceAsString(e));
         String errorMsg = e.getBindingResult().getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("；"));
@@ -46,7 +46,7 @@ public abstract class BaseExceptionHandler {
      */
     @ExceptionHandler(BindException.class)
     public GenericResult<String> handleBindException(BindException e) {
-        log.debug("全局捕获绑定异常: {}", ThrowableHelper.getStackTraceAsString(e));
+        log.debug("全局捕获绑定异常: {}", ThrowableUtils.getStackTraceAsString(e));
         String errorMsg = e.getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("；"));
@@ -58,7 +58,7 @@ public abstract class BaseExceptionHandler {
      */
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public GenericResult<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
-        log.debug("全局捕获解析异常: {}", ThrowableHelper.getStackTraceAsString(e));
+        log.debug("全局捕获解析异常: {}", ThrowableUtils.getStackTraceAsString(e));
         return GenericResult.failure("请求体解析失败", "请检查JSON格式是否正确");
     }
 
@@ -67,7 +67,7 @@ public abstract class BaseExceptionHandler {
      */
     @ExceptionHandler(NullPointerException.class)
     public GenericResult<String> handleNullPointerException(NullPointerException e) {
-        log.debug("全局捕获空指针异常: {}", ThrowableHelper.getStackTraceAsString(e));
+        log.debug("全局捕获空指针异常: {}", ThrowableUtils.getStackTraceAsString(e));
         return GenericResult.failure("空指针异常");
     }
 

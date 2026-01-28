@@ -1,4 +1,4 @@
-package com.jinelei.bitterling.core.helper;
+package com.jinelei.bitterling.core.utils;
 
 import java.security.SecureRandom;
 import java.time.Instant;

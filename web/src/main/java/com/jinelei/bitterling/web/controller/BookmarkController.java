@@ -1,19 +1,16 @@
 package com.jinelei.bitterling.web.controller;
 
 import java.security.InvalidParameterException;
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
 import com.jinelei.bitterling.core.controller.BaseController;
 import com.jinelei.bitterling.core.domain.result.GenericResult;
-import com.jinelei.bitterling.core.helper.TimeTracker;
-import com.jinelei.bitterling.core.helper.TreeHelper;
+import com.jinelei.bitterling.core.utils.TimeTracker;
+import com.jinelei.bitterling.core.utils.TreeUtils;
 import com.jinelei.bitterling.web.domain.BookmarkDomain;
 import com.jinelei.bitterling.web.service.BookmarkService;
 import com.jinelei.bitterling.web.service.IndexService;
@@ -83,7 +80,7 @@ public class BookmarkController extends BaseController {
         TimeTracker.getInstance().mark("查询书签树").printTotalTime("查询书签树");
         List<BookmarkDomain> list = new ArrayList<>();
         all.forEach(list::add);
-        List<BookmarkDomain> tree = TreeHelper.convertToTree(list);
+        List<BookmarkDomain> tree = TreeUtils.convertToTree(list);
         return GenericResult.success(tree);
     }
 

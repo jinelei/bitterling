@@ -1,4 +1,4 @@
-package com.jinelei.bitterling.core.helper;
+package com.jinelei.bitterling.core.utils;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
