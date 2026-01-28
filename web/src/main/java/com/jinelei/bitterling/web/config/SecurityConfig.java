@@ -1,5 +1,7 @@
 package com.jinelei.bitterling.web.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jinelei.bitterling.core.domain.result.GenericResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -7,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,10 +17,16 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;
 
 import com.jinelei.bitterling.web.service.MessageService;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+
+import java.util.List;
+import java.util.Optional;
 
 @Configuration
 @EnableWebSecurity
@@ -74,7 +83,7 @@ public class SecurityConfig {
                         .usernameParameter("username")
                         .passwordParameter("password")
                         .successHandler(authenticationSuccessHandler())
-                        .failureUrl("/login?error=true")
+                        .failureHandler(authenticationFailureHandler())
                         .permitAll())
                 .logout(logout -> logout
                         .logoutUrl("/logout")
@@ -82,19 +91,43 @@ public class SecurityConfig {
                         .invalidateHttpSession(true)
                         .deleteCookies("JSESSIONID", "REMEMBER_ME")
                         .permitAll())
-                .rememberMe(rememberMe -> rememberMe
-                        .userDetailsService(userDetailsService())
-                        .rememberMeParameter(rememberMeKey)
-                        .rememberMeCookieName("REMEMBER_ME")
-                        .tokenValiditySeconds(tokenValiditySeconds)
-                        .useSecureCookie(true))
-                .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/login"))
-                .sessionManagement(session -> session
-                        .maximumSessions(maximumSessions)
-                        .expiredUrl("/login?expired=true"));
+                .cors(c -> {
+                    CorsConfiguration config = new CorsConfiguration();
+                    config.setAllowedOrigins(List.of(
+                            "https://*.jinelei.com:9443",
+                            "http://localhost:8080",
+                            "http://localhost:8081",
+                            "http://localhost:8082",
+                            "http://localhost:8083",
+                            "http://localhost:5173"
+                    ));
+                    config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
+                    config.setAllowedHeaders(List.of("*"));
+                    config.setAllowCredentials(true);
+                    config.setMaxAge(3600L);
+                    config.setExposedHeaders(List.of("Authorization", "Cache-Control"));
+                    config.setAllowedOriginPatterns(List.of("/**"));
+                    UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+                    source.registerCorsConfiguration("/**", config);
+                    c.configurationSource(source);
+                })
+                .rememberMe(AbstractHttpConfigurer::disable)
+                .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(AbstractHttpConfigurer::disable)
+        ;
 
         return http.build();
+    }
+
+    /**
+     * 自定义登录失败处理器
+     */
+    @Bean
+    public AuthenticationFailureHandler authenticationFailureHandler() {
+        return (request, response, authentication) -> {
+            GenericResult<String> message = GenericResult.failure(500, "登录失败", Optional.ofNullable(authentication).map(Throwable::getMessage).orElse("账号或密码错误"));
+            SpringBeanUtils.getBean(ObjectMapper.class).writeValue(response.getWriter(), message);
+        };
     }
 
     /**
@@ -104,7 +137,8 @@ public class SecurityConfig {
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
         return (request, response, authentication) -> {
             SpringBeanUtils.getBean(MessageService.class).userLoginNotify(authentication.getName());
-            response.sendRedirect("/");
+            GenericResult<String> message = GenericResult.of(200, "登录成功", "账号或密码错误");
+            SpringBeanUtils.getBean(ObjectMapper.class).writeValue(response.getWriter(), message);
         };
     }
 
