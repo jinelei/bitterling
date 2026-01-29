@@ -45,7 +45,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter implements Ord
 
     @Override
     protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain) throws ServletException, IOException {
-        log.info("===== JWT 过滤器开始处理请求：{} =====", request.getRequestURI());
         final String authorization = request.getHeader(AUTHORIZATION);
         String username = null;
         String jwtToken = null;
@@ -60,8 +59,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter implements Ord
                 UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(token);
-                log.info("用户登录成功[JWT]: {}", token.getPrincipal());
             }
+            log.debug("filter url, {} >>> {}", request.getRequestURI(), userDetails.getUsername());
+        } else {
+            log.debug("filter url, {} >>> anonymous", request.getRequestURI());
         }
         chain.doFilter(request, response);
     }
