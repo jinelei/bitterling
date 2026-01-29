@@ -4,6 +4,7 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -82,6 +83,14 @@ public class BookmarkController extends BaseController {
         all.forEach(list::add);
         List<BookmarkDomain> tree = TreeUtils.convertToTree(list);
         return GenericResult.success(tree);
+    }
+
+    @PostMapping("myFavoriteBookmarks")
+    @Operation(operationId = "myFavoriteBookmarks", summary = "我收藏的书签", description = "我收藏的书签")
+    public GenericResult<List<BookmarkDomain>> myFavoriteBookmarks() {
+        Iterable<BookmarkDomain> all = this.service.myFavoriteBookmarks();
+        List<BookmarkDomain> list = StreamSupport.stream(all.spliterator(), false).toList();
+        return GenericResult.success(list);
     }
 
 }

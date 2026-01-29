@@ -1,13 +1,12 @@
 package com.jinelei.bitterling.web.service;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import com.jinelei.bitterling.core.exception.BusinessException;
+import jakarta.persistence.criteria.*;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.jinelei.bitterling.core.service.BaseService;
@@ -43,4 +42,16 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
         return props;
     }
 
+    public Iterable<BookmarkDomain> myFavoriteBookmarks() {
+        Optional<BookmarkDomain> one = repository.findOne((Specification<BookmarkDomain>) (r, q, cb) -> cb.and(
+                cb.equal(r.get("name"), "收藏"),
+                cb.equal(r.get("type"), BookmarkType.FOLDER)
+        ));
+        BookmarkDomain favorite = one.orElseThrow(() -> new BusinessException("未找到个人收藏"));
+        List<BookmarkDomain> all = repository.findAll((Specification<BookmarkDomain>) (r, q, cb) -> cb.and(
+                cb.equal(r.get("parentId"), favorite.getId()),
+                cb.equal(r.get("type"), BookmarkType.ITEM)
+        ));
+        return all;
+    }
 }
