@@ -93,4 +93,5 @@ bitterling:
   administrator:
     username: asdf
     password: asdf
-    nickname: 美丽人生
+  jwt:
+    secret: admin

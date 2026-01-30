@@ -1,93 +1,85 @@
 package com.jinelei.bitterling.web.utils;
 
+import com.jinelei.bitterling.core.exception.BusinessException;
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwt;
+import io.jsonwebtoken.JwtParser;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 /**
  * JWT 工具类：生成、解析、验证 Token
  */
+@Slf4j
 @Component
-public class JwtTokenUtil {
-    // 密钥（生产环境建议配置在 yaml 中，且足够复杂）
-    @Value("${jwt.secret:your-secret-key-32bytes-long-1234567890}")
+public class JwtTokenUtil implements InitializingBean {
+    private SecretKey secretKey;
+    private JwtParser jwtParser;
+    @Value("${bitterling.jwt.secret:your-secret-key-32bytes-long-1234567890}")
     private String secret;
-
-    // Token 过期时间（3600秒 = 1小时）
     @Value("${jwt.expiration:3600000}")
     private long expiration;
 
-    // 生成签名密钥
-    private SecretKey getSigningKey() {
-        // 密钥长度至少 256 位（32 字节），否则会报错
-        return Keys.hmacShaKeyFor(secret.getBytes());
+    private final Function<String, Claims> getClaim = token -> Optional.ofNullable(token)
+            .map(String::trim)
+            .filter(StringUtils::hasLength)
+            .map(s -> {
+                try {
+                    return jwtParser.parseSignedClaims(s);
+                } catch (Exception e) {
+                    log.error("解析jwt失败: {}", e.getMessage());
+                    return null;
+                }
+            })
+            .map(Jwt::getPayload)
+            .orElse(null);
+
+    public <T> T resolveClaimObject(String token, Function<Claims, T> claimsResolver) {
+        return Optional.ofNullable(token)
+                .map(getClaim)
+                .map(claimsResolver)
+                .orElse(null);
     }
 
-    // 从 Token 中提取用户名
-    public String extractUsername(String token) {
-        return extractClaim(token, Claims::getSubject);
+    public String resolveUsername(String token) {
+        return resolveClaimObject(token, Claims::getSubject);
     }
 
-    // 从 Token 中提取过期时间
-    public Date extractExpiration(String token) {
-        return extractClaim(token, Claims::getExpiration);
+    public Date resolveExpiration(String token) {
+        return resolveClaimObject(token, Claims::getExpiration);
     }
 
-    // 通用提取 Claim 方法
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
-        final Claims claims = extractAllClaims(token);
-        return claimsResolver.apply(claims);
+    public Boolean validateToken(String token, String destUsername) {
+        final String username = resolveUsername(token);
+        return (username.equals(destUsername) && !resolveExpiration(token).before(new Date()));
     }
 
-    // 解析 Token 获取所有 Claim
-    private Claims extractAllClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(getSigningKey())
-                .build()
-                .parseSignedClaims(token)
-                .getPayload();
-    }
-
-    // 验证 Token 是否过期
-    private Boolean isTokenExpired(String token) {
-        return extractExpiration(token).before(new Date());
-    }
-
-    // 生成 Token（基于用户信息）
-    public String generateToken(UserDetails userDetails) {
-        Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, userDetails.getUsername());
-    }
-
-    // 生成 Token（基于用户信息）
     public String generateToken(String username) {
         Map<String, Object> claims = new HashMap<>();
-        return createToken(claims, username);
-    }
-
-    // 构建 Token
-    private String createToken(Map<String, Object> claims, String subject) {
         return Jwts.builder()
-                .claims(claims)          // 自定义载荷
-                .subject(subject)        // 主题（用户名）
-                .issuedAt(new Date(System.currentTimeMillis())) // 签发时间
-                .expiration(new Date(System.currentTimeMillis() + expiration)) // 过期时间
-                .signWith(getSigningKey()) // 签名
+                .claims(claims)
+                .subject(username)
+                .issuedAt(new Date(System.currentTimeMillis()))
+                .expiration(new Date(System.currentTimeMillis() + expiration))
+                .signWith(secretKey)
                 .compact();
     }
 
-    // 验证 Token 有效性（用户名匹配 + 未过期）
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
+    @Override
+    public void afterPropertiesSet() {
+        this.secretKey = Optional.ofNullable(secret)
+                .map(String::getBytes)
+                .map(Keys::hmacShaKeyFor)
+                .orElseThrow(() -> new BusinessException("创建Jwt密钥失败"));
+        this.jwtParser = Jwts.parser().verifyWith(secretKey).build();
     }
 }

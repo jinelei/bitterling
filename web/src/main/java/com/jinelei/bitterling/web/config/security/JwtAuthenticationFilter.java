@@ -51,11 +51,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter implements Ord
 
         if (authorization != null && authorization.startsWith(BEARER_)) {
             jwtToken = authorization.substring(BEARER_.length());
-            username = jwtTokenUtil.extractUsername(jwtToken);
+            username = jwtTokenUtil.resolveUsername(jwtToken);
         }
         if (username != null && isAnonymous.get()) {
             UserDetails userDetails = this.userDetailsService.loadUserByUsername(username);
-            if (jwtTokenUtil.validateToken(jwtToken, userDetails)) {
+            if (jwtTokenUtil.validateToken(jwtToken, userDetails.getUsername())) {
                 UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 token.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                 SecurityContextHolder.getContext().setAuthentication(token);
