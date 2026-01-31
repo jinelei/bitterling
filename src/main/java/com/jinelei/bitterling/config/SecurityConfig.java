@@ -13,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,7 +26,8 @@ import org.springframework.security.web.authentication.AuthenticationFailureHand
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.web.authentication.logout.LogoutSuccessHandler;
-import org.springframework.session.jdbc.config.annotation.web.http.EnableJdbcHttpSession;
+import org.springframework.security.web.context.NullSecurityContextRepository;
+import org.springframework.security.web.context.SecurityContextRepository;
 
 import com.jinelei.bitterling.service.MessageService;
 
@@ -33,7 +35,6 @@ import java.util.Optional;
 
 @Configuration
 @EnableWebSecurity
-@EnableJdbcHttpSession(maxInactiveIntervalInSeconds = 1800)
 public class SecurityConfig {
     private final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
 
@@ -41,12 +42,6 @@ public class SecurityConfig {
     private String username;
     @Value("${bitterling.administrator.password:admin}")
     private String password;
-    @Value("${spring.security.rememberme.key:rememberMe}")
-    private String rememberMeKey;
-    @Value("${spring.security.rememberme.token-validity-seconds:604800}")
-    private int tokenValiditySeconds;
-    @Value("${spring.security.session.maximum-sessions:3}")
-    private int maximumSessions;
 
     /**
      * 1. 密码编码器
@@ -66,6 +61,11 @@ public class SecurityConfig {
                 .roles("ADMIN")
                 .build();
         return new InMemoryUserDetailsManager(adminUser);
+    }
+
+    @Bean
+    public SecurityContextRepository securityContextRepository() {
+        return new NullSecurityContextRepository();
     }
 
     /**
@@ -98,7 +98,7 @@ public class SecurityConfig {
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(authenticationEntryPoint()))
                 .rememberMe(AbstractHttpConfigurer::disable)
                 .csrf(AbstractHttpConfigurer::disable)
-                .sessionManagement(AbstractHttpConfigurer::disable)
+                .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(SpringBeanUtils.getBean(JwtAuthenticationFilter.class), UsernamePasswordAuthenticationFilter.class);
 
         ;
