@@ -29,7 +29,7 @@ public class UserController extends BaseController {
 
     @PostMapping("/info")
     @Operation(operationId = "getUserInfo", summary = "用户信息", description = "获取当前登录用户相关信息")
-    public GenericResult<UserInfoResponse> getUserInfo(Principal principal) {
+    public GenericResult<?> getUserInfo(Principal principal) {
         UserInfoResponse response = userService.getUserInfo(principal);
         return GenericResult.success(response);
     }
