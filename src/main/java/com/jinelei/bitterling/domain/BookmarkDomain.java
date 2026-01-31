@@ -1,0 +1,43 @@
+package com.jinelei.bitterling.domain;
+
+import java.util.List;
+
+import com.jinelei.bitterling.domain.base.TreeRecordDomain;
+import com.jinelei.bitterling.domain.view.TreeView;
+import com.jinelei.bitterling.domain.enums.BookmarkType;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
+
+@Data
+@ToString
+@EqualsAndHashCode(callSuper = true)
+@Entity
+@Table(name = "BOOKMARK")
+@Schema(name = "BookmarkDomain", description = "书签领域对象")
+public class BookmarkDomain extends TreeRecordDomain<Long> implements TreeView<BookmarkDomain, Long> {
+    @Column(name = "name", unique = true)
+    @Schema(name = "name", description = "书签名称")
+    private String name;
+    @Column(name = "type")
+    @Schema(name = "type", description = "书签类型")
+    private BookmarkType type;
+    @Column(name = "url")
+    @Schema(name = "url", description = "书签地址")
+    private String url;
+    @Column(name = "icon")
+    @Schema(name = "icon", description = "书签图标")
+    private String icon;
+    @Column(name = "color")
+    @Schema(name = "color", description = "书签颜色")
+    private String color;
+    @Transient
+    @Schema(name = "children", description = "子级")
+    protected transient List<BookmarkDomain> children;
+}

@@ -5,7 +5,7 @@
             "name": "web",
             "type": "java",
             "request": "launch",
-            "mainClass": "com.jinelei.bitterling.web.WebApplication",
+            "mainClass": "com.jinelei.bitterling.WebApplication",
             "projectName": "web",
             "args": "", // 启动参数（可选，如 --server.port=8081）
             "vmArgs": "-Dspring.profiles.active=dev -Xms512m -Xmx1024m",
