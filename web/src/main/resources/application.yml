@@ -94,4 +94,4 @@ bitterling:
     username: asdf
     password: asdf
   jwt:
-    secret: admin
+    secret: 7b8f9c2d-1a3e-4b5c-8d7e-6f9a0b1c2d3e
