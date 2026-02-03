@@ -40,11 +40,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter implements Ord
     public JwtAuthenticationFilter(JwtTokenUtil jwtTokenUtil, UserDetailsService userDetailsService) {
         this.jwtTokenUtil = jwtTokenUtil;
         this.userDetailsService = userDetailsService;
-        this.isAnonymous = () -> Optional.ofNullable(SecurityContextHolder.getContext()).map(SecurityContext::getAuthentication).map(Authentication::getPrincipal).map(ANONYMOUS_USER::equals).orElse(true);
+        this.isAnonymous = () -> Optional.of(SecurityContextHolder.getContext()).map(SecurityContext::getAuthentication).map(Authentication::getPrincipal).map(ANONYMOUS_USER::equals).orElse(true);
     }
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain chain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain) throws ServletException, IOException {
         final String authorization = request.getHeader(AUTHORIZATION);
         String username = null;
         String jwtToken = null;

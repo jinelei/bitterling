@@ -14,6 +14,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -31,6 +32,7 @@ import org.springframework.security.web.context.SecurityContextRepository;
 
 import com.jinelei.bitterling.service.MessageService;
 
+import java.util.List;
 import java.util.Optional;
 
 @Configuration
@@ -59,6 +61,12 @@ public class SecurityConfig {
         UserDetails adminUser = User.withUsername(username)
                 .password(passwordEncoder().encode(password))
                 .roles("ADMIN")
+                .authorities(List.of(
+                        new SimpleGrantedAuthority("ROLE_ADMIN"),
+                        new SimpleGrantedAuthority("PAGE_/"),
+                        new SimpleGrantedAuthority("PAGE_/memo"),
+                        new SimpleGrantedAuthority("PAGE_/bookmark")
+                ))
                 .build();
         return new InMemoryUserDetailsManager(adminUser);
     }
