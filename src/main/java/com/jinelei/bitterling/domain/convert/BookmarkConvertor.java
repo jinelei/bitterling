@@ -1,6 +1,8 @@
 package com.jinelei.bitterling.domain.convert;
 
 import com.jinelei.bitterling.domain.BookmarkDomain;
+import com.jinelei.bitterling.domain.base.TreeRecordDomain;
+import org.mapstruct.InheritConfiguration;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -14,13 +16,18 @@ import org.mapstruct.MappingTarget;
 @SuppressWarnings("unused")
 @Mapper(componentModel = "spring")
 public interface BookmarkConvertor {
-    @Mapping(target = "id", ignore = true)
-    @Mapping(target = "createTime", ignore = true)
-    @Mapping(target = "updateTime", ignore = true)
+
+    @Mapping(source = "parentId", target = "parentId")
+    void createMapTree(@MappingTarget TreeRecordDomain<Long> tree, BookmarkDomain.CreateRequest source);
+
+    @Mapping(source = "parentId", target = "parentId")
+    @Mapping(source = "id", target = "id")
+    void updateMapTree(@MappingTarget TreeRecordDomain<Long> tree, BookmarkDomain.UpdateRequest source);
+
+    @InheritConfiguration(name = "createMapTree")
     BookmarkDomain fromCreateReq(BookmarkDomain.CreateRequest r);
 
-    @Mapping(target = "createTime", ignore = true)
-    @Mapping(target = "updateTime", ignore = true)
+    @InheritConfiguration(name = "updateMapTree")
     BookmarkDomain merge(@MappingTarget BookmarkDomain source, BookmarkDomain.UpdateRequest r);
 
 }

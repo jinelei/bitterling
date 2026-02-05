@@ -48,7 +48,8 @@ public class BookmarkDomain extends TreeRecordDomain<Long> implements TreeView<B
             @NotNull(message = "类型不能为空") BookmarkType type,
             @NotBlank(message = "地址不能为空") String url,
             @NotBlank(message = "图标不能为空") String icon,
-            @NotBlank(message = "颜色不能为空") String color
+            @NotBlank(message = "颜色不能为空") String color,
+            Long parentId
     ) {
     }
 
@@ -58,7 +59,8 @@ public class BookmarkDomain extends TreeRecordDomain<Long> implements TreeView<B
             @NotNull(message = "类型不能为空") BookmarkType type,
             @NotBlank(message = "地址不能为空") String url,
             @NotBlank(message = "图标不能为空") String icon,
-            @NotBlank(message = "颜色不能为空") String color
+            @NotBlank(message = "颜色不能为空") String color,
+            Long parentId
     ) {
     }
 
@@ -68,4 +70,11 @@ public class BookmarkDomain extends TreeRecordDomain<Long> implements TreeView<B
     public record DeleteRequest(@NotNull(message = "id不能为空") Long id) {
     }
 
+    public record ListRequest(
+            Long id,
+            String name,
+            BookmarkType type,
+            String url
+    ) {
+    }
 }

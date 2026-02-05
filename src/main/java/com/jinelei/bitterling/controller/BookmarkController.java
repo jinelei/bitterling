@@ -1,14 +1,11 @@
 package com.jinelei.bitterling.controller;
 
-import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.StreamSupport;
 
 import com.jinelei.bitterling.exception.BusinessException;
 import jakarta.validation.Valid;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.jinelei.bitterling.domain.result.GenericResult;
@@ -16,8 +13,6 @@ import com.jinelei.bitterling.utils.TimeTracker;
 import com.jinelei.bitterling.utils.TreeUtils;
 import com.jinelei.bitterling.domain.BookmarkDomain;
 import com.jinelei.bitterling.service.BookmarkService;
-import com.jinelei.bitterling.service.IndexService;
-import com.jinelei.bitterling.service.MessageService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -27,13 +22,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "书签管理", description = "书签相关接口")
 public class BookmarkController extends BaseController {
     private final BookmarkService service;
-    private final IndexService indexService;
-    private final MessageService messageService;
 
-    public BookmarkController(BookmarkService service, IndexService indexService, MessageService messageService) {
+    public BookmarkController(BookmarkService service) {
         this.service = service;
-        this.indexService = indexService;
-        this.messageService = messageService;
     }
 
     @PostMapping("create")
@@ -66,11 +57,8 @@ public class BookmarkController extends BaseController {
 
     @PostMapping("list")
     @Operation(operationId = "bookmarkList", summary = "查询书签列表", description = "查询书签列表")
-    public GenericResult<List<BookmarkDomain>> list(@RequestBody BookmarkDomain req) {
-        log.info("list: {}", req);
-        TimeTracker.getInstance().mark("查询书签列表");
-        Iterable<BookmarkDomain> all = this.service.findAll();
-        TimeTracker.getInstance().mark("查询书签列表").printTotalTime("查询书签列表");
+    public GenericResult<List<BookmarkDomain>> list(@RequestBody @Valid BookmarkDomain.ListRequest req) {
+        Iterable<BookmarkDomain> all = this.service.findList(req);
         List<BookmarkDomain> list = new ArrayList<>();
         all.forEach(list::add);
         return GenericResult.success(list);

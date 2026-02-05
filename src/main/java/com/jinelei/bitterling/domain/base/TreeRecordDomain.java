@@ -27,7 +27,7 @@ public class TreeRecordDomain<ID> extends BaseDomain<ID> implements Comparable<T
     @Schema(name = "id", description = "主键ID")
     protected ID id;
     @Schema(description = "父级ID")
-    protected Long parentId;
+    protected ID parentId;
     @Column(name = "create_time")
     @Schema(name = "createTime", description = "创建时间")
     protected LocalDateTime createTime;
@@ -44,5 +44,45 @@ public class TreeRecordDomain<ID> extends BaseDomain<ID> implements Comparable<T
                 .map(s -> s.compareTo(
                         Optional.of(o).map(TreeRecordDomain::getOrderNumber).orElse(0)))
                 .orElse(0);
+    }
+
+    public ID getId() {
+        return id;
+    }
+
+    public void setId(ID id) {
+        this.id = id;
+    }
+
+    public ID getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(ID parentId) {
+        this.parentId = parentId;
+    }
+
+    public LocalDateTime getCreateTime() {
+        return createTime;
+    }
+
+    public void setCreateTime(LocalDateTime createTime) {
+        this.createTime = createTime;
+    }
+
+    public LocalDateTime getUpdateTime() {
+        return updateTime;
+    }
+
+    public void setUpdateTime(LocalDateTime updateTime) {
+        this.updateTime = updateTime;
+    }
+
+    public Integer getOrderNumber() {
+        return orderNumber;
+    }
+
+    public void setOrderNumber(Integer orderNumber) {
+        this.orderNumber = orderNumber;
     }
 }
