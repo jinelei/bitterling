@@ -24,7 +24,7 @@ import java.util.Optional;
 public class TreeRecordDomain<ID> extends BaseDomain<ID> implements Comparable<TreeRecordDomain<ID>> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(name = "ID", description = "主键ID")
+    @Schema(name = "id", description = "主键ID")
     protected ID id;
     @Schema(description = "父级ID")
     protected Long parentId;

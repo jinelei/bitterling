@@ -4,7 +4,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import com.jinelei.bitterling.domain.convert.BookmarkConvertor;
 import com.jinelei.bitterling.exception.BusinessException;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +19,11 @@ import jakarta.validation.Validator;
 
 @Service
 public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDomain, Long> {
+    private final BookmarkConvertor bookmarkConvertor;
 
-    public BookmarkService(BookmarkRepository repository, Validator validator) {
+    public BookmarkService(BookmarkRepository repository, Validator validator, BookmarkConvertor bookmarkConvertor) {
         super(repository, validator);
+        this.bookmarkConvertor = bookmarkConvertor;
     }
 
     public Map<String, Object> renderIndex() {
@@ -51,5 +56,16 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
                 cb.equal(r.get("type"), BookmarkType.ITEM)
         ));
         return all;
+    }
+
+    public void save(BookmarkDomain.CreateRequest req) {
+        BookmarkDomain bookmarkDomain = bookmarkConvertor.fromCreateReq(req);
+        repository.save(bookmarkDomain);
+    }
+
+    public void update(BookmarkDomain.UpdateRequest req) {
+        BookmarkDomain exist = repository.findById(req.id()).orElseThrow(() -> new BusinessException("未找到书签"));
+        BookmarkDomain merge = bookmarkConvertor.merge(exist, req);
+        repository.save(merge);
     }
 }

@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
 
+import com.jinelei.bitterling.exception.BusinessException;
+import jakarta.validation.Valid;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.jinelei.bitterling.domain.result.GenericResult;
@@ -35,28 +38,30 @@ public class BookmarkController extends BaseController {
 
     @PostMapping("create")
     @Operation(operationId = "bookmarkCreate", summary = "新增书签", description = "新增书签")
-    public GenericResult<String> create(@RequestBody BookmarkDomain req) {
-        log.info("create: {}", req);
+    public GenericResult<String> create(@RequestBody @Valid BookmarkDomain.CreateRequest req) {
         this.service.save(req);
         return GenericResult.success("success");
     }
 
     @PostMapping("update")
     @Operation(operationId = "bookmarkUpdate", summary = "更新书签", description = "根据id更新书签")
-    public GenericResult<String> update(@RequestBody BookmarkDomain req) {
-        log.info("update: {}", req);
-        this.service.save(req);
+    public GenericResult<String> update(@RequestBody @Valid BookmarkDomain.UpdateRequest req) {
+        this.service.update(req);
         return GenericResult.success("success");
     }
 
     @PostMapping("delete")
     @Operation(operationId = "bookmarkDelete", summary = "删除书签", description = "根据id删除书签")
-    public GenericResult<String> delete(@RequestBody BookmarkDomain req) {
-        log.info("delete: {}", req);
-        Long id = Optional.ofNullable(req).map(BookmarkDomain::getId)
-                .orElseThrow(() -> new InvalidParameterException("需要删除的ID不能为空"));
-        this.service.deleteById(id);
+    public GenericResult<String> delete(@RequestBody @Valid BookmarkDomain.DeleteRequest req) {
+        this.service.deleteById(req.id());
         return GenericResult.success("success");
+    }
+
+    @PostMapping("get")
+    @Operation(operationId = "bookmarkGet", summary = "查询书签列表", description = "查询书签列表")
+    public GenericResult<BookmarkDomain> get(@RequestBody @Valid BookmarkDomain.GetRequest req) {
+        BookmarkDomain bookmark = this.service.findById(req.id()).orElseThrow(() -> new BusinessException("未找到书签"));
+        return GenericResult.success(bookmark);
     }
 
     @PostMapping("list")
