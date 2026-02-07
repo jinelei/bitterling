@@ -66,14 +66,8 @@ public class BookmarkController extends BaseController {
 
     @PostMapping("tree")
     @Operation(operationId = "bookmarkTree", summary = "查询书签树", description = "查询书签树")
-    public GenericResult<List<BookmarkDomain>> tree(@RequestBody BookmarkDomain req) {
-        log.info("tree: {}", req);
-        TimeTracker.getInstance().mark("查询书签树");
-        Iterable<BookmarkDomain> all = this.service.findAll();
-        TimeTracker.getInstance().mark("查询书签树").printTotalTime("查询书签树");
-        List<BookmarkDomain> list = new ArrayList<>();
-        all.forEach(list::add);
-        List<BookmarkDomain> tree = TreeUtils.convertToTree(list);
+    public GenericResult<List<BookmarkDomain>> tree() {
+        List<BookmarkDomain> tree = this.service.tree();
         return GenericResult.success(tree);
     }
 
@@ -84,5 +78,13 @@ public class BookmarkController extends BaseController {
         List<BookmarkDomain> list = StreamSupport.stream(all.spliterator(), false).toList();
         return GenericResult.success(list);
     }
+
+    @PostMapping("sort")
+    @Operation(operationId = "bookmarkSort", summary = "书签排序", description = "书签排序")
+    public GenericResult<String> bookmarkSort(@RequestBody List<Long> ids) {
+        this.service.sort(ids);
+        return GenericResult.success("排序成功");
+    }
+
 
 }

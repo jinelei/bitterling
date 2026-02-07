@@ -4,8 +4,10 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
+import com.jinelei.bitterling.domain.base.TreeRecordDomain;
 import com.jinelei.bitterling.domain.convert.BookmarkConvertor;
 import com.jinelei.bitterling.exception.BusinessException;
+import com.jinelei.bitterling.utils.TreeUtils;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +19,7 @@ import com.jinelei.bitterling.domain.enums.BookmarkType;
 import com.jinelei.bitterling.repository.BookmarkRepository;
 
 import jakarta.validation.Validator;
+import org.springframework.util.CollectionUtils;
 
 @Service
 public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDomain, Long> {
@@ -25,25 +28,6 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
     public BookmarkService(BookmarkRepository repository, Validator validator, BookmarkConvertor bookmarkConvertor) {
         super(repository, validator);
         this.bookmarkConvertor = bookmarkConvertor;
-    }
-
-    public Map<String, Object> renderIndex() {
-        final Map<String, Object> props = new HashMap<>();
-        Iterable<BookmarkDomain> all = findAll();
-        final Map<BookmarkType, List<BookmarkDomain>> map = StreamSupport.stream(all.spliterator(), true)
-                .filter(i -> Objects.nonNull(i.getType()))
-                .collect(Collectors.groupingBy(BookmarkDomain::getType));
-        final Map<Long, String> folderNameById = map.getOrDefault(BookmarkType.FOLDER, new ArrayList<>())
-                .parallelStream()
-                .collect(Collectors.toMap(BookmarkDomain::getId, BookmarkDomain::getName));
-        final Map<String, List<BookmarkDomain>> itemByFolderId = map.getOrDefault(BookmarkType.ITEM, new ArrayList<>())
-                .parallelStream()
-                .filter(i -> Objects.nonNull(i.getParentId()))
-                .collect(Collectors.groupingBy(i -> folderNameById.get(i.getParentId())));
-        itemByFolderId.put("全部", map.get(BookmarkType.ITEM));
-        props.put("tags", map.get(BookmarkType.FOLDER));
-        props.put("bookmarkByTags", itemByFolderId);
-        return props;
     }
 
     public Iterable<BookmarkDomain> myFavoriteBookmarks() {
@@ -88,5 +72,26 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
                     .ifPresent(list::add);
             return cb.and(list.toArray(new Predicate[0]));
         });
+    }
+
+    public void sort(List<Long> ids) {
+        if (CollectionUtils.isEmpty(ids)) {
+            return;
+        }
+        Iterable<BookmarkDomain> allById = getRepository().findAllById(ids);
+        List<BookmarkDomain> list = StreamSupport.stream(allById.spliterator(), false)
+                .peek(it -> {
+                    it.setOrderNumber(ids.indexOf(it.getId()));
+                })
+                .toList();
+        getRepository().saveAll(list);
+    }
+
+    public List<BookmarkDomain> tree() {
+        Iterable<BookmarkDomain> all = findAll();
+        List<BookmarkDomain> list = new ArrayList<>();
+        StreamSupport.stream(all.spliterator(), false).forEach(list::add);
+        List<BookmarkDomain> tree = TreeUtils.convertToTree(list, Comparator.comparingInt(TreeRecordDomain::getOrderNumber));
+        return tree;
     }
 }
