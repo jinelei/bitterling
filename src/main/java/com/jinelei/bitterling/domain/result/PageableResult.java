@@ -17,13 +17,13 @@ import lombok.ToString;
 @SuppressWarnings("unused")
 @JsonPropertyOrder({"code", "message", "pageNo", "pageSize", "total", "data"})
 public class PageableResult<T extends Collection<?>> extends GenericResult<T> {
-    public static final Integer DEFAULT_TOTAL = 0;
+    public static final Long DEFAULT_TOTAL = 0L;
     @Schema(name = "pageNo", description = "分页页码")
     protected Integer pageNo;
     @Schema(name = "pageSize", description = "分页大小")
     protected Integer pageSize;
     @Schema(name = "total", description = "总计")
-    protected Integer total;
+    protected Long total;
 
     public static <T extends Collection<?>> PageableResult<T> of(T data) {
         PageableResult<T> result = new PageableResult<>();
@@ -36,7 +36,7 @@ public class PageableResult<T extends Collection<?>> extends GenericResult<T> {
         return result;
     }
 
-    public static <T extends Collection<?>> PageableResult<T> of(T data, Integer total) {
+    public static <T extends Collection<?>> PageableResult<T> of(T data, Long total) {
         PageableResult<T> result = new PageableResult<>();
         result.setCode(CODE_SUCCESS);
         result.setMessage(MESSAGE_SUCCESS);
@@ -58,7 +58,7 @@ public class PageableResult<T extends Collection<?>> extends GenericResult<T> {
         return result;
     }
 
-    public static <T extends Collection<?>> PageableResult<T> of(Integer pageNo, Integer pageSize, T data, Integer total) {
+    public static <T extends Collection<?>> PageableResult<T> of(Integer pageNo, Integer pageSize, T data, Long total) {
         PageableResult<T> result = new PageableResult<>();
         result.setCode(CODE_SUCCESS);
         result.setMessage(MESSAGE_SUCCESS);
@@ -70,7 +70,7 @@ public class PageableResult<T extends Collection<?>> extends GenericResult<T> {
     }
 
     public static <T extends Collection<?>> PageableResult<T> of(Integer code, String message, Integer pageNo,
-                                                                 Integer pageSize, T data, Integer total) {
+                                                                 Integer pageSize, T data, Long total) {
         PageableResult<T> result = new PageableResult<>();
         result.setCode(code);
         result.setMessage(message);

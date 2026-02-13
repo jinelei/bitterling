@@ -1,13 +1,23 @@
 package com.jinelei.bitterling.service;
 
+import com.jinelei.bitterling.domain.MemoTagRelateRecordDomain;
+import com.jinelei.bitterling.domain.request.MemoCreateRequest;
+import com.jinelei.bitterling.domain.request.MemoPageRequest;
+import com.jinelei.bitterling.domain.request.MemoUpdateRequest;
+import com.jinelei.bitterling.domain.request.PageableRequest;
 import com.jinelei.bitterling.exception.BusinessException;
 import com.jinelei.bitterling.domain.convert.MemoConvertor;
 import com.jinelei.bitterling.domain.convert.MemoTagConvertor;
 import com.jinelei.bitterling.domain.MemoDomain;
 import com.jinelei.bitterling.repository.MemoRepository;
+import jakarta.persistence.criteria.Predicate;
 import jakarta.validation.Validator;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -30,7 +40,7 @@ public class MemoService extends BaseService<MemoRepository, MemoDomain, Long> {
     }
 
     @Transactional
-    public MemoDomain create(MemoDomain.CreateRequest request) {
+    public MemoDomain create(MemoCreateRequest request) {
         MemoDomain entity = memoConvertor.fromRequest(request);
         entity.setCreateTime(LocalDateTime.now());
         entity.setUpdateTime(LocalDateTime.now());
@@ -40,7 +50,7 @@ public class MemoService extends BaseService<MemoRepository, MemoDomain, Long> {
     }
 
     @Transactional
-    public MemoDomain update(MemoDomain.UpdateRequest request) {
+    public MemoDomain update(MemoUpdateRequest request) {
         MemoDomain entity = findById(request.id()).orElseThrow(() -> new BusinessException("备忘未找到"));
         memoConvertor.merge(entity, request);
         entity.setUpdateTime(LocalDateTime.now());
@@ -58,4 +68,19 @@ public class MemoService extends BaseService<MemoRepository, MemoDomain, Long> {
         log.info("删除备忘标签成功: {}", deleteByMemoId);
     }
 
+    public Page<MemoDomain> page(PageableRequest<MemoPageRequest> req) {
+        final Specification<MemoDomain> specification = (r, q, cb) -> {
+            final List<Predicate> predicates = new ArrayList<>();
+            Optional.ofNullable(req.getQuery())
+                    .map(MemoPageRequest::tagId)
+                    .map(memoTagRelateService::findByTagId)
+                    .map(l -> l.stream().map(MemoTagRelateRecordDomain::getMemoId).toList())
+                    .filter(c -> !CollectionUtils.isEmpty(c))
+                    .map(list -> r.get("id").in(list))
+                    .ifPresent(predicates::add);
+            return cb.and(predicates.toArray(Predicate[]::new));
+        };
+        Page<MemoDomain> all = this.getRepository().findAll(specification, PageRequest.of(req.getPageNo(), req.getPageSize()));
+        return all;
+    }
 }

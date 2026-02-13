@@ -1,9 +1,11 @@
 package com.jinelei.bitterling.domain.convert;
 
+import com.jinelei.bitterling.domain.response.MemoTagResponse;
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
 
 import com.jinelei.bitterling.domain.MemoTagDomain;
+
+import java.util.List;
 
 /**
  * @version v1.0.0
@@ -15,10 +17,8 @@ import com.jinelei.bitterling.domain.MemoTagDomain;
 @Mapper(componentModel = "spring")
 public interface MemoTagConvertor {
 
-    MemoTagDomain.Response toResponse(MemoTagDomain e);
+    MemoTagResponse toResponse(MemoTagDomain e);
 
-    default MemoTagDomain.CountResponse toCountResponse(@MappingTarget MemoTagDomain.Response target, Long count) {
-        return new MemoTagDomain.CountResponse(target.id(), target.title(), target.icon(), count);
-    }
+    List<MemoTagResponse> toResponse(List<MemoTagDomain> e);
 
 }

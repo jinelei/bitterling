@@ -29,47 +29,4 @@ public class MemoDomain extends RecordDomain<Long> {
     @Column(name = "content", columnDefinition = "MEDIUMTEXT")
     @Schema(name = "content", description = "备忘内容")
     private String content;
-
-    public record CreateRequest(
-            @NotBlank(message = "标题不能为空") String title,
-            @NotBlank(message = "副标题不能为空") String subTitle,
-            @NotBlank(message = "内容不能为空") String content,
-            Integer orderNumber,
-            List<Long> tagIds) {
-    }
-
-    public record DeleteRequest(
-            @NotNull(message = "ID不能为空") Long id) {
-    }
-
-    public record UpdateRequest(
-            @NotNull(message = "ID不能为空") Long id,
-            @NotBlank(message = "标题不能为空") String title,
-            @NotBlank(message = "副标题不能为空") String subTitle,
-            @NotBlank(message = "内容不能为空") String content,
-            @NotNull(message = "排序不能为空") Integer orderNumber,
-            List<Long> tagIds) {
-    }
-
-    public record ListQueryRequest(
-            @NotNull(message = "ID不能为空") Long id,
-            String title,
-            String subTitle,
-            String content,
-            Integer orderNumber) {
-    }
-
-    public record DetailResponse(
-            @NotNull(message = "ID不能为空") Long id,
-            String title,
-            String subTitle,
-            String content,
-            String contentRender,
-            List<MemoTagDomain> tags,
-            List<Long> tagIds,
-            Integer orderNumber,
-            LocalDateTime createTime,
-            LocalDateTime updateTime) {
-    }
-
 }

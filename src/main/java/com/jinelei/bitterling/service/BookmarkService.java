@@ -1,16 +1,17 @@
 package com.jinelei.bitterling.service;
 
 import java.util.*;
-import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
 import com.jinelei.bitterling.domain.base.TreeRecordDomain;
 import com.jinelei.bitterling.domain.convert.BookmarkConvertor;
+import com.jinelei.bitterling.domain.request.BookmarkCreateRequest;
+import com.jinelei.bitterling.domain.request.BookmarkListRequest;
+import com.jinelei.bitterling.domain.request.BookmarkUpdateRequest;
+import com.jinelei.bitterling.domain.response.BookmarkResponse;
 import com.jinelei.bitterling.exception.BusinessException;
 import com.jinelei.bitterling.utils.TreeUtils;
 import jakarta.persistence.criteria.Predicate;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -43,18 +44,18 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
         return all;
     }
 
-    public void save(BookmarkDomain.CreateRequest req) {
+    public void save(BookmarkCreateRequest req) {
         BookmarkDomain bookmarkDomain = bookmarkConvertor.fromCreateReq(req);
         repository.save(bookmarkDomain);
     }
 
-    public void update(BookmarkDomain.UpdateRequest req) {
+    public void update(BookmarkUpdateRequest req) {
         BookmarkDomain exist = repository.findById(req.id()).orElseThrow(() -> new BusinessException("未找到书签"));
         BookmarkDomain merge = bookmarkConvertor.merge(exist, req);
         repository.save(merge);
     }
 
-    public Iterable<BookmarkDomain> findList(BookmarkDomain.ListRequest req) {
+    public Iterable<BookmarkDomain> findList(BookmarkListRequest req) {
         Optional.ofNullable(req).orElseThrow(() -> new BusinessException("请求不能为空"));
         return repository.findAll((Specification<BookmarkDomain>) (r, q, cb) -> {
             List<Predicate> list = new ArrayList<>();
@@ -87,11 +88,12 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
         getRepository().saveAll(list);
     }
 
-    public List<BookmarkDomain> tree() {
+    public List<BookmarkResponse> tree() {
         Iterable<BookmarkDomain> all = findAll();
         List<BookmarkDomain> list = new ArrayList<>();
         StreamSupport.stream(all.spliterator(), false).forEach(list::add);
         List<BookmarkDomain> tree = TreeUtils.convertToTree(list, Comparator.comparingInt(TreeRecordDomain::getOrderNumber));
-        return tree;
+        List<BookmarkResponse> response = bookmarkConvertor.toResponse(tree);
+        return response;
     }
 }

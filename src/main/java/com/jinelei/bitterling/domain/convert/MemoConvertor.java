@@ -3,6 +3,9 @@ package com.jinelei.bitterling.domain.convert;
 import com.jinelei.bitterling.domain.base.RecordDomain;
 import com.jinelei.bitterling.domain.MemoDomain;
 import com.jinelei.bitterling.domain.MemoTagDomain;
+import com.jinelei.bitterling.domain.request.MemoCreateRequest;
+import com.jinelei.bitterling.domain.request.MemoResponse;
+import com.jinelei.bitterling.domain.request.MemoUpdateRequest;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -21,24 +24,27 @@ public interface MemoConvertor {
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createTime", ignore = true)
     @Mapping(target = "updateTime", ignore = true)
-    MemoDomain fromRequest(MemoDomain.CreateRequest r);
+    MemoDomain fromRequest(MemoCreateRequest r);
 
-    @Mapping(target = "contentRender", ignore = true)
     @Mapping(target = "tags", ignore = true)
     @Mapping(target = "tagIds", ignore = true)
-    MemoDomain.DetailResponse toResponse(MemoDomain e);
+    MemoResponse toResponse(MemoDomain e);
+
+    @Mapping(target = "tags", ignore = true)
+    @Mapping(target = "tagIds", ignore = true)
+    List<MemoResponse> toResponse(List<MemoDomain> e);
 
     @Mapping(target = "createTime", ignore = true)
     @Mapping(target = "updateTime", ignore = true)
-    MemoDomain merge(@MappingTarget MemoDomain source, MemoDomain.UpdateRequest r);
+    MemoDomain merge(@MappingTarget MemoDomain source, MemoUpdateRequest r);
 
-    default MemoDomain.DetailResponse transTags(@MappingTarget MemoDomain.DetailResponse source,
-                                                List<MemoTagDomain> tags) {
+    default MemoResponse transTags(@MappingTarget MemoResponse source,
+                                   List<MemoTagDomain> tags) {
         final List<Long> tagIds = Optional.ofNullable(tags)
                 .map(l -> l.stream().map(RecordDomain::getId).toList())
                 .orElse(new ArrayList<>());
-        return new MemoDomain.DetailResponse(source.id(), source.title(), source.subTitle(), source.content(),
-                source.contentRender(), tags, tagIds, source.orderNumber(), source.createTime(),
+        return new MemoResponse(source.id(), source.title(), source.subTitle(), source.content(),
+                tags, tagIds, source.orderNumber(), source.createTime(),
                 source.updateTime());
     }
 

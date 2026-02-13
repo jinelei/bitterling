@@ -22,18 +22,6 @@ public class MemoTagDomain extends RecordDomain<Long> {
     @Schema(name = "icon", description = "备忘标签图标")
     private String icon;
 
-    @Schema(name = "Response", description = "普通备忘对象")
-    public record Response(
-            @NotNull(message = "备忘标签id不能为空") Long id,
-            @NotNull(message = "备忘标签标题不能为空") String title,
-            @NotNull(message = "备忘标签图标不能为空") String icon) {
-    }
 
-    @Schema(name = "CountResponse", description = "带总数备忘对象")
-    public record CountResponse(
-            @NotNull(message = "备忘标签id不能为空") Long id,
-            @NotNull(message = "备忘标签标题不能为空") String title,
-            @NotNull(message = "备忘标签图标不能为空") String icon,
-            @NotNull(message = "备忘标签数量不能为空") Long count) {
-    }
+
 }
