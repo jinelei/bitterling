@@ -19,10 +19,14 @@ import io.swagger.v3.oas.models.media.StringSchema;
 import io.swagger.v3.oas.models.parameters.RequestBody;
 import io.swagger.v3.oas.models.responses.ApiResponse;
 import io.swagger.v3.oas.models.responses.ApiResponses;
+import org.springdoc.core.configuration.SpringDocConfiguration;
 import org.springdoc.core.customizers.OpenApiCustomizer;
+import org.springdoc.core.properties.SpringDocConfigProperties;
+import org.springdoc.core.providers.ObjectMapperProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.ResolvableType;
+import org.springframework.core.annotation.Order;
 
 import java.lang.reflect.Type;
 import java.util.Collections;
@@ -185,47 +189,47 @@ public class SpringDocConfig {
     /**
      * 适配 2.8.15 版本：全局解析 GenericResult 泛型（替代废弃的 addAnnotatedType）
      */
-    @Bean
-    public OpenApiCustomizer genericResultCustomizer() {
-        return openApi -> {
-            Map<String, Schema> schemas = openApi.getComponents().getSchemas();
-            if (schemas == null) return;
-
-            // 获取 GenericResult 的基础 Schema
-            Schema<?> genericResultSchema = schemas.get("GenericResult");
-            if (genericResultSchema == null || genericResultSchema.getProperties() == null) return;
-
-            // ========== 1. 解析单层泛型：GenericResult<BookmarkResponse> ==========
-            Type singleType = ResolvableType.forClassWithGenerics(GenericResult.class, BookmarkResponse.class).getType();
-            updateDataSchema(genericResultSchema, singleType);
-
-            // ========== 2. 解析多层泛型：GenericResult<List<BookmarkResponse>> ==========
-            Type listType = ResolvableType.forClassWithGenerics(GenericResult.class, ResolvableType.forClassWithGenerics(List.class, BookmarkResponse.class)).getType();
-            updateDataSchema(genericResultSchema, listType);
-
-            // ========== 3. 解析基础类型泛型：GenericResult<String> ==========
-            Type stringType = ResolvableType.forClassWithGenerics(GenericResult.class, String.class).getType();
-            updateDataSchema(genericResultSchema, stringType);
-        };
-    }
-
-    /**
-     * 通用方法：更新 GenericResult 的 data 字段为具体泛型类型
-     */
-    private void updateDataSchema(Schema<?> genericResultSchema, Type genericType) {
-        // 解析泛型类型的完整 Schema
-        ResolvedSchema resolvedSchema = ModelConverters.getInstance()
-                .resolveAsResolvedSchema(new AnnotatedType(genericType));
-
-        // 提取 data 字段并替换
-        if (resolvedSchema.schema != null && resolvedSchema.schema.getProperties() != null) {
-            if (resolvedSchema.schema.getProperties() instanceof Map map) {
-                Schema<?> dataSchema = (Schema<?>) map.get("data");
-                if (dataSchema != null) {
-                    genericResultSchema.getProperties().put("data", dataSchema);
-                }
-            }
-        }
-    }
+//    @Bean
+//    public OpenApiCustomizer genericResultCustomizer() {
+//        return openApi -> {
+//            Map<String, Schema> schemas = openApi.getComponents().getSchemas();
+//            if (schemas == null) return;
+//
+//            // 获取 GenericResult 的基础 Schema
+//            Schema<?> genericResultSchema = schemas.get("GenericResult");
+//            if (genericResultSchema == null || genericResultSchema.getProperties() == null) return;
+//
+//            // ========== 1. 解析单层泛型：GenericResult<BookmarkResponse> ==========
+//            Type singleType = ResolvableType.forClassWithGenerics(GenericResult.class, BookmarkResponse.class).getType();
+//            updateDataSchema(genericResultSchema, singleType);
+//
+//            // ========== 2. 解析多层泛型：GenericResult<List<BookmarkResponse>> ==========
+//            Type listType = ResolvableType.forClassWithGenerics(GenericResult.class, ResolvableType.forClassWithGenerics(List.class, BookmarkResponse.class)).getType();
+//            updateDataSchema(genericResultSchema, listType);
+//
+//            // ========== 3. 解析基础类型泛型：GenericResult<String> ==========
+//            Type stringType = ResolvableType.forClassWithGenerics(GenericResult.class, String.class).getType();
+//            updateDataSchema(genericResultSchema, stringType);
+//        };
+//    }
+//
+//    /**
+//     * 通用方法：更新 GenericResult 的 data 字段为具体泛型类型
+//     */
+//    private void updateDataSchema(Schema<?> genericResultSchema, Type genericType) {
+//        // 解析泛型类型的完整 Schema
+//        ResolvedSchema resolvedSchema = ModelConverters.getInstance()
+//                .resolveAsResolvedSchema(new AnnotatedType(genericType));
+//
+//        // 提取 data 字段并替换
+//        if (resolvedSchema.schema != null && resolvedSchema.schema.getProperties() != null) {
+//            if (resolvedSchema.schema.getProperties() instanceof Map map) {
+//                Schema<?> dataSchema = (Schema<?>) map.get("data");
+//                if (dataSchema != null) {
+//                    genericResultSchema.getProperties().put("data", dataSchema);
+//                }
+//            }
+//        }
+//    }
 
 }

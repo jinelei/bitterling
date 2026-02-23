@@ -29,6 +29,17 @@ public class GenericResult<T> {
     @Schema(name = "data", description = "响应数据")
     protected T data;
 
+    public GenericResult() {
+        this.code = CODE_SUCCESS;
+        this.message = MESSAGE_SUCCESS;
+    }
+
+    public GenericResult(Integer code, String message, T data) {
+        this.code = code;
+        this.message = message;
+        this.data = data;
+    }
+
     public static <T> GenericResult<T> success(T data) {
         return of(CODE_SUCCESS, MESSAGE_SUCCESS, data);
     }
