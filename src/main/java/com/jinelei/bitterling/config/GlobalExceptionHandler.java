@@ -1,5 +1,7 @@
 package com.jinelei.bitterling.config;
 
+import com.jinelei.bitterling.domain.result.ResultFactory;
+import com.jinelei.bitterling.domain.result.StringResult;
 import com.jinelei.bitterling.exception.BusinessException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,7 +27,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BusinessException.class)
     public GenericResult<String> handleBusinessException(BusinessException e) {
         log.debug("全局捕获业务异常: {}", ThrowableUtils.getStackTraceAsString(e));
-        return GenericResult.failure(e.getCode(), GenericResult.MESSAGE_FAILURE_BUSINESS, e.getMessage());
+        return ResultFactory.create(StringResult.class, e.getCode(), GenericResult.MESSAGE_FAILURE_BUSINESS, e.getMessage());
     }
 
     /**
@@ -37,7 +39,7 @@ public class GlobalExceptionHandler {
         String errorMsg = e.getBindingResult().getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("；"));
-        return GenericResult.failure("参数校验失败", errorMsg);
+        return ResultFactory.create(StringResult.class, GenericResult.CODE_FAILURE_INTERNAL, GenericResult.PARAMETER_VALIDATION_FAILED, errorMsg);
     }
 
     /**
@@ -49,7 +51,7 @@ public class GlobalExceptionHandler {
         String errorMsg = e.getFieldErrors().stream()
                 .map(FieldError::getDefaultMessage)
                 .collect(Collectors.joining("；"));
-        return GenericResult.failure("参数绑定失败", errorMsg);
+        return ResultFactory.create(StringResult.class, GenericResult.CODE_FAILURE_INTERNAL, GenericResult.PARAMETER_BINDING_FAILED, errorMsg);
     }
 
     /**
@@ -58,7 +60,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(HttpMessageNotReadableException.class)
     public GenericResult<String> handleHttpMessageNotReadableException(HttpMessageNotReadableException e) {
         log.debug("全局捕获解析异常: {}", ThrowableUtils.getStackTraceAsString(e));
-        return GenericResult.failure("请求体解析失败", "请检查JSON格式是否正确");
+        return ResultFactory.create(StringResult.class, GenericResult.CODE_FAILURE_INTERNAL, GenericResult.FAILED_TO_PARSE_REQUEST_BODY, "请检查JSON格式是否正确");
     }
 
     /**
@@ -67,7 +69,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NullPointerException.class)
     public GenericResult<String> handleNullPointerException(NullPointerException e) {
         log.debug("全局捕获空指针异常: {}", ThrowableUtils.getStackTraceAsString(e));
-        return GenericResult.failure("空指针异常");
+        return ResultFactory.create(StringResult.class, GenericResult.CODE_FAILURE_INTERNAL, GenericResult.MESSAGE_FAILURE_BUSINESS, "空指针异常");
     }
 
     /**
@@ -76,7 +78,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public GenericResult<String> handleGlobalException(Exception e) {
         log.error("全局捕获未知异常: {}", ThrowableUtils.getStackTraceAsString(e));
-        return GenericResult.failure(e.getMessage());
+        return ResultFactory.create(StringResult.class, GenericResult.CODE_FAILURE_INTERNAL, GenericResult.MESSAGE_FAILURE_BUSINESS, e.getMessage());
     }
 
 }

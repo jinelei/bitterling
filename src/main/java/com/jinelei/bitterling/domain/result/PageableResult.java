@@ -3,7 +3,6 @@ package com.jinelei.bitterling.domain.result;
 import java.util.Collection;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import com.jinelei.bitterling.constant.PageableProperty;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -33,67 +32,16 @@ public class PageableResult<T extends Collection<?>> extends CollectionResult<T>
         this.total = DEFAULT_TOTAL;
     }
 
-    public PageableResult(Integer code, String message, T data, Integer pageNo, Integer pageSize, Long total) {
-        super(code, message, data, total);
+    public PageableResult(T data, Long total, Integer pageNo, Integer pageSize) {
+        super(data, total);
         this.pageNo = pageNo;
         this.pageSize = pageSize;
     }
 
-    public static <T extends Collection<?>> PageableResult<T> of(T data) {
-        PageableResult<T> result = new PageableResult<>();
-        result.setCode(CODE_SUCCESS);
-        result.setMessage(MESSAGE_SUCCESS);
-        result.setPageNo(DEFAULT_PAGE_NO);
-        result.setPageSize(DEFAULT_PAGE_SIZE);
-        result.setTotal(data != null ? data.size() : DEFAULT_TOTAL);
-        result.setData(data);
-        return result;
+    public PageableResult(Integer code, String message, T data, Long total, Integer pageNo, Integer pageSize) {
+        super(code, message, data, total);
+        this.pageNo = pageNo;
+        this.pageSize = pageSize;
     }
-
-    public static <T extends Collection<?>> PageableResult<T> of(T data, Long total) {
-        PageableResult<T> result = new PageableResult<>();
-        result.setCode(CODE_SUCCESS);
-        result.setMessage(MESSAGE_SUCCESS);
-        result.setPageNo(DEFAULT_PAGE_NO);
-        result.setPageSize(DEFAULT_PAGE_SIZE);
-        result.setTotal(total);
-        result.setData(data);
-        return result;
-    }
-
-    public static <T extends Collection<?>> PageableResult<T> of(Integer pageNo, Integer pageSize, T data) {
-        PageableResult<T> result = new PageableResult<>();
-        result.setCode(CODE_SUCCESS);
-        result.setMessage(MESSAGE_SUCCESS);
-        result.setPageNo(pageNo);
-        result.setPageSize(pageSize);
-        result.setTotal(data != null ? data.size() : DEFAULT_TOTAL);
-        result.setData(data);
-        return result;
-    }
-
-    public static <T extends Collection<?>> PageableResult<T> of(Integer pageNo, Integer pageSize, T data, Long total) {
-        PageableResult<T> result = new PageableResult<>();
-        result.setCode(CODE_SUCCESS);
-        result.setMessage(MESSAGE_SUCCESS);
-        result.setPageNo(pageNo);
-        result.setPageSize(pageSize);
-        result.setTotal(total);
-        result.setData(data);
-        return result;
-    }
-
-    public static <T extends Collection<?>> PageableResult<T> of(Integer code, String message, Integer pageNo,
-                                                                 Integer pageSize, T data, Long total) {
-        PageableResult<T> result = new PageableResult<>();
-        result.setCode(code);
-        result.setMessage(message);
-        result.setPageNo(pageNo);
-        result.setPageSize(pageSize);
-        result.setTotal(total);
-        result.setData(data);
-        return result;
-    }
-
 
 }

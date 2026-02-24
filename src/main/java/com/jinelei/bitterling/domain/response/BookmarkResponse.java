@@ -8,7 +8,7 @@ import java.util.List;
 
 @Schema(name = "BookmarkResponse", description = "书签领域对象")
 public record BookmarkResponse(
-        @Schema(name = "ID", description = "主键ID")
+        @Schema(name = "id", description = "主键ID")
         Long id,
         @Schema(name = "createTime", description = "创建时间")
         LocalDateTime createTime,

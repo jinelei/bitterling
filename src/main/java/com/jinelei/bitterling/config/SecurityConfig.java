@@ -1,8 +1,10 @@
 package com.jinelei.bitterling.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jinelei.bitterling.domain.result.GenericResult;
 import com.jinelei.bitterling.config.security.JwtAuthenticationFilter;
+import com.jinelei.bitterling.domain.result.GenericResult;
+import com.jinelei.bitterling.domain.result.ResultFactory;
+import com.jinelei.bitterling.domain.result.StringResult;
 import com.jinelei.bitterling.utils.JwtTokenUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -108,9 +110,6 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(SpringBeanUtils.getBean(JwtAuthenticationFilter.class), UsernamePasswordAuthenticationFilter.class);
-
-        ;
-
         return http.build();
     }
 
@@ -120,7 +119,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationFailureHandler authenticationFailureHandler() {
         return (request, response, authentication) -> {
-            GenericResult<String> message = GenericResult.failure(500, "登录失败", Optional.ofNullable(authentication).map(Throwable::getMessage).orElse("账号或密码错误"));
+            StringResult message = ResultFactory.create(StringResult.class, GenericResult.CODE_FAILURE_INTERNAL, GenericResult.LOGIN_FAILED, Optional.ofNullable(authentication).map(Throwable::getMessage).orElse("账号或密码错误"));
             SpringBeanUtils.getBean(ObjectMapper.class).writeValue(response.getWriter(), message);
         };
     }
@@ -133,7 +132,7 @@ public class SecurityConfig {
         return (request, response, authentication) -> {
             SpringBeanUtils.getBean(MessageService.class).userLoginNotify(authentication.getName());
             final String jwtToken = SpringBeanUtils.getBean(JwtTokenUtil.class).generateToken(authentication.getName());
-            GenericResult<String> message = GenericResult.of(200, "登录成功", jwtToken);
+            StringResult message = ResultFactory.create(StringResult.class, GenericResult.CODE_SUCCESS, GenericResult.LOGIN_SUCCESSFUL, jwtToken);
             SpringBeanUtils.getBean(ObjectMapper.class).writeValue(response.getWriter(), message);
         };
     }
@@ -145,7 +144,7 @@ public class SecurityConfig {
     public LogoutSuccessHandler logoutSuccessHandler() {
         return (request, response, authentication) -> {
             SpringBeanUtils.getBean(MessageService.class).userLoginNotify(authentication.getName());
-            GenericResult<String> message = GenericResult.of(200, "登出成功", "");
+            StringResult message = ResultFactory.create(StringResult.class, GenericResult.CODE_SUCCESS, GenericResult.LOGOUT_SUCCESSFUL, "");
             SpringBeanUtils.getBean(ObjectMapper.class).writeValue(response.getWriter(), message);
         };
     }
@@ -156,7 +155,7 @@ public class SecurityConfig {
     @Bean
     public AuthenticationEntryPoint authenticationEntryPoint() {
         return (request, response, authentication) -> {
-            GenericResult<String> message = GenericResult.of(401, "用户未登录", authentication.getMessage());
+            StringResult message = ResultFactory.create(StringResult.class, GenericResult.CODE_FAILURE_UNAUTHORIZED, GenericResult.USER_NOT_LOGGED_IN, authentication.getMessage());
             SpringBeanUtils.getBean(ObjectMapper.class).writeValue(response.getWriter(), message);
             response.setStatus(HttpStatus.OK.value());
         };

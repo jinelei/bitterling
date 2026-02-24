@@ -1,78 +1,14 @@
 package com.jinelei.bitterling.domain.result;
 
-import com.jinelei.bitterling.domain.request.PageableRequest;
-import com.jinelei.bitterling.exception.BusinessException;
-
-import java.util.Collection;
-import java.util.Optional;
-
-import static com.jinelei.bitterling.constant.PageableProperty.DEFAULT_PAGE_NO;
-import static com.jinelei.bitterling.constant.PageableProperty.DEFAULT_PAGE_SIZE;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Parameter;
+import java.util.*;
+import java.util.function.BiPredicate;
 
 public class ResultFactory {
 
-    public static <E, T> T create(Class<T> clazz, Integer code, String message, E data) {
-        return switch (judgeResultMode(Optional.ofNullable(clazz).orElseThrow(() -> new BusinessException("Class参数不能为空")))) {
-            case RAW_GENERIC -> clazz.cast(GenericResult.of(code, message, data));
-            case COLLECTION -> clazz.cast(CollectionResult.of(code, message, data));
-            case PAGEABLE -> clazz.cast(PageableResult.of(code, message, data));
-        };
-    }
-
-    public static <E extends Collection<?>, T> T create(Class<T> clazz, Integer code, String message, E data, Long total, PageableRequest<?> req) {
-        Integer pageNo = Optional.ofNullable(req).map(PageableRequest::getPageNo).orElse(DEFAULT_PAGE_NO);
-        Integer pageSize = Optional.ofNullable(req).map(PageableRequest::getPageNo).orElse(DEFAULT_PAGE_SIZE);
-        return switch (judgeResultMode(Optional.ofNullable(clazz).orElseThrow(() -> new BusinessException("Class参数不能为空")))) {
-            case RAW_GENERIC -> throw new BusinessException("集合类型不能使用该返回类型");
-            case COLLECTION -> clazz.cast(CollectionResult.of(code, message, data));
-            case PAGEABLE -> clazz.cast(PageableResult.of(code, message, pageNo, pageSize, data, total));
-        };
-    }
-
-
-    public enum ResultMode {
-        RAW_GENERIC,    // 模式1：裸继承GenericResult
-        COLLECTION,     // 模式2：继承CollectionResult
-        PAGEABLE        // 模式3：继承PageableResult
-    }
-
-    /**
-     * 核心方法：判断Class对应的继承模式
-     *
-     * @param clazz 要判断的GenericResult子类Class
-     * @return 对应的模式枚举
-     * @throws IllegalArgumentException 非GenericResult子类时抛出
-     */
-    public static ResultMode judgeResultMode(Class<?> clazz) {
-        // 前置校验：必须是GenericResult的子类
-        if (!GenericResult.class.isAssignableFrom(clazz)) {
-            throw new IllegalArgumentException(clazz.getName() + " 不是GenericResult的子类");
-        }
-
-        // 1. 判断是否是PageableResult的子类（模式3）
-        if (isAssignableTo(clazz, PageableResult.class)) {
-            // 额外校验：泛型是否符合 T extends Collection<?>（可选，根据你的需求）
-            validateCollectionGeneric(clazz, PageableResult.class);
-            return ResultMode.PAGEABLE;
-        }
-
-        // 2. 判断是否是CollectionResult的子类（模式2）
-        if (isAssignableTo(clazz, CollectionResult.class)) {
-            validateCollectionGeneric(clazz, CollectionResult.class);
-            return ResultMode.COLLECTION;
-        }
-
-        // 3. 剩下的就是裸继承GenericResult（模式1）
-        return ResultMode.RAW_GENERIC;
-    }
-
-    /**
-     * 工具方法：判断clazz是否是targetSuper的子类（排除自身，只判断继承关系）
-     * （因为PageableResult/CollectionResult本身是抽象类，实际传入的是子类）
-     */
-    private static boolean isAssignableTo(Class<?> clazz, Class<?> targetSuper) {
-        Class<?> current = clazz;
-        // 递归遍历继承链，直到GenericResult
+    public static final BiPredicate<Class<?>, Class<?>> isAssignableTo = (clz, targetSuper) -> {
+        Class<?> current = clz;
         while (current != null && current != GenericResult.class) {
             Class<?> superClass = current.getSuperclass();
             if (superClass == targetSuper) {
@@ -81,29 +17,153 @@ public class ResultFactory {
             current = superClass;
         }
         return false;
+    };
+
+    public static <T extends GenericResult<?>> T create(Class<T> clazz, Object... args) {
+        if (args == null || args.length == 0) {
+            return create(clazz);
+        }
+        try {
+            Constructor<T> constructor = getMatchingConstructor(clazz, args);
+            return constructor.newInstance(args);
+        } catch (NoSuchMethodException e) {
+            throw new RuntimeException(clazz.getSimpleName() + "没有匹配的构造器，参数类型不匹配", e);
+        } catch (Exception e) {
+            throw new RuntimeException("创建" + clazz.getSimpleName() + "并赋值失败：" + e.getMessage(), e);
+        }
     }
 
     /**
-     * 可选校验：确保泛型T符合 extends Collection<?> 的约束
-     * （如果你的场景中不需要严格校验泛型，可注释此方法）
+     * 智能获取构造器：支持基本类型和包装类型自动匹配
+     *
+     * @param clazz 目标类
+     * @param args  构造器参数值（实际传入的参数，如 Integer、Long 等）
+     * @return 匹配的构造器
+     * @throws NoSuchMethodException 无匹配的构造器时抛出
      */
-    private static void validateCollectionGeneric(Class<?> clazz, Class<?> parentClass) {
-        try {
-            // 获取父类的泛型类型
-            java.lang.reflect.ParameterizedType parameterizedType =
-                    (java.lang.reflect.ParameterizedType) clazz.getGenericSuperclass();
-            // 获取泛型参数T的实际类型
-            Class<?> actualType = (Class<?>) parameterizedType.getActualTypeArguments()[0];
-            // 校验是否是Collection的子类
-            if (!Collection.class.isAssignableFrom(actualType)) {
-                throw new IllegalArgumentException(
-                        clazz.getName() + " 的泛型类型 " + actualType.getName() +
-                                " 不符合 " + parentClass.getName() + " 的约束：T extends Collection<?>");
-            }
-        } catch (Exception e) {
-            // 泛型擦除等情况时的容错（可选抛出或忽略）
-            throw new IllegalArgumentException(
-                    "无法校验 " + clazz.getName() + " 的泛型约束", e);
+    @SuppressWarnings("unchecked")
+    public static <T> Constructor<T> getMatchingConstructor(Class<T> clazz, Object... args) throws NoSuchMethodException {
+        if (args == null) {
+            args = new Object[0];
         }
+
+        // 第一步：尝试直接匹配（参数类型完全一致）
+        Class<?>[] paramTypes = getParameterTypes(args);
+        try {
+            return clazz.getDeclaredConstructor(paramTypes);
+        } catch (NoSuchMethodException e) {
+            // 直接匹配失败，进入宽松匹配逻辑
+        }
+
+        // 第二步：遍历所有构造器，进行宽松类型匹配
+        Constructor<?>[] constructors = clazz.getDeclaredConstructors();
+        for (Constructor<?> constructor : constructors) {
+            Parameter[] parameters = constructor.getParameters();
+            // 先校验参数数量是否一致
+            if (parameters.length != args.length) {
+                continue;
+            }
+
+            // 校验每个参数的类型是否兼容（基本类型/包装类型互转）
+            boolean match = true;
+            for (int i = 0; i < parameters.length; i++) {
+                Class<?> paramType = parameters[i].getType();
+                Class<?> argType = args[i] == null ? null : args[i].getClass();
+                if (!isTypeCompatible(paramType, argType)) {
+                    match = false;
+                    break;
+                }
+            }
+
+            // 找到匹配的构造器，强制类型转换返回
+            if (match) {
+                return (Constructor<T>) constructor;
+            }
+        }
+
+        // 所有构造器都不匹配，抛出异常
+        throw new NoSuchMethodException(
+                "类 " + clazz.getName() + " 没有匹配的构造器，参数类型：" + Arrays.toString(paramTypes)
+        );
     }
+
+    /**
+     * 获取参数值对应的类型数组（用于初始匹配）
+     */
+    private static Class<?>[] getParameterTypes(Object... args) {
+        Class<?>[] paramTypes = new Class[args.length];
+        for (int i = 0; i < args.length; i++) {
+            paramTypes[i] = args[i] == null ? Object.class : args[i].getClass();
+        }
+        return paramTypes;
+    }
+
+    /**
+     * 核心：判断参数类型是否兼容（支持基本类型/包装类型互转）
+     *
+     * @param paramType 构造器声明的参数类型（如 int）
+     * @param argType   实际传入参数的类型（如 Integer）
+     * @return 是否兼容
+     */
+    private static boolean isTypeCompatible(Class<?> paramType, Class<?> argType) {
+        // 1. 空值兼容所有引用类型（基本类型不能传null）
+        if (argType == null) {
+            return !paramType.isPrimitive();
+        }
+
+        // 2. 类型完全一致
+        if (paramType == argType) {
+            return true;
+        }
+
+        // 3. 基本类型 <-> 包装类型 互转匹配
+        Map<Class<?>, Class<?>> primitiveToWrapper = getPrimitiveToWrapperMap();
+        Map<Class<?>, Class<?>> wrapperToPrimitive = getWrapperToPrimitiveMap();
+
+        // 情况1：构造器参数是基本类型，传入的是包装类型
+        if (paramType.isPrimitive() && wrapperToPrimitive.containsKey(argType)) {
+            return paramType == wrapperToPrimitive.get(argType);
+        }
+
+        // 情况2：构造器参数是包装类型，传入的是基本类型（极少出现，因为基本类型值会自动装箱）
+        if (primitiveToWrapper.containsKey(paramType) && argType.isPrimitive()) {
+            return primitiveToWrapper.get(paramType) == argType;
+        }
+
+        // 4. 其他兼容情况（如子类赋值给父类）
+        return paramType.isAssignableFrom(argType);
+    }
+
+    /**
+     * 基本类型 -> 包装类型 映射
+     */
+    private static Map<Class<?>, Class<?>> getPrimitiveToWrapperMap() {
+        Map<Class<?>, Class<?>> map = new HashMap<>();
+        map.put(int.class, Integer.class);
+        map.put(long.class, Long.class);
+        map.put(boolean.class, Boolean.class);
+        map.put(byte.class, Byte.class);
+        map.put(short.class, Short.class);
+        map.put(float.class, Float.class);
+        map.put(double.class, Double.class);
+        map.put(char.class, Character.class);
+        return map;
+    }
+
+    /**
+     * 包装类型 -> 基本类型 映射
+     */
+    private static Map<Class<?>, Class<?>> getWrapperToPrimitiveMap() {
+        Map<Class<?>, Class<?>> map = new HashMap<>();
+        map.put(Integer.class, int.class);
+        map.put(Long.class, long.class);
+        map.put(Boolean.class, boolean.class);
+        map.put(Byte.class, byte.class);
+        map.put(Short.class, short.class);
+        map.put(Float.class, float.class);
+        map.put(Double.class, double.class);
+        map.put(Character.class, char.class);
+        return map;
+    }
+
 }

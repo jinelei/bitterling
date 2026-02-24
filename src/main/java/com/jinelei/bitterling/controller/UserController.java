@@ -1,7 +1,8 @@
 package com.jinelei.bitterling.controller;
 
-import com.jinelei.bitterling.domain.result.GenericResult;
 import com.jinelei.bitterling.domain.dto.UserInfoResponse;
+import com.jinelei.bitterling.domain.result.ResultFactory;
+import com.jinelei.bitterling.domain.result.UserInfoSingleResult;
 import com.jinelei.bitterling.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,9 +29,9 @@ public class UserController extends BaseController {
 
     @PostMapping("/info")
     @Operation(operationId = "getUserInfo", summary = "用户信息", description = "获取当前登录用户相关信息")
-    public GenericResult<?> getUserInfo(Principal principal) {
+    public UserInfoSingleResult getUserInfo(Principal principal) {
         UserInfoResponse response = userService.getUserInfo(principal);
-        return GenericResult.success(response);
+        return ResultFactory.create(UserInfoSingleResult.class, response);
     }
 
 }

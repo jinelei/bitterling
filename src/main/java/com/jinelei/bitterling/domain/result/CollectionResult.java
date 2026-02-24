@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.ToString;
 
 import java.util.Collection;
+import java.util.Optional;
 
 @Data
 @ToString
@@ -23,13 +24,23 @@ public class CollectionResult<T extends Collection<?>> extends GenericResult<T> 
         this.total = 0L;
     }
 
+    public CollectionResult(T data) {
+        super(CODE_SUCCESS, MESSAGE_SUCCESS, data);
+        this.total = Optional.ofNullable(data).map(Collection::size).map(Integer::longValue).orElse(0L);
+    }
+
+    public CollectionResult(T data, Long total) {
+        super(CODE_SUCCESS, MESSAGE_SUCCESS, data);
+        this.total = Optional.ofNullable(total).orElse(0L);
+    }
+
     public CollectionResult(Integer code, String message, T data) {
         super(code, message, data);
-        this.total = (long) data.size();
+        this.total = Optional.ofNullable(data).map(Collection::size).map(Integer::longValue).orElse(0L);
     }
 
     public CollectionResult(Integer code, String message, T data, Long total) {
         super(code, message, data);
-        this.total = total;
+        this.total = Optional.ofNullable(total).orElse(0L);
     }
 }

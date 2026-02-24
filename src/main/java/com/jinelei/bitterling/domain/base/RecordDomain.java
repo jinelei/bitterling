@@ -24,7 +24,7 @@ import java.util.Optional;
 public class RecordDomain<ID> extends BaseDomain<ID> implements Comparable<RecordDomain<ID>> {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Schema(name = "ID", description = "主键ID")
+    @Schema(name = "id", description = "主键ID")
     protected ID id;
     @Column(name = "create_time")
     @Schema(name = "createTime", description = "创建时间")

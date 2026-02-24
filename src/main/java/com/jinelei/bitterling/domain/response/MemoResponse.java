@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 
 @Schema(name = "MemoDomain", description = "备忘领域对象")
 public record MemoResponse(
-        @Schema(name = "ID", description = "主键ID")
+        @Schema(name = "id", description = "主键ID")
         Long id,
         @Schema(name = "createTime", description = "创建时间")
         LocalDateTime createTime,
