@@ -36,7 +36,7 @@ public class TreeRecordDomain<ID> extends BaseDomain<ID> implements Comparable<T
     protected LocalDateTime updateTime;
     @Column(name = "order_number")
     @Schema(name = "orderNumber", description = "排序值")
-    protected Integer orderNumber;
+    protected Integer orderNumber = 0;
 
     @Override
     public int compareTo(TreeRecordDomain<ID> o) {
