@@ -10,13 +10,9 @@ import com.jinelei.bitterling.domain.MemoDomain;
 import com.jinelei.bitterling.service.MemoService;
 import com.jinelei.bitterling.service.MemoTagService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -40,7 +36,6 @@ public class MemoController extends BaseController {
 
     @PostMapping("tags")
     @Operation(operationId = "memoTags", summary = "查询备忘标签", description = "查询备忘标签")
-    @ApiResponse(responseCode = "200", description = "查询成功", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GenericResult.class)))
     public MemoTagListResult tags() {
         Iterable<MemoTagDomain> all = memoTagService.findAll();
         List<MemoTagResponse> list = StreamSupport.stream(all.spliterator(), false).map(memoTagConvertor::toResponse).toList();
@@ -49,7 +44,6 @@ public class MemoController extends BaseController {
 
     @PostMapping("page")
     @Operation(operationId = "memoPage", summary = "查询备忘分页", description = "查询备忘分页")
-    @ApiResponse(responseCode = "200", description = "查询成功", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GenericResult.class)))
     public MemoTagPageResult page(@RequestBody @Valid PageableRequest<MemoPageRequest> req) {
         Page<MemoDomain> page = service.page(req);
         List<MemoResponse> response = memoConvertor.toResponse(page.getContent());
@@ -58,7 +52,6 @@ public class MemoController extends BaseController {
 
     @PostMapping("create")
     @Operation(operationId = "memoCreate", summary = "新增备忘", description = "新增备忘")
-    @ApiResponse(responseCode = "200", description = "新增成功", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GenericResult.class)))
     public StringResult create(@RequestBody @Valid MemoCreateRequest req) {
         this.service.create(req);
         return ResultFactory.create(StringResult.class, "新增成功");
@@ -66,7 +59,6 @@ public class MemoController extends BaseController {
 
     @PostMapping("update")
     @Operation(operationId = "memoUpdate", summary = "更新备忘", description = "根据id更新备忘")
-    @ApiResponse(responseCode = "200", description = "更新成功", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GenericResult.class)))
     public StringResult update(@RequestBody @Valid MemoUpdateRequest req) {
         this.service.update(req);
         return ResultFactory.create(StringResult.class, "更新成功");
@@ -74,7 +66,6 @@ public class MemoController extends BaseController {
 
     @PostMapping("delete")
     @Operation(operationId = "memoDelete", summary = "删除备忘", description = "根据id删除备忘")
-    @ApiResponse(responseCode = "200", description = "删除成功", content = @Content(mediaType = MediaType.APPLICATION_JSON_VALUE, schema = @Schema(implementation = GenericResult.class)))
     public StringResult delete(@RequestBody @Valid MemoDeleteRequest req) {
         this.service.deleteById(req.id());
         return ResultFactory.create(StringResult.class, "删除成功");
