@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 @Schema(description = "备忘标签分页返回结果")
 public class MemoTagPageResult extends PageableResult<List<MemoTagResponse>> {
     public MemoTagPageResult() {

@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 @Schema(description = "书签列表返回结果")
 public class BookmarkListResult extends CollectionResult<List<BookmarkResponse>> {
     public BookmarkListResult() {

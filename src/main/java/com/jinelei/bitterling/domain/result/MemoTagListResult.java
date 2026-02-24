@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.util.List;
 
+@SuppressWarnings("unused")
 @Schema(description = "备忘列表返回结果")
 public class MemoTagListResult extends CollectionResult<List<MemoTagResponse>> {
     public MemoTagListResult() {
