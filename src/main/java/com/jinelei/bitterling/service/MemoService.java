@@ -80,7 +80,7 @@ public class MemoService extends BaseService<MemoRepository, MemoDomain, Long> {
                     .ifPresent(predicates::add);
             return cb.and(predicates.toArray(Predicate[]::new));
         };
-        Page<MemoDomain> all = this.getRepository().findAll(specification, PageRequest.of(req.getPageNo(), req.getPageSize()));
+        Page<MemoDomain> all = this.getRepository().findAll(specification, PageRequest.of(Math.max(0, req.getPageNo() - 1), req.getPageSize()));
         return all;
     }
 }

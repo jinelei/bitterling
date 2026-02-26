@@ -44,10 +44,10 @@ public class MemoController extends BaseController {
 
     @PostMapping("page")
     @Operation(operationId = "memoPage", summary = "查询备忘分页", description = "查询备忘分页")
-    public MemoTagPageResult page(@RequestBody @Valid PageableRequest<MemoPageRequest> req) {
+    public MemoPageResult page(@RequestBody @Valid PageableRequest<MemoPageRequest> req) {
         Page<MemoDomain> page = service.page(req);
         List<MemoResponse> response = memoConvertor.toResponse(page.getContent());
-        return ResultFactory.create(MemoTagPageResult.class, response);
+        return ResultFactory.create(MemoPageResult.class, response, page.getTotalElements(), page.getPageable().getPageNumber(), page.getPageable().getPageSize());
     }
 
     @PostMapping("create")

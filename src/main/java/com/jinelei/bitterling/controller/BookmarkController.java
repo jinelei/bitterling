@@ -17,9 +17,6 @@ import com.jinelei.bitterling.service.BookmarkService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-import static com.jinelei.bitterling.domain.result.GenericResult.CODE_SUCCESS;
-import static com.jinelei.bitterling.domain.result.GenericResult.MESSAGE_SUCCESS;
-
 @RestController
 @RequestMapping("/bookmark")
 @Tag(name = "书签管理", description = "书签相关接口")
