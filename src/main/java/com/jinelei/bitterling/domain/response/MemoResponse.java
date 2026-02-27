@@ -1,6 +1,5 @@
 package com.jinelei.bitterling.domain.response;
 
-import com.jinelei.bitterling.domain.MemoTagDomain;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 import java.time.LocalDateTime;
@@ -23,8 +22,6 @@ public record MemoResponse(
         @Schema(name = "content", description = "备忘内容")
         String content,
         @Schema(name = "tags", description = "备忘关联标签对象列表")
-        List<MemoTagDomain> tags,
-        @Schema(name = "tagIds", description = "备忘关联标签列表")
-        List<Long> tagIds
+        List<MemoTagResponse> tags
 ) {
 }

@@ -33,7 +33,7 @@ public interface BookmarkConvertor {
     BookmarkDomain fromCreateReq(BookmarkCreateRequest r);
 
     @InheritConfiguration(name = "updateMapTree")
-    BookmarkDomain merge(@MappingTarget BookmarkDomain source, BookmarkUpdateRequest r);
+    void merge(@MappingTarget BookmarkDomain source, BookmarkUpdateRequest r);
 
     BookmarkResponse toResponse(BookmarkDomain e);
 

@@ -9,7 +9,9 @@ import jakarta.validation.Validator;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
@@ -29,6 +31,14 @@ public class MemoTagRelateService
                 Optional.ofNullable(id).orElseThrow(() -> new BusinessException("需要查询的memoId不能为空"))));
         log.info("findByMemoId: {}", findByMemoId);
         return findByMemoId;
+    }
+
+    public Map<Long, List<MemoTagRelateRecordDomain>> findByMemoIdList(List<Long> ids) {
+        List<MemoTagRelateRecordDomain> findByMemoId = repository.findAll((r, q, cb) ->
+                r.get("memoId").in(Optional.ofNullable(ids).filter(c -> !CollectionUtils.isEmpty(c)).orElseThrow(() -> new BusinessException("需要查询的memoId列表不能为空"))));
+        Map<Long, List<MemoTagRelateRecordDomain>> map = findByMemoId.stream().collect(Collectors.groupingBy(MemoTagRelateRecordDomain::getMemoId));
+        log.info("findByMemoIdList: {}", map);
+        return map;
     }
 
     public List<MemoTagRelateRecordDomain> findByTagId(Long id) {

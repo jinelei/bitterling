@@ -1,6 +1,7 @@
 package com.jinelei.bitterling.controller;
 
 import com.jinelei.bitterling.domain.MemoTagDomain;
+import com.jinelei.bitterling.domain.base.RecordDomain;
 import com.jinelei.bitterling.domain.convert.MemoConvertor;
 import com.jinelei.bitterling.domain.convert.MemoTagConvertor;
 import com.jinelei.bitterling.domain.request.*;
@@ -18,6 +19,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.StreamSupport;
 
 @RestController
@@ -48,6 +50,8 @@ public class MemoController extends BaseController {
     @Operation(operationId = "memoGet", summary = "查询备忘详情", description = "查询备忘详情")
     public MemoSingleResult get(@RequestBody @Valid MemoGetRequest req) {
         MemoDomain memo = this.service.findById(req.id()).orElseThrow(() -> new BusinessException("未找到备忘"));
+        List<MemoTagDomain> tagsByMemoId = memoTagService.getTagsByMemoId(memo.getId());
+        memoConvertor.merge(memo, tagsByMemoId);
         MemoResponse response = memoConvertor.toResponse(memo);
         return ResultFactory.create(MemoSingleResult.class, response);
     }
@@ -56,6 +60,8 @@ public class MemoController extends BaseController {
     @Operation(operationId = "memoPage", summary = "查询备忘分页", description = "查询备忘分页")
     public MemoPageResult page(@RequestBody @Valid PageableRequest<MemoPageRequest> req) {
         Page<MemoDomain> page = service.page(req);
+        Map<Long, List<MemoTagDomain>> tagsByMemoId = memoTagService.getTagsByMemoId(page.getContent().stream().map(RecordDomain::getId).toList());
+        page.getContent().forEach(it -> memoConvertor.merge(it, tagsByMemoId.get(it.getId())));
         List<MemoResponse> response = memoConvertor.toResponse(page.getContent());
         return ResultFactory.create(MemoPageResult.class, response, page.getTotalElements(), page.getPageable().getPageNumber(), page.getPageable().getPageSize());
     }

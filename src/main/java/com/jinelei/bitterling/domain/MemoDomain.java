@@ -29,4 +29,7 @@ public class MemoDomain extends RecordDomain<Long> {
     @Column(name = "content", columnDefinition = "MEDIUMTEXT")
     @Schema(name = "content", description = "备忘内容")
     private String content;
+    @Transient
+    @Schema(name = "tags", description = "备忘关联标签")
+    private transient List<MemoTagDomain> tags;
 }

@@ -75,16 +75,6 @@ public class BookmarkController extends BaseController {
         return ResultFactory.create(BookmarkListResult.class, tree);
     }
 
-    @PostMapping("myFavoriteBookmarks")
-    @Operation(operationId = "myFavoriteBookmarks", summary = "我收藏的书签", description = "我收藏的书签")
-    public BookmarkListResult myFavoriteBookmarks() {
-        Iterable<BookmarkDomain> all = this.service.myFavoriteBookmarks();
-        List<BookmarkResponse> list = StreamSupport.stream(all.spliterator(), false)
-                .map(bookmarkConvertor::toResponse)
-                .toList();
-        return ResultFactory.create(BookmarkListResult.class, list);
-    }
-
     @PostMapping("sort")
     @Operation(operationId = "bookmarkSort", summary = "书签排序", description = "书签排序")
     public StringResult bookmarkSort(@RequestBody List<Long> ids) {

@@ -16,7 +16,6 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.jinelei.bitterling.domain.BookmarkDomain;
-import com.jinelei.bitterling.domain.enums.BookmarkType;
 import com.jinelei.bitterling.repository.BookmarkRepository;
 
 import jakarta.validation.Validator;
@@ -31,19 +30,6 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
         this.bookmarkConvertor = bookmarkConvertor;
     }
 
-    public Iterable<BookmarkDomain> myFavoriteBookmarks() {
-        Optional<BookmarkDomain> one = repository.findOne((Specification<BookmarkDomain>) (r, q, cb) -> cb.and(
-                cb.equal(r.get("name"), "收藏"),
-                cb.equal(r.get("type"), BookmarkType.FOLDER)
-        ));
-        BookmarkDomain favorite = one.orElseThrow(() -> new BusinessException("未找到个人收藏"));
-        List<BookmarkDomain> all = repository.findAll((Specification<BookmarkDomain>) (r, q, cb) -> cb.and(
-                cb.equal(r.get("parentId"), favorite.getId()),
-                cb.equal(r.get("type"), BookmarkType.ITEM)
-        ));
-        return all;
-    }
-
     public void save(BookmarkCreateRequest req) {
         BookmarkDomain bookmarkDomain = bookmarkConvertor.fromCreateReq(req);
         repository.save(bookmarkDomain);
@@ -51,8 +37,8 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
 
     public void update(BookmarkUpdateRequest req) {
         BookmarkDomain exist = repository.findById(req.id()).orElseThrow(() -> new BusinessException("未找到书签"));
-        BookmarkDomain merge = bookmarkConvertor.merge(exist, req);
-        repository.save(merge);
+        bookmarkConvertor.merge(exist, req);
+        repository.save(exist);
     }
 
     public Iterable<BookmarkDomain> findList(BookmarkListRequest req) {
@@ -81,9 +67,7 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
         }
         Iterable<BookmarkDomain> allById = getRepository().findAllById(ids);
         List<BookmarkDomain> list = StreamSupport.stream(allById.spliterator(), false)
-                .peek(it -> {
-                    it.setOrderNumber(ids.indexOf(it.getId()));
-                })
+                .peek(it -> it.setOrderNumber(ids.indexOf(it.getId())))
                 .toList();
         getRepository().saveAll(list);
     }
@@ -93,7 +77,6 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
         List<BookmarkDomain> list = new ArrayList<>();
         StreamSupport.stream(all.spliterator(), false).forEach(list::add);
         List<BookmarkDomain> tree = TreeUtils.convertToTree(list, Comparator.comparingInt(TreeRecordDomain::getOrderNumber));
-        List<BookmarkResponse> response = bookmarkConvertor.toResponse(tree);
-        return response;
+        return bookmarkConvertor.toResponse(tree);
     }
 }
