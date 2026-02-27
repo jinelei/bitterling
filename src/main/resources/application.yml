@@ -59,6 +59,7 @@ spring:
         format_sql: false
     open-in-view: false
     defer-datasource-initialization: true
+    database-platform: org.hibernate.dialect.MariaDBDialect
   sql:
     init:
       mode: never
