@@ -66,7 +66,9 @@ public class SecurityConfig {
                 .authorities(List.of(
                         new SimpleGrantedAuthority("ROLE_ADMIN"),
                         new SimpleGrantedAuthority("PAGE_/"),
+                        new SimpleGrantedAuthority("PAGE_/about"),
                         new SimpleGrantedAuthority("PAGE_/memo"),
+                        new SimpleGrantedAuthority("PAGE_/memo_detail"),
                         new SimpleGrantedAuthority("PAGE_/bookmark")
                 ))
                 .build();

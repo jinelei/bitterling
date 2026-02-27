@@ -25,28 +25,28 @@ public class MemoTagRelateService
     }
 
     public List<MemoTagRelateRecordDomain> findByMemoId(Long id) {
-        List<MemoTagRelateRecordDomain> findByMemoId = repository.findAll((r, q, cb) -> cb.equal(r.get("id").get("memoId"),
+        List<MemoTagRelateRecordDomain> findByMemoId = repository.findAll((r, q, cb) -> cb.equal(r.get("memoId"),
                 Optional.ofNullable(id).orElseThrow(() -> new BusinessException("需要查询的memoId不能为空"))));
         log.info("findByMemoId: {}", findByMemoId);
         return findByMemoId;
     }
 
     public List<MemoTagRelateRecordDomain> findByTagId(Long id) {
-        List<MemoTagRelateRecordDomain> findByTagId = repository.findAll((r, q, cb) -> cb.equal(r.get("id").get("tagId"),
+        List<MemoTagRelateRecordDomain> findByTagId = repository.findAll((r, q, cb) -> cb.equal(r.get("tagId"),
                 Optional.ofNullable(id).orElseThrow(() -> new BusinessException("需要查询的memoId不能为空"))));
         log.info("findByTagId: {}", findByTagId);
         return findByTagId;
     }
 
     public long deleteByMemoId(Long id) {
-        long deleteByMemoId = repository.delete((r, q, cb) -> cb.equal(r.get("id").get("memoId"),
+        long deleteByMemoId = repository.delete((r, q, cb) -> cb.equal(r.get("memoId"),
                 Optional.ofNullable(id).orElseThrow(() -> new BusinessException("需要删除的memoId不能为空"))));
         log.info("deleteByMemoId: {}", deleteByMemoId);
         return deleteByMemoId;
     }
 
     public long deleteByTagId(Long id) {
-        long deleteByTagId = repository.delete((r, q, cb) -> cb.equal(r.get("id").get("tagId"),
+        long deleteByTagId = repository.delete((r, q, cb) -> cb.equal(r.get("tagId"),
                 Optional.ofNullable(id).orElseThrow(() -> new BusinessException("需要删除的memoId不能为空"))));
         log.info("deleteByTagId: {}", deleteByTagId);
         return deleteByTagId;

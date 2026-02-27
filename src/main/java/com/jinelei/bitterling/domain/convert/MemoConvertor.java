@@ -4,8 +4,8 @@ import com.jinelei.bitterling.domain.base.RecordDomain;
 import com.jinelei.bitterling.domain.MemoDomain;
 import com.jinelei.bitterling.domain.MemoTagDomain;
 import com.jinelei.bitterling.domain.request.MemoCreateRequest;
-import com.jinelei.bitterling.domain.request.MemoResponse;
 import com.jinelei.bitterling.domain.request.MemoUpdateRequest;
+import com.jinelei.bitterling.domain.response.MemoResponse;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.MappingTarget;
@@ -43,9 +43,10 @@ public interface MemoConvertor {
         final List<Long> tagIds = Optional.ofNullable(tags)
                 .map(l -> l.stream().map(RecordDomain::getId).toList())
                 .orElse(new ArrayList<>());
-        return new MemoResponse(source.id(), source.title(), source.subTitle(), source.content(),
-                tags, tagIds, source.orderNumber(), source.createTime(),
-                source.updateTime());
+        return new MemoResponse(source.id(), source.createTime(),
+                source.updateTime(), source.orderNumber(),
+                source.title(), source.subTitle(), source.content(),
+                tags, tagIds);
     }
 
 }

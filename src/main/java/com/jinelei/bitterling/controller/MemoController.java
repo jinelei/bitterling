@@ -4,9 +4,11 @@ import com.jinelei.bitterling.domain.MemoTagDomain;
 import com.jinelei.bitterling.domain.convert.MemoConvertor;
 import com.jinelei.bitterling.domain.convert.MemoTagConvertor;
 import com.jinelei.bitterling.domain.request.*;
+import com.jinelei.bitterling.domain.response.MemoResponse;
 import com.jinelei.bitterling.domain.response.MemoTagResponse;
 import com.jinelei.bitterling.domain.result.*;
 import com.jinelei.bitterling.domain.MemoDomain;
+import com.jinelei.bitterling.exception.BusinessException;
 import com.jinelei.bitterling.service.MemoService;
 import com.jinelei.bitterling.service.MemoTagService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -40,6 +42,14 @@ public class MemoController extends BaseController {
         Iterable<MemoTagDomain> all = memoTagService.findAll();
         List<MemoTagResponse> list = StreamSupport.stream(all.spliterator(), false).map(memoTagConvertor::toResponse).toList();
         return ResultFactory.create(MemoTagListResult.class, list);
+    }
+
+    @PostMapping("get")
+    @Operation(operationId = "memoGet", summary = "查询备忘详情", description = "查询备忘详情")
+    public MemoSingleResult get(@RequestBody @Valid MemoGetRequest req) {
+        MemoDomain memo = this.service.findById(req.id()).orElseThrow(() -> new BusinessException("未找到备忘"));
+        MemoResponse response = memoConvertor.toResponse(memo);
+        return ResultFactory.create(MemoSingleResult.class, response);
     }
 
     @PostMapping("page")
