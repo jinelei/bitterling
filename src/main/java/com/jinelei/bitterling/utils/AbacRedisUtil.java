@@ -24,17 +24,13 @@ public class AbacRedisUtil {
      */
     public UserAttribute getUserAttribute(String sessionId) {
         // 1. 读取会话中的基础属性
-        String sessionKey = "session:" + sessionId;
-        Map<Object, Object> sessionMap = redisTemplate.opsForHash().entries(sessionKey);
+        final Map<Object, Object> sessionMap = redisTemplate.opsForHash().entries(String.format("session:%s", sessionId));
         if (sessionMap.isEmpty()) {
             return null;
         }
-
         // 2. 读取用户扩展属性
-        String username = Optional.ofNullable(sessionMap.get("username")).map(Object::toString).orElse(null);
-        String userAttributeKey = "user:attr:" + username;
-        Map<Object, Object> userAttributeMap = redisTemplate.opsForHash().entries(userAttributeKey);
-
+        final String username = Optional.ofNullable(sessionMap.get("username")).map(Object::toString).orElse(null);
+        final Map<Object, Object> userAttributeMap = redisTemplate.opsForHash().entries(String.format("user:attr:%s", username));
         // 3. 合并为UserAttribute对象
         final Set<String> roles = Optional.ofNullable(userAttributeMap.get("roles"))
                 .map(Object::toString)
@@ -59,8 +55,7 @@ public class AbacRedisUtil {
      * 从Redis获取资源属性
      */
     public ResourceAttribute getResourceAttribute(String resourceId) {
-        String resourceKey = "resource:attr:" + resourceId;
-        Map<Object, Object> resourceMap = redisTemplate.opsForHash().entries(resourceKey);
+        final Map<Object, Object> resourceMap = redisTemplate.opsForHash().entries(String.format("resource:attr:%s", resourceId));
         if (resourceMap.isEmpty()) {
             return null;
         }

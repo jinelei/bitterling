@@ -26,7 +26,7 @@ import java.util.function.Supplier;
  * JWT 认证过滤器：每次请求拦截 Token 并完成身份校验
  */
 @Slf4j
-@Component
+//@Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter implements Ordered {
 
     public static final String ANONYMOUS_USER = "anonymousUser";

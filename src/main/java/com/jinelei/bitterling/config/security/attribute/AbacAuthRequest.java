@@ -2,7 +2,7 @@ package com.jinelei.bitterling.config.security.attribute;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
-@Schema(name = "AbacAuthRequest", description = "ABAC权限请求")
+@Schema(name = "AuthRequest", description = "权限请求")
 public record AbacAuthRequest(
         @Schema(name = "sessionId", description = "会话ID")
         String sessionId,
