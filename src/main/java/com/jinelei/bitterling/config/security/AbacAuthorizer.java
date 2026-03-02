@@ -3,7 +3,6 @@ package com.jinelei.bitterling.config.security;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.jinelei.bitterling.config.security.attribute.AbacAuthRequest;
 import com.jinelei.bitterling.config.security.attribute.EnvironmentAttribute;
 import com.jinelei.bitterling.config.security.attribute.ResourceAttribute;
 import com.jinelei.bitterling.config.security.attribute.UserAttribute;
@@ -53,6 +52,8 @@ public class AbacAuthorizer {
     /**
      * 用户登录
      *
+     * @param request        请求
+     * @param response       响应
      * @param authentication 授权对象
      * @return 登录是否成功
      */
@@ -98,6 +99,14 @@ public class AbacAuthorizer {
         return redisTemplate.expire(String.format(SESSION_S, sessionId), 2, TimeUnit.HOURS);
     }
 
+    /**
+     * 用户登出
+     *
+     * @param request        请求
+     * @param response       响应
+     * @param authentication 授权对象
+     * @return 登出是否成功
+     */
     public boolean userLogout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         Optional.ofNullable(getSessionId(request))
                 .filter(StringUtils::hasText)
@@ -112,6 +121,11 @@ public class AbacAuthorizer {
 
     /**
      * 核心授权方法：判断用户是否有权限操作资源
+     *
+     * @param userAttr     用户属性
+     * @param resourceAttr 资源属性
+     * @param envAttr      环境属性
+     * @return 是否授权
      */
     public boolean authorize(UserAttribute userAttr, ResourceAttribute resourceAttr, EnvironmentAttribute envAttr) {
         // 基础校验：属性不存在直接拒绝
@@ -125,16 +139,23 @@ public class AbacAuthorizer {
                 || checkEnvRule(userAttr, envAttr);             // 环境规则
     }
 
-    // 进阶：使用EL表达式执行动态规则（适合复杂规则）
-    public boolean authorizeByEl(AbacAuthRequest request, String ruleEl) {
-        UserAttribute userAttr = abacRedisUtil.getUserAttribute(request.sessionId());
-        ResourceAttribute resourceAttr = abacRedisUtil.getResourceAttribute(request.resourceId());
+
+    /**
+     * 进阶：使用EL表达式执行动态规则（适合复杂规则）
+     *
+     * @param userAttr     用户属性
+     * @param resourceAttr 资源属性
+     * @param envAttr      环境属性
+     * @param ruleEl       EL表达式
+     * @return 是否授权
+     */
+    public boolean authorizeByEl(UserAttribute userAttr, ResourceAttribute resourceAttr, EnvironmentAttribute envAttr, String ruleEl) {
 
         // 构建EL上下文
         StandardEvaluationContext context = new StandardEvaluationContext();
         context.setVariable("user", userAttr);
         context.setVariable("resource", resourceAttr);
-        context.setVariable("env", request.envAttr());
+        context.setVariable("env", envAttr);
 
         // 执行EL表达式（示例规则：user.role == 'admin' && user.dept == resource.dept）
         ExpressionParser parser = new SpelExpressionParser();
@@ -142,22 +163,46 @@ public class AbacAuthorizer {
         return Boolean.TRUE.equals(expression.getValue(context, Boolean.class));
     }
 
-    // 规则1：管理员可操作本部门所有资源
+    /**
+     * 规则：管理员可操作本部门所有资源
+     *
+     * @param userAttr     用户属性
+     * @param resourceAttr 资源属性
+     * @return 是否授权
+     */
     private boolean checkAdminRule(UserAttribute userAttr, ResourceAttribute resourceAttr) {
         return Optional.ofNullable(userAttr.roles()).map(s -> s.contains(PermissionConstants.ADMIN)).orElse(false);
     }
 
-    // 规则2：资源归属者可操作自己的资源
+    /**
+     * 规则：资源归属者可操作自己的资源
+     *
+     * @param userAttr     用户属性
+     * @param resourceAttr 资源属性
+     * @return 是否授权
+     */
     private boolean checkOwnerRule(UserAttribute userAttr, ResourceAttribute resourceAttr) {
         return userAttr.username().equals(resourceAttr.owner());
     }
 
-    // 规则3：临时授权资源可操作
+    /**
+     * 规则3：临时授权资源可操作
+     *
+     * @param userAttr     用户属性
+     * @param resourceAttr 资源属性
+     * @return 是否授权
+     */
     private boolean checkTempAuthRule(UserAttribute userAttr, ResourceAttribute resourceAttr) {
         return userAttr.tempAuthResourceList() != null && userAttr.tempAuthResourceList().contains(resourceAttr.id());
     }
 
-    // 规则4：普通用户在办公IP+工作时间可操作公开资源
+    /**
+     * 规则：普通用户在办公IP+工作时间可操作公开资源
+     *
+     * @param userAttr 用户属性
+     * @param envAttr  环境属性
+     * @return 是否授权
+     */
     private boolean checkEnvRule(UserAttribute userAttr, EnvironmentAttribute envAttr) {
         // 检查IP白名单
         boolean isIpValid = abacRedisUtil.isIpInWhiteList(envAttr.ip());
@@ -168,6 +213,12 @@ public class AbacAuthorizer {
         return userAttr.roles().contains(USER) && isIpValid && isTimeValid;
     }
 
+    /**
+     * 从请求头中获取SessionId
+     *
+     * @param request 请求对象
+     * @return SessionId
+     */
     public String getSessionId(HttpServletRequest request) {
         final String authorization = request.getHeader(AUTHORIZATION);
         if (authorization != null && authorization.startsWith(BEARER_)) {
@@ -177,11 +228,23 @@ public class AbacAuthorizer {
         }
     }
 
+    /**
+     * 从请求中获取资源属性
+     *
+     * @param request 请求对象
+     * @return 资源属性
+     */
     public ResourceAttribute getResourceAttribute(HttpServletRequest request) {
         String resourceId = request.getRequestURI();
         return new ResourceAttribute("", "", "", "");
     }
 
+    /**
+     * 从请求中获取环境属性
+     *
+     * @param request 请求对象
+     * @return 环境属性
+     */
     public EnvironmentAttribute getEnvironmentAttribute(HttpServletRequest request) {
         return new EnvironmentAttribute(RequestUtil.getClientIp(request), LocalDateTime.now(), RequestUtil.getDeviceType(request));
     }
@@ -189,6 +252,9 @@ public class AbacAuthorizer {
 
     /**
      * 从Redis获取用户全量属性（会话属性+扩展属性）
+     *
+     * @param sessionId 会话ID
+     * @return 用户全量属性
      */
     public UserAttribute getUserAttribute(String sessionId) {
         final Map<Object, Object> sessionMap = redisTemplate.opsForHash().entries(String.format(SESSION_S, sessionId));
