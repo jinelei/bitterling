@@ -45,6 +45,8 @@ public class AbacAuthenticationFilter extends OncePerRequestFilter implements Or
             SecurityContextHolder.getContext().setAuthentication(token);
             log.debug("abac filter url, {} >>> {}", request.getRequestURI(), userDetails.getUsername());
             redisTemplate.expire("session:" + sessionId, 2, TimeUnit.HOURS);
+        } else {
+            SecurityContextHolder.clearContext();
         }
         chain.doFilter(request, response);
     }

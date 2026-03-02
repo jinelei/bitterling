@@ -171,7 +171,6 @@ public class SecurityConfig {
         return (request, response, authentication) -> {
             StringResult message = ResultFactory.create(StringResult.class, GenericResult.CODE_FAILURE_UNAUTHORIZED, GenericResult.USER_NOT_LOGGED_IN, authentication.getMessage());
             SpringBeanUtils.getBean(ObjectMapper.class).writeValue(response.getWriter(), message);
-            response.setStatus(HttpStatus.OK.value());
         };
     }
 
