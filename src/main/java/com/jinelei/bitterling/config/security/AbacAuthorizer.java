@@ -7,13 +7,14 @@ import com.jinelei.bitterling.config.security.attribute.EnvironmentAttribute;
 import com.jinelei.bitterling.config.security.attribute.ResourceAttribute;
 import com.jinelei.bitterling.config.security.attribute.UserAttribute;
 import com.jinelei.bitterling.constant.PermissionConstants;
-import com.jinelei.bitterling.utils.AbacRedisUtil;
 import com.jinelei.bitterling.utils.MD5Util;
+import com.jinelei.bitterling.utils.NetworkUtil;
 import com.jinelei.bitterling.utils.RequestUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.NonNull;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.expression.Expression;
 import org.springframework.expression.ExpressionParser;
@@ -26,7 +27,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -45,7 +45,6 @@ public class AbacAuthorizer {
     public static final String LOGIN_DEVICE = "loginDevice";
     public static final String ROLES = "roles";
     public static final String CLIENT_IP = "clientIp";
-    private final AbacRedisUtil abacRedisUtil;
     private final StringRedisTemplate redisTemplate;
     private final ObjectMapper objectMapper;
 
@@ -128,15 +127,21 @@ public class AbacAuthorizer {
      * @return 是否授权
      */
     public boolean authorize(UserAttribute userAttr, ResourceAttribute resourceAttr, EnvironmentAttribute envAttr) {
-        // 基础校验：属性不存在直接拒绝
-        if (userAttr == null || resourceAttr == null || envAttr == null) {
-            return false;
+        boolean valid = false;
+        valid = checkAdminRule(userAttr, resourceAttr);
+        if (valid) {
+            return valid;
         }
-        // 2. 执行ABAC规则判断（组合多维度规则）
-        return checkAdminRule(userAttr, resourceAttr)          // 管理员规则
-                || checkOwnerRule(userAttr, resourceAttr)       // 资源归属者规则
-                || checkTempAuthRule(userAttr, resourceAttr)    // 临时授权规则
-                || checkEnvRule(userAttr, envAttr);             // 环境规则
+        valid = checkOwnerRule(userAttr, resourceAttr);
+        if (valid) {
+            return valid;
+        }
+        valid = checkTempAuthRule(userAttr, resourceAttr);
+        if (valid) {
+            return valid;
+        }
+//        valid = checkEnvRule(userAttr, envAttr);
+        return valid;
     }
 
 
@@ -171,7 +176,7 @@ public class AbacAuthorizer {
      * @return 是否授权
      */
     private boolean checkAdminRule(UserAttribute userAttr, ResourceAttribute resourceAttr) {
-        return Optional.ofNullable(userAttr.roles()).map(s -> s.contains(PermissionConstants.ADMIN)).orElse(false);
+        return Optional.ofNullable(userAttr).map(UserAttribute::roles).map(s -> s.contains(PermissionConstants.ADMIN)).orElse(false);
     }
 
     /**
@@ -182,7 +187,9 @@ public class AbacAuthorizer {
      * @return 是否授权
      */
     private boolean checkOwnerRule(UserAttribute userAttr, ResourceAttribute resourceAttr) {
-        return userAttr.username().equals(resourceAttr.owner());
+        return Optional.ofNullable(userAttr).map(UserAttribute::username)
+                .map(s -> Optional.ofNullable(resourceAttr).map(ResourceAttribute::owner).map(s::equals).orElse(false))
+                .orElse(false);
     }
 
     /**
@@ -193,7 +200,10 @@ public class AbacAuthorizer {
      * @return 是否授权
      */
     private boolean checkTempAuthRule(UserAttribute userAttr, ResourceAttribute resourceAttr) {
-        return userAttr.tempAuthResourceList() != null && userAttr.tempAuthResourceList().contains(resourceAttr.id());
+        return Optional.ofNullable(userAttr)
+                .map(UserAttribute::tempAuthResourceList)
+                .map(s -> Optional.ofNullable(resourceAttr).map(ResourceAttribute::id).map(s::contains).orElse(false))
+                .orElse(false);
     }
 
     /**
@@ -204,13 +214,12 @@ public class AbacAuthorizer {
      * @return 是否授权
      */
     private boolean checkEnvRule(UserAttribute userAttr, EnvironmentAttribute envAttr) {
-        // 检查IP白名单
-        boolean isIpValid = abacRedisUtil.isIpInWhiteList(envAttr.ip());
-        // 检查工作时间（9:00-18:00）
-        LocalDateTime now = envAttr.time();
-        boolean isTimeValid = now.toLocalTime().isAfter(LocalTime.of(9, 0)) && now.toLocalTime().isBefore(LocalTime.of(18, 0));
-        // 普通用户+IP有效+时间有效 → 允许
-        return userAttr.roles().contains(USER) && isIpValid && isTimeValid;
+        boolean matched = false;
+        matched = isIpInWhiteList(envAttr.ip());
+        if (matched && Optional.ofNullable(userAttr).isPresent()) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -301,5 +310,14 @@ public class AbacAuthorizer {
                 .orElse(null);
         return new UserAttribute(username, roles, permissions, tempAuthResourceList, loginDevice);
     }
+
+    /**
+     * 检查IP是否在白名单
+     */
+    public boolean isIpInWhiteList(String ip) {
+        Set<@NonNull String> members = redisTemplate.opsForSet().members("env:ip_white_list");
+        return members.stream().anyMatch(s -> NetworkUtil.matchIp(ip, s));
+    }
+
 
 }
