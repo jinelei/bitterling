@@ -128,7 +128,7 @@ public class ChromeBookmarkParser {
             // 1. 解析文件夹（DT 下的 H3 标签）
             Elements h3List = dtElement.select(H_3);
             if (!h3List.isEmpty()) {
-                parseFolder(dtElement, h3List.first(), parentFolder);
+                parseFolder(h3List.first(), dtElement, parentFolder);
             }
 
             // 2. 解析书签（DT 下的 A 标签）
