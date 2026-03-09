@@ -16,6 +16,7 @@ import com.jinelei.bitterling.service.BookmarkService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/bookmark")
@@ -82,5 +83,12 @@ public class BookmarkController extends BaseController {
         return ResultFactory.create(StringResult.class, "排序成功");
     }
 
+    @PostMapping("parse")
+    @Operation(operationId = "bookmarkParse", summary = "解析书签树", description = "解析书签树")
+    public StringResult parse(MultipartFile file) {
+        this.service.parse(file);
+//        return ResultFactory.create(BookmarkListResult.class, null);
+        return ResultFactory.create(StringResult.class, "解析成功");
+    }
 
 }

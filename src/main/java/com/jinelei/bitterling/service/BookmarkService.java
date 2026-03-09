@@ -1,5 +1,6 @@
 package com.jinelei.bitterling.service;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
@@ -10,8 +11,10 @@ import com.jinelei.bitterling.domain.request.BookmarkListRequest;
 import com.jinelei.bitterling.domain.request.BookmarkUpdateRequest;
 import com.jinelei.bitterling.domain.response.BookmarkResponse;
 import com.jinelei.bitterling.exception.BusinessException;
+import com.jinelei.bitterling.utils.ChromeBookmarkParser;
 import com.jinelei.bitterling.utils.TreeUtils;
 import jakarta.persistence.criteria.Predicate;
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -20,14 +23,17 @@ import com.jinelei.bitterling.repository.BookmarkRepository;
 
 import jakarta.validation.Validator;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDomain, Long> {
     private final BookmarkConvertor bookmarkConvertor;
+    private final ChromeBookmarkParser chromeBookmarkParser;
 
-    public BookmarkService(BookmarkRepository repository, Validator validator, BookmarkConvertor bookmarkConvertor) {
+    public BookmarkService(BookmarkRepository repository, Validator validator, BookmarkConvertor bookmarkConvertor, ChromeBookmarkParser chromeBookmarkParser) {
         super(repository, validator);
         this.bookmarkConvertor = bookmarkConvertor;
+        this.chromeBookmarkParser = chromeBookmarkParser;
     }
 
     public void save(BookmarkCreateRequest req) {
@@ -45,18 +51,10 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
         Optional.ofNullable(req).orElseThrow(() -> new BusinessException("请求不能为空"));
         return repository.findAll((Specification<BookmarkDomain>) (r, q, cb) -> {
             List<Predicate> list = new ArrayList<>();
-            Optional.ofNullable(req.id())
-                    .map(id -> cb.equal(r.get("id"), id))
-                    .ifPresent(list::add);
-            Optional.ofNullable(req.type())
-                    .map(type -> cb.equal(r.get("type"), type))
-                    .ifPresent(list::add);
-            Optional.ofNullable(req.name())
-                    .map(name -> cb.like(r.get("name"), String.format("%%%s%%", name)))
-                    .ifPresent(list::add);
-            Optional.ofNullable(req.url())
-                    .map(url -> cb.like(r.get("url"), String.format("%%%s%%", url)))
-                    .ifPresent(list::add);
+            Optional.ofNullable(req.id()).map(id -> cb.equal(r.get("id"), id)).ifPresent(list::add);
+            Optional.ofNullable(req.type()).map(type -> cb.equal(r.get("type"), type)).ifPresent(list::add);
+            Optional.ofNullable(req.name()).map(name -> cb.like(r.get("name"), String.format("%%%s%%", name))).ifPresent(list::add);
+            Optional.ofNullable(req.url()).map(url -> cb.like(r.get("url"), String.format("%%%s%%", url))).ifPresent(list::add);
             return cb.and(list.toArray(new Predicate[0]));
         });
     }
@@ -66,9 +64,7 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
             return;
         }
         Iterable<BookmarkDomain> allById = getRepository().findAllById(ids);
-        List<BookmarkDomain> list = StreamSupport.stream(allById.spliterator(), false)
-                .peek(it -> it.setOrderNumber(ids.indexOf(it.getId())))
-                .toList();
+        List<BookmarkDomain> list = StreamSupport.stream(allById.spliterator(), false).peek(it -> it.setOrderNumber(ids.indexOf(it.getId()))).toList();
         getRepository().saveAll(list);
     }
 
@@ -78,5 +74,17 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
         StreamSupport.stream(all.spliterator(), false).forEach(list::add);
         List<BookmarkDomain> tree = TreeUtils.convertToTree(list, Comparator.comparingInt(TreeRecordDomain::getOrderNumber));
         return bookmarkConvertor.toResponse(tree);
+    }
+
+    public List<BookmarkDomain> parse(MultipartFile file) {
+        BookmarkDomain root = null;
+        try {
+            root = chromeBookmarkParser.parse(file.getInputStream(), "");
+            log.info("根节点: {}", root);
+            return List.of();
+        } catch (IOException e) {
+            log.error("解析书签失败: {}", e.getMessage());
+            throw new BusinessException("解析书签失败: " + e.getMessage());
+        }
     }
 }
