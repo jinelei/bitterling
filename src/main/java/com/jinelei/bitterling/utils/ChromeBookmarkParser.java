@@ -8,15 +8,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
 import org.jsoup.select.Elements;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.*;
+import java.util.function.Function;
 
 /**
  * Chrome 书签解析工具（封装为 BookmarkDomain 树形结构）
@@ -26,9 +31,30 @@ import java.util.*;
 @Component
 @RequiredArgsConstructor
 public class ChromeBookmarkParser {
-    private static final SimpleDateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    public static final String HREF = "HREF";
+    public static final String ICON = "ICON";
+    public static final String ADD_DATE = "ADD_DATE";
+    public static final String LAST_MODIFIED = "LAST_MODIFIED";
+    public static final String DT = "DT";
+    public static final String H_3 = "H3";
+    public static final String A = "A";
+    public static final String DL = DL1;
+    public static final String DL1 = "DL";
     private static long currentId = 1L;
     private final ObjectMapper objectMapper;
+    private static final Function<String, String> CLEAN_TEXT = text -> Optional.ofNullable(text)
+            .map(t -> t.replaceAll("[\\u200B\\u200C\\u200D\\uFEFF\\s]+", " "))
+            .map(String::trim)
+            .orElse("");
+
+    private static final Function<String, LocalDateTime> PARSE_LOCAL_DATE_TIME = s -> Optional.ofNullable(s)
+            .filter(StringUtils::hasLength)
+            .map(Long::parseLong)
+            .map(t -> t * 1000)
+            .map(Date::new)
+            .map(Date::toInstant)
+            .map(i -> LocalDateTime.ofInstant(i, ZoneId.systemDefault()))
+            .orElse(null);
 
     /**
      * 解析 Chrome 书签 HTML
@@ -71,329 +97,149 @@ public class ChromeBookmarkParser {
      * @return 根节点（所有书签/文件夹的父节点）
      */
     public BookmarkDomain parse(Document doc) {
-        BookmarkDomain root = new BookmarkDomain();
+        final BookmarkDomain root = new BookmarkDomain();
         root.setId(currentId++);
         root.setName("书签根目录");
         root.setType(BookmarkType.FOLDER);
         root.setChildren(new ArrayList<>());
+        final Elements rootDl = doc.select(DL);
 
-        Deque<BookmarkDomain> folderStack = new ArrayDeque<>();
-        folderStack.push(root);
-        log.info("创建根节点: {}", root.getName());
 
-        Elements dtElements = doc.select("dt");
-        for (Element dt : dtElements) {
-            Element folderElement = dt.selectFirst("h3");
-            if (folderElement != null) {
-                String folderName = folderElement.text().trim();
-                BookmarkDomain folderNode = new BookmarkDomain();
-                folderNode.setId(currentId++);
-                folderNode.setName(folderName);
-                folderNode.setType(BookmarkType.FOLDER);
-                folderNode.setParentId(folderStack.peek().getId());
-                folderNode.setChildren(new ArrayList<>());
-
-                log.info("{} 追加子文件夹 {}", folderStack.peek().getName(), folderNode.getName());
-                folderStack.peek().getChildren().add(folderNode);
-                folderStack.push(folderNode);
-                continue;
-            }
-
-            Element bookmarkElement = dt.selectFirst("a");
-            if (bookmarkElement != null) {
-                BookmarkDomain bookmarkNode = new BookmarkDomain();
-                bookmarkNode.setId(currentId++);
-                bookmarkNode.setName(bookmarkElement.text().trim());
-                bookmarkNode.setType(BookmarkType.BOOKMARK);
-                bookmarkNode.setUrl(bookmarkElement.attr("href").trim());
-                bookmarkNode.setParentId(folderStack.peek().getId());
-                bookmarkNode.setChildren(new ArrayList<>());
-
-                String addDateStr = bookmarkElement.attr("add_date");
-                if (!addDateStr.isEmpty()) {
-                    try {
-                        long timestamp = Long.parseLong(addDateStr);
-                        String addDate = DATE_FORMAT.format(new Date(timestamp * 1000));
-                        bookmarkNode.setColor(addDate);
-                    } catch (NumberFormatException e) {
-                        bookmarkNode.setColor("时间格式错误");
-                    }
-                } else {
-                    bookmarkNode.setColor("未知时间");
-                }
-
-                log.info("{} 追加书签 {}", folderStack.peek().getName(), bookmarkNode.getName());
-                folderStack.peek().getChildren().add(bookmarkNode);
-            }
-
-            Element dlClose = dt.nextElementSibling();
-            if (dlClose != null && dlClose.tagName().equals("dl") && dlClose.html().isEmpty()) {
-                log.info("{} 结束解析", folderStack.peek().getName());
-                if (folderStack.size() > 1) {
-                    folderStack.pop();
-                }
-            }
+        // 找到所有顶级 DL 节点（Chrome 书签的核心容器）
+        Elements allTopDl = doc.select(DL);
+        for (Element dl : allTopDl) {
+            // 递归解析每个 DL 节点，挂载到根目录
+            parseDlRecursive(dl, root);
         }
-
+//        Optional.of(rootDl)
+//                .filter(n -> Objects.nonNull(n.first()))
+//                .map(Elements::first)
+//                .ifPresent(n -> parseDlNode(n, root));
         return root;
     }
 
-        // 书签项基类（文件夹/书签通用属性）
-        public static abstract class BookmarkNode {
-            private String name;
-            private String addDate;
+    /**
+     * 递归解析 DL 节点（核心修复：支持任意层级嵌套）
+     *
+     * @param dlElement    待解析的 DL 节点
+     * @param parentFolder 当前 DL 所属的父文件夹
+     */
+    private void parseDlRecursive(Element dlElement, BookmarkDomain parentFolder) {
+        if (dlElement == null) return;
 
-            public BookmarkNode(String name, String addDate) {
-                this.name = name;
-                this.addDate = addDate;
+        // 遍历 DL 下的所有直接子节点
+        for (Node childNode : dlElement.childNodes()) {
+            // 只处理 DT 标签（书签/文件夹的容器）
+            if (!(childNode instanceof Element) || !DT.equalsIgnoreCase(((Element) childNode).tagName())) {
+                continue;
             }
 
-            public String getName() {
-                return name;
+            Element dtElement = (Element) childNode;
+            // 1. 解析文件夹（DT 下的 H3 标签）
+            Elements h3List = dtElement.select(H_3);
+            if (!h3List.isEmpty()) {
+                parseFolder(dtElement, h3List.first(), parentFolder);
             }
 
-            public void setName(String name) {
-                this.name = name;
+            // 2. 解析书签（DT 下的 A 标签）
+            Elements aList = dtElement.select(A);
+            if (!aList.isEmpty()) {
+                parseBookmark(aList.first(), parentFolder);
             }
 
-            public String getAddDate() {
-                return addDate;
-            }
-
-            public void setAddDate(String addDate) {
-                this.addDate = addDate;
-            }
-
-            public abstract String getType();
-        }
-
-        // 书签项（单个链接）
-        public static class BookmarkItem extends BookmarkNode {
-            private String href;
-            private String icon;
-
-            public BookmarkItem(String name, String addDate, String href, String icon) {
-                super(name, addDate);
-                this.href = href;
-                this.icon = icon;
-            }
-
-            public String getHref() {
-                return href;
-            }
-
-            public void setHref(String href) {
-                this.href = href;
-            }
-
-            public String getIcon() {
-                return icon;
-            }
-
-            public void setIcon(String icon) {
-                this.icon = icon;
-            }
-
-            @Override
-            public String getType() {
-                return "bookmark";
-            }
-
-            @Override
-            public String toString() {
-                return "BookmarkItem{" +
-                        "name='" + getName() + '\'' +
-                        ", addDate='" + getAddDate() + '\'' +
-                        ", href='" + href + '\'' +
-                        ", icon='" + (icon != null ? "data:image/..." : "null") + '\'' +
-                        '}';
+            // 3. 处理 DT 内部嵌套的 DL（兼容特殊嵌套结构）
+            Elements innerDl = dtElement.select(DL);
+            for (Element dl : innerDl) {
+                parseDlRecursive(dl, parentFolder);
             }
         }
 
-        // 文件夹（包含子节点）
-        public static class BookmarkFolder extends BookmarkNode {
-            private String lastModified;
-            private List<BookmarkNode> children = new ArrayList<>();
-
-            public BookmarkFolder(String name, String addDate, String lastModified) {
-                super(name, addDate);
-                this.lastModified = lastModified;
+        // 处理当前 DL 的兄弟 DL 节点（修复跨节点嵌套问题）
+        Node nextSibling = dlElement.nextSibling();
+        while (nextSibling != null) {
+            if (nextSibling instanceof Element && DL.equals(((Element) nextSibling).tagName())) {
+                parseDlRecursive((Element) nextSibling, parentFolder);
             }
-
-            public String getLastModified() {
-                return lastModified;
-            }
-
-            public void setLastModified(String lastModified) {
-                this.lastModified = lastModified;
-            }
-
-            public List<BookmarkNode> getChildren() {
-                return children;
-            }
-
-            public void addChild(BookmarkNode child) {
-                this.children.add(child);
-            }
-
-            @Override
-            public String getType() {
-                return "folder";
-            }
-
-            @Override
-            public String toString() {
-                return "BookmarkFolder{" +
-                        "name='" + getName() + '\'' +
-                        ", addDate='" + getAddDate() + '\'' +
-                        ", lastModified='" + lastModified + '\'' +
-                        ", childrenCount=" + children.size() +
-                        '}';
-            }
+            nextSibling = nextSibling.nextSibling();
         }
-
-        // 根节点（整个书签树的根）
-        private BookmarkFolder rootFolder;
-
-        public ChromeBookmarkParser() {
-            this.rootFolder = new BookmarkFolder("Root", "", "");
-        }
-
-        /**
-         * 解析书签HTML文件
-         *
-         * @param filePath 书签文件路径
-         * @throws IOException 读取/解析异常
-         */
-        public void parse(String filePath) throws IOException {
-            File file = new File(filePath);
-            Document doc = Jsoup.parse(file, "UTF-8");
-            // 从第一个DL标签开始解析（Chrome书签的核心内容在DL/DT层级中）
-            Elements rootDl = doc.select("DL");
-            if (!rootDl.isEmpty()) {
-                parseDlNode(rootDl.first(), rootFolder);
-            }
-        }
-
-        /**
-         * 递归解析DL节点（文件夹内容容器）
-         *
-         * @param dlElement    DL标签元素
-         * @param parentFolder 父文件夹
-         */
-        private void parseDlNode(Element dlElement, BookmarkFolder parentFolder) {
-            // 遍历DL下的所有子节点（主要是DT）
-            for (Node node : dlElement.childNodes()) {
-                if (node instanceof Element dtElement && "DT".equals(dtElement.tagName())) {
-                    // 处理DT下的H3（文件夹）或A（书签）
-                    Elements h3Elements = dtElement.select("H3");
-                    Elements aElements = dtElement.select("A");
-
-                    if (!h3Elements.isEmpty()) {
-                        // 解析文件夹
-                        parseFolderNode(h3Elements.first(), dtElement, parentFolder);
-                    } else if (!aElements.isEmpty()) {
-                        // 解析书签
-                        parseBookmarkNode(aElements.first(), parentFolder);
-                    }
-                }
-            }
-        }
-
-        /**
-         * 解析文件夹节点（H3 + 后续的DL）
-         *
-         * @param h3Element    H3标签（文件夹名称/属性）
-         * @param dtElement    父DT标签
-         * @param parentFolder 父文件夹
-         */
-        private void parseFolderNode(Element h3Element, Element dtElement, BookmarkFolder parentFolder) {
-            // 提取文件夹属性
-            String folderName = cleanText(h3Element.text());
-            String addDate = h3Element.attr("ADD_DATE");
-            String lastModified = h3Element.attr("LAST_MODIFIED");
-
-            // 创建文件夹节点
-            BookmarkFolder folder = new BookmarkFolder(folderName, addDate, lastModified);
-            parentFolder.addChild(folder);
-
-            // 找到文件夹对应的DL节点（DT的下一个兄弟节点中找DL）
-            Node nextNode = dtElement.nextSibling();
-            while (nextNode != null) {
-                if (nextNode instanceof Element nextElement && "DL".equals(nextElement.tagName())) {
-                    // 递归解析文件夹内的内容
-                    parseDlNode(nextElement, folder);
-                    break;
-                }
-                nextNode = nextNode.nextSibling();
-            }
-        }
-
-        /**
-         * 解析书签节点（A标签）
-         *
-         * @param aElement     A标签元素
-         * @param parentFolder 父文件夹
-         */
-        private void parseBookmarkNode(Element aElement, BookmarkFolder parentFolder) {
-            // 提取书签属性
-            String bookmarkName = cleanText(aElement.text());
-            String addDate = aElement.attr("ADD_DATE");
-            String href = aElement.attr("HREF");
-            String icon = aElement.attr("ICON"); // Base64格式的图标
-
-            // 创建书签节点
-            BookmarkItem bookmark = new BookmarkItem(bookmarkName, addDate, href, icon);
-            parentFolder.addChild(bookmark);
-        }
-
-        /**
-         * 清理文本（去除不可见字符、多余空格）
-         *
-         * @param text 原始文本
-         * @return 清理后的文本
-         */
-        private String cleanText(String text) {
-            if (text == null) return "";
-            // 移除零宽字符、全角空格、多余空格
-            return text.replaceAll("[\\u200B\\u200C\\u200D\\uFEFF\\s]+", " ").trim();
-        }
-
-        /**
-         * 打印书签树（调试用）
-         *
-         * @param node   起始节点
-         * @param indent 缩进（用于层级展示）
-         */
-        public void printBookmarkTree(BookmarkNode node, String indent) {
-            System.out.println(indent + node);
-            if (node instanceof BookmarkFolder folder) {
-                for (BookmarkNode child : folder.getChildren()) {
-                    printBookmarkTree(child, indent + "  ");
-                }
-            }
-        }
-
-        // 获取根文件夹
-        public BookmarkFolder getRootFolder() {
-            return rootFolder;
-        }
-
-        // 测试主方法
-        public static void main(String[] args) {
-            try {
-                ChromeBookmarkParser parser = new ChromeBookmarkParser();
-                // 替换为你的书签文件路径
-                parser.parse("bookmarks.html");
-
-                // 打印解析结果
-                System.out.println("===== Chrome书签解析结果 =====");
-                parser.printBookmarkTree(parser.getRootFolder(), "");
-
-            } catch (IOException e) {
-                System.err.println("解析书签失败：" + e.getMessage());
-                e.printStackTrace();
-            }
-        }
-
     }
+
+    /**
+     * 递归解析DL节点（文件夹内容容器）
+     *
+     * @param dlElement DL标签元素
+     * @param parent    父文件夹
+     */
+    private void parseDlNode(Element dlElement, BookmarkDomain parent) {
+        for (Node node : dlElement.childNodes()) {
+            if (node instanceof Element dtElement && DT.equalsIgnoreCase(dtElement.tagName())) {
+                Elements h3Elements = dtElement.select(H_3);
+                Elements aElements = dtElement.select(A);
+                if (!h3Elements.isEmpty()) {
+                    parseFolder(h3Elements.first(), dtElement, parent);
+                } else if (!aElements.isEmpty()) {
+                    parseBookmark(aElements.first(), parent);
+                }
+            }
+        }
+    }
+
+    /**
+     * 解析文件夹节点（H3 + 后续的DL）
+     *
+     * @param h3Element    H3标签（文件夹名称/属性）
+     * @param dtElement    父DT标签
+     * @param parentFolder 父文件夹
+     */
+    private void parseFolder(Element h3Element, Element dtElement, BookmarkDomain parentFolder) {
+        final BookmarkDomain folder = new BookmarkDomain();
+        folder.setType(BookmarkType.FOLDER);
+        if (Objects.isNull(h3Element) || Objects.isNull(dtElement) || Objects.isNull(parentFolder)) {
+            return;
+        }
+        Optional.of(h3Element.text()).map(CLEAN_TEXT).ifPresent(folder::setName);
+        Optional.of(h3Element.attr(ADD_DATE)).map(PARSE_LOCAL_DATE_TIME).ifPresent(folder::setCreateTime);
+        Optional.of(h3Element.attr(LAST_MODIFIED)).map(PARSE_LOCAL_DATE_TIME).ifPresent(folder::setUpdateTime);
+        List<BookmarkDomain> children = Optional.ofNullable(parentFolder.getChildren()).orElse(new ArrayList<>());
+        children.add(folder);
+        parentFolder.setChildren(children);
+        // 查找文件夹对应的 DL（关键修复：遍历所有兄弟节点找 DL）
+        Node sibling = dtElement.nextSibling();
+        while (sibling != null) {
+            if (sibling instanceof Element && DL.equalsIgnoreCase(((Element) sibling).tagName())) {
+                // 递归解析文件夹内的 DL
+                parseDlRecursive((Element) sibling, folder);
+                break;
+            }
+            sibling = sibling.nextSibling();
+        }
+        // 兜底：检查 DT 内部是否有 DL（兼容嵌套写法）
+        Elements innerDl = dtElement.select(DL);
+        if (innerDl.size() > 0) {
+            parseDlRecursive(innerDl.first(), folder);
+        }
+    }
+
+    /**
+     * 解析书签节点（A标签）
+     *
+     * @param aElement     A标签元素
+     * @param parentFolder 父文件夹
+     */
+    private void parseBookmark(Element aElement, BookmarkDomain parentFolder) {
+        final BookmarkDomain bookmark = new BookmarkDomain();
+        bookmark.setType(BookmarkType.FOLDER);
+        if (Objects.isNull(aElement) || Objects.isNull(parentFolder)) {
+            return;
+        }
+        Optional.of(aElement.text()).map(CLEAN_TEXT).ifPresent(bookmark::setName);
+        Optional.of(aElement.attr(HREF)).map(CLEAN_TEXT).ifPresent(bookmark::setUrl);
+        Optional.of(aElement.attr(ICON)).map(CLEAN_TEXT).ifPresent(bookmark::setIcon);
+        Optional.of(aElement.attr(ADD_DATE)).map(PARSE_LOCAL_DATE_TIME).ifPresent(bookmark::setCreateTime);
+        Optional.of(aElement.attr(LAST_MODIFIED)).map(PARSE_LOCAL_DATE_TIME).ifPresent(bookmark::setUpdateTime);
+        List<BookmarkDomain> children = Optional.ofNullable(parentFolder.getChildren()).orElse(new ArrayList<>());
+        children.add(bookmark);
+        parentFolder.setChildren(children);
+    }
+
+}
