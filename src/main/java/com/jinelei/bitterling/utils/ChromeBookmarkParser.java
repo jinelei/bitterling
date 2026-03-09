@@ -38,8 +38,7 @@ public class ChromeBookmarkParser {
     public static final String DT = "DT";
     public static final String H_3 = "H3";
     public static final String A = "A";
-    public static final String DL = DL1;
-    public static final String DL1 = "DL";
+    public static final String DL = "DL";
     private static long currentId = 1L;
     private final ObjectMapper objectMapper;
     private static final Function<String, String> CLEAN_TEXT = text -> Optional.ofNullable(text)
@@ -102,19 +101,10 @@ public class ChromeBookmarkParser {
         root.setName("书签根目录");
         root.setType(BookmarkType.FOLDER);
         root.setChildren(new ArrayList<>());
-        final Elements rootDl = doc.select(DL);
-
-
-        // 找到所有顶级 DL 节点（Chrome 书签的核心容器）
         Elements allTopDl = doc.select(DL);
         for (Element dl : allTopDl) {
-            // 递归解析每个 DL 节点，挂载到根目录
             parseDlRecursive(dl, root);
         }
-//        Optional.of(rootDl)
-//                .filter(n -> Objects.nonNull(n.first()))
-//                .map(Elements::first)
-//                .ifPresent(n -> parseDlNode(n, root));
         return root;
     }
 
@@ -161,26 +151,6 @@ public class ChromeBookmarkParser {
                 parseDlRecursive((Element) nextSibling, parentFolder);
             }
             nextSibling = nextSibling.nextSibling();
-        }
-    }
-
-    /**
-     * 递归解析DL节点（文件夹内容容器）
-     *
-     * @param dlElement DL标签元素
-     * @param parent    父文件夹
-     */
-    private void parseDlNode(Element dlElement, BookmarkDomain parent) {
-        for (Node node : dlElement.childNodes()) {
-            if (node instanceof Element dtElement && DT.equalsIgnoreCase(dtElement.tagName())) {
-                Elements h3Elements = dtElement.select(H_3);
-                Elements aElements = dtElement.select(A);
-                if (!h3Elements.isEmpty()) {
-                    parseFolder(h3Elements.first(), dtElement, parent);
-                } else if (!aElements.isEmpty()) {
-                    parseBookmark(aElements.first(), parent);
-                }
-            }
         }
     }
 
