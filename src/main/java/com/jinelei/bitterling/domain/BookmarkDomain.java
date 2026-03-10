@@ -1,17 +1,15 @@
 package com.jinelei.bitterling.domain;
 
 import java.util.List;
+import java.util.Optional;
 
+import com.jinelei.bitterling.domain.base.RecordDomain;
 import com.jinelei.bitterling.domain.base.TreeRecordDomain;
 import com.jinelei.bitterling.domain.view.TreeView;
 import com.jinelei.bitterling.domain.enums.BookmarkType;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import jakarta.validation.constraints.NotNull;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -22,7 +20,7 @@ import lombok.ToString;
 @Entity
 @Table(name = "BOOKMARK")
 @Schema(name = "BookmarkDomain", description = "书签领域对象")
-public class BookmarkDomain extends TreeRecordDomain<Long> implements TreeView<BookmarkDomain, Long> {
+public class BookmarkDomain extends RecordDomain<Long> implements TreeView<BookmarkDomain, Long> {
     @Column(name = "name", unique = true)
     @Schema(name = "name", description = "书签名称")
     private String name;
@@ -38,8 +36,17 @@ public class BookmarkDomain extends TreeRecordDomain<Long> implements TreeView<B
     @Column(name = "color")
     @Schema(name = "color", description = "书签颜色")
     private String color;
-    @Transient
-    @Schema(name = "children", description = "子级")
-    protected transient List<BookmarkDomain> children;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "parent_id", nullable = true)
+    private BookmarkDomain parent;
+    @OneToMany(mappedBy = "parent",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.PERSIST,
+            orphanRemoval = true)
+    private List<BookmarkDomain> children;
 
+    @Override
+    public Long getParentId() {
+        return Optional.ofNullable(getParent()).map(RecordDomain::getId).orElse(null);
+    }
 }

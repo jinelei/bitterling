@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.StreamSupport;
 
+import com.jinelei.bitterling.config.SpringBeanUtils;
+import com.jinelei.bitterling.domain.base.RecordDomain;
 import com.jinelei.bitterling.domain.base.TreeRecordDomain;
 import com.jinelei.bitterling.domain.convert.BookmarkConvertor;
 import com.jinelei.bitterling.domain.request.BookmarkCreateRequest;
@@ -71,7 +73,7 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
         Iterable<BookmarkDomain> all = findAll();
         List<BookmarkDomain> list = new ArrayList<>();
         StreamSupport.stream(all.spliterator(), false).forEach(list::add);
-        List<BookmarkDomain> tree = TreeUtils.convertToTree(list, Comparator.comparingInt(TreeRecordDomain::getOrderNumber));
+        List<BookmarkDomain> tree = TreeUtils.convertToTree(list, Comparator.comparingInt(RecordDomain::getOrderNumber));
         return bookmarkConvertor.toResponse(tree);
     }
 
@@ -79,6 +81,7 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
         try {
             ChromeBookmarkUtil.Folder node = chromeBookmarkUtil.parse(file.getInputStream(), "");
             BookmarkCreateRequest from = bookmarkConvertor.from(node);
+            SpringBeanUtils.getBean(BookmarkService.class).save(from);
             log.info("根节点: {}", node);
             return List.of();
         } catch (IOException e) {
