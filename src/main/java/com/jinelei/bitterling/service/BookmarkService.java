@@ -77,10 +77,9 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
     }
 
     public List<BookmarkDomain> parse(MultipartFile file) {
-        BookmarkDomain root = null;
         try {
-            root = chromeBookmarkParser.parse(file.getInputStream(), "");
-            log.info("根节点: {}", root);
+            ChromeBookmarkParser.FolderNode node = chromeBookmarkParser.parse(file.getInputStream(), "");
+            log.info("根节点: {}", node);
             return List.of();
         } catch (IOException e) {
             log.error("解析书签失败: {}", e.getMessage());
