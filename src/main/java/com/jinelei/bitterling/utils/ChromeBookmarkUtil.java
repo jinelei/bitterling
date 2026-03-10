@@ -26,7 +26,7 @@ import java.util.Optional;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class ChromeBookmarkParser {
+public class ChromeBookmarkUtil {
 
 
     public static final String DL = "dl";
@@ -133,7 +133,7 @@ public class ChromeBookmarkParser {
         // 2. 创建文件夹节点
         Folder folder = Folder.builder().name(folderName).addTime(addTime).build();
 
-        List<Bookmark> children = Optional.ofNullable(parentFolder.getChildren()).orElse(new ArrayList<>());
+        List<Base> children = Optional.ofNullable(parentFolder.getChildren()).orElse(new ArrayList<>());
         children.add(folder);
         parentFolder.setChildren(children);
 
@@ -161,7 +161,7 @@ public class ChromeBookmarkParser {
 
         // 2. 创建书签项
         Bookmark bookmark = Bookmark.builder().name(bookmarkName).addTime(addTime).url(url).lastVisitedTime(lastVisitedTime).lastModifiedTime(lastModifiedTime).build();
-        List<Bookmark> children = Optional.ofNullable(parentFolder.getChildren()).orElse(new ArrayList<>());
+        List<Base> children = Optional.ofNullable(parentFolder.getChildren()).orElse(new ArrayList<>());
         children.add(bookmark);
         parentFolder.setChildren(children);
     }
@@ -185,7 +185,7 @@ public class ChromeBookmarkParser {
      */
     @Data
     @SuperBuilder
-    public static abstract class Bookmark {
+    public static abstract class Base {
         // 节点名称
         protected String name;
         // 添加时间（Chrome以微秒为单位的时间戳）
@@ -199,7 +199,7 @@ public class ChromeBookmarkParser {
      */
     @Data
     @SuperBuilder
-    public static class Bookmark extends Bookmark {
+    public static class Bookmark extends Base {
         // 书签URL
         protected String url;
         // 最后访问时间
@@ -213,9 +213,9 @@ public class ChromeBookmarkParser {
      */
     @Data
     @SuperBuilder
-    public static class Folder extends Bookmark {
+    public static class Folder extends Base {
         // 子节点（文件夹/书签项）
-        protected List<Bookmark> children;
+        protected List<Base> children;
     }
 
 }

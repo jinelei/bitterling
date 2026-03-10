@@ -11,10 +11,9 @@ import com.jinelei.bitterling.domain.request.BookmarkListRequest;
 import com.jinelei.bitterling.domain.request.BookmarkUpdateRequest;
 import com.jinelei.bitterling.domain.response.BookmarkResponse;
 import com.jinelei.bitterling.exception.BusinessException;
-import com.jinelei.bitterling.utils.ChromeBookmarkParser;
+import com.jinelei.bitterling.utils.ChromeBookmarkUtil;
 import com.jinelei.bitterling.utils.TreeUtils;
 import jakarta.persistence.criteria.Predicate;
-import lombok.RequiredArgsConstructor;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
@@ -28,12 +27,12 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDomain, Long> {
     private final BookmarkConvertor bookmarkConvertor;
-    private final ChromeBookmarkParser chromeBookmarkParser;
+    private final ChromeBookmarkUtil chromeBookmarkUtil;
 
-    public BookmarkService(BookmarkRepository repository, Validator validator, BookmarkConvertor bookmarkConvertor, ChromeBookmarkParser chromeBookmarkParser) {
+    public BookmarkService(BookmarkRepository repository, Validator validator, BookmarkConvertor bookmarkConvertor, ChromeBookmarkUtil chromeBookmarkUtil) {
         super(repository, validator);
         this.bookmarkConvertor = bookmarkConvertor;
-        this.chromeBookmarkParser = chromeBookmarkParser;
+        this.chromeBookmarkUtil = chromeBookmarkUtil;
     }
 
     public void save(BookmarkCreateRequest req) {
@@ -78,7 +77,7 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
 
     public List<BookmarkDomain> parse(MultipartFile file) {
         try {
-            ChromeBookmarkParser.FolderNode node = chromeBookmarkParser.parse(file.getInputStream(), "");
+            ChromeBookmarkUtil.Folder node = chromeBookmarkUtil.parse(file.getInputStream(), "");
             log.info("根节点: {}", node);
             return List.of();
         } catch (IOException e) {
