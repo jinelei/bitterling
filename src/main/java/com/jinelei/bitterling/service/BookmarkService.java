@@ -78,6 +78,7 @@ public class BookmarkService extends BaseService<BookmarkRepository, BookmarkDom
     public List<BookmarkDomain> parse(MultipartFile file) {
         try {
             ChromeBookmarkUtil.Folder node = chromeBookmarkUtil.parse(file.getInputStream(), "");
+            BookmarkCreateRequest from = bookmarkConvertor.from(node);
             log.info("根节点: {}", node);
             return List.of();
         } catch (IOException e) {

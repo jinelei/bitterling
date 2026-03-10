@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
+import java.util.List;
+
 
 @Schema(name = "BookmarkCreateRequest", description = "书签创建请求")
 public record BookmarkCreateRequest(
@@ -24,6 +26,8 @@ public record BookmarkCreateRequest(
         @NotBlank(message = "颜色不能为空")
         String color,
         @Schema(name = "parentId", description = "父级ID")
-        Long parentId
+        Long parentId,
+        @Schema(name = "children", description = "子级列表")
+        List<BookmarkCreateRequest> children
 ) {
 }

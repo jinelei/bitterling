@@ -8,6 +8,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+import org.springframework.util.StringUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -21,16 +22,22 @@ import java.util.Optional;
 
 /**
  * Chrome 书签解析工具（封装为 BookmarkDomain 树形结构）
- *
  */
+@SuppressWarnings("unused")
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class ChromeBookmarkUtil {
-
-
     public static final String DL = "dl";
-    public static final String H_3 = "dt > h3";
+    public static final String GT_DL = "> dl";
+    public static final String DT_GT_H3 = "dt > h3";
+    public static final String GT_DT = "> dt";
+    public static final String GT_H3 = "> h3";
+    public static final String GT_A = "> a";
+    public static final String ADD_DATE = "ADD_DATE";
+    public static final String LAST_MODIFIED = "LAST_MODIFIED";
+    public static final String HREF = "HREF";
+    public static final String ICON = "ICON";
 
     public Folder parse(InputStream inputStream, String baseUri) throws IOException {
         Document doc = Jsoup.parse(inputStream, StandardCharsets.UTF_8.name(), baseUri);
@@ -88,7 +95,7 @@ public class ChromeBookmarkUtil {
         Elements dlList = doc.select(DL);
         for (Element dl : dlList) {
             // 根DL包含H3标签（书签栏），且嵌套子DL
-            if (!dl.select(H_3).isEmpty()) {
+            if (!dl.select(DT_GT_H3).isEmpty()) {
                 return dl;
             }
         }
@@ -103,17 +110,17 @@ public class ChromeBookmarkUtil {
      */
     private void parseDlNode(Element dlNode, Folder parentFolder) {
         // 遍历DL下的所有DT节点（每个DT对应一个书签/文件夹）
-        Elements dtNodes = dlNode.select("> dt");
+        Elements dtNodes = dlNode.select(GT_DT);
         for (Element dt : dtNodes) {
             // 情况1：当前DT是文件夹（包含H3标签）
-            Element h3 = dt.selectFirst("> h3");
+            Element h3 = dt.selectFirst(GT_H3);
             if (h3 != null) {
                 parseFolderNode(dt, h3, parentFolder);
             }
             // 情况2：当前DT是书签项（包含A标签）
-            Element aTag = dt.selectFirst("> a");
+            Element aTag = dt.selectFirst(GT_A);
             if (aTag != null) {
-                parseBookmarkItem(dt, aTag, parentFolder);
+                parseBookmark(dt, aTag, parentFolder);
             }
         }
     }
@@ -126,19 +133,16 @@ public class ChromeBookmarkUtil {
      * @param parentFolder 父文件夹
      */
     private void parseFolderNode(Element dtNode, Element h3Node, Folder parentFolder) {
-        // 1. 提取文件夹属性
-        String folderName = h3Node.text().trim();
-        long addTime = parseTimeAttribute(h3Node.attr("add_date"));
-
-        // 2. 创建文件夹节点
-        Folder folder = Folder.builder().name(folderName).addTime(addTime).build();
-
+        final Folder.FolderBuilder<?, ?> builder = Folder.builder();
+        Optional.ofNullable(h3Node).map(Element::text).map(String::trim).ifPresent(builder::name);
+        Optional.ofNullable(h3Node).map(a -> a.attr(ADD_DATE)).map(String::trim).filter(StringUtils::hasLength).map(Long::parseLong).ifPresent(builder::addTime);
+        Optional.ofNullable(h3Node).map(a -> a.attr(LAST_MODIFIED)).map(String::trim).filter(StringUtils::hasLength).map(Long::parseLong).ifPresent(builder::lastModifiedTime);
         List<Base> children = Optional.ofNullable(parentFolder.getChildren()).orElse(new ArrayList<>());
+        Folder folder = builder.build();
         children.add(folder);
         parentFolder.setChildren(children);
-
         // 3. 找到文件夹内的子DL节点（递归解析子节点）
-        Element childDl = dtNode.selectFirst("> dl");
+        Element childDl = dtNode.selectFirst(GT_DL);
         if (childDl != null) {
             parseDlNode(childDl, folder);
         }
@@ -151,18 +155,15 @@ public class ChromeBookmarkUtil {
      * @param aTag         A标签（书签链接）
      * @param parentFolder 父文件夹
      */
-    private void parseBookmarkItem(Element dtNode, Element aTag, Folder parentFolder) {
-        // 1. 提取书签属性
-        String bookmarkName = aTag.text().trim();
-        String url = aTag.attr("href").trim();
-        long addTime = parseTimeAttribute(aTag.attr("add_date"));
-        long lastVisitedTime = parseTimeAttribute(aTag.attr("last_visit"));
-        long lastModifiedTime = parseTimeAttribute(aTag.attr("last_modified"));
-
-        // 2. 创建书签项
-        Bookmark bookmark = Bookmark.builder().name(bookmarkName).addTime(addTime).url(url).lastVisitedTime(lastVisitedTime).lastModifiedTime(lastModifiedTime).build();
+    private void parseBookmark(Element dtNode, Element aTag, Folder parentFolder) {
+        final Bookmark.BookmarkBuilder<?, ?> builder = Bookmark.builder();
+        Optional.ofNullable(aTag).map(Element::text).map(String::trim).ifPresent(builder::name);
+        Optional.ofNullable(aTag).map(a -> a.attr(HREF)).map(String::trim).ifPresent(builder::url);
+        Optional.ofNullable(aTag).map(a -> a.attr(ADD_DATE)).map(String::trim).map(Long::parseLong).ifPresent(builder::addTime);
+        Optional.ofNullable(aTag).map(a -> a.attr(ICON)).map(String::trim).ifPresent(builder::icon);
+        Optional.ofNullable(aTag).map(a -> a.attr(LAST_MODIFIED)).map(String::trim).filter(StringUtils::hasLength).map(Long::parseLong).ifPresent(builder::lastModifiedTime);
         List<Base> children = Optional.ofNullable(parentFolder.getChildren()).orElse(new ArrayList<>());
-        children.add(bookmark);
+        children.add(builder.build());
         parentFolder.setChildren(children);
     }
 
@@ -190,6 +191,8 @@ public class ChromeBookmarkUtil {
         protected String name;
         // 添加时间（Chrome以微秒为单位的时间戳）
         protected long addTime;
+        // 最后修改时间
+        protected long lastModifiedTime;
         // 父节点
         protected Folder parent;
     }
@@ -199,13 +202,12 @@ public class ChromeBookmarkUtil {
      */
     @Data
     @SuperBuilder
+    @EqualsAndHashCode(callSuper = true)
     public static class Bookmark extends Base {
         // 书签URL
         protected String url;
-        // 最后访问时间
-        protected long lastVisitedTime;
-        // 最后修改时间
-        protected long lastModifiedTime;
+        // 书签ICON
+        protected String icon;
     }
 
     /**
@@ -213,6 +215,7 @@ public class ChromeBookmarkUtil {
      */
     @Data
     @SuperBuilder
+    @EqualsAndHashCode(callSuper = true)
     public static class Folder extends Base {
         // 子节点（文件夹/书签项）
         protected List<Base> children;
