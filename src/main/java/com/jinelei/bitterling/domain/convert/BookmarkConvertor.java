@@ -86,4 +86,16 @@ public interface BookmarkConvertor {
         return result;
     }
 
+    default void coverParent(BookmarkDomain bookmarkDomain, List<BookmarkDomain> children) {
+        if (bookmarkDomain == null) {
+            return;
+        }
+        if (CollectionUtils.isEmpty(children)) {
+            return;
+        }
+        children.forEach(child -> {
+            child.setParent(bookmarkDomain);
+            coverParent(child, child.getChildren());
+        });
+    }
 }

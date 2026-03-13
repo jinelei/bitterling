@@ -1,5 +1,6 @@
 package com.jinelei.bitterling.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
@@ -63,10 +64,8 @@ public class BookmarkController extends BaseController {
     @Operation(operationId = "bookmarkList", summary = "查询书签列表", description = "查询书签列表")
     public BookmarkListResult list(@RequestBody @Valid BookmarkListRequest req) {
         Iterable<BookmarkDomain> all = this.service.findList(req);
-        List<BookmarkResponse> list = StreamSupport.stream(all.spliterator(), false)
-                .map(bookmarkConvertor::toResponse)
-                .toList();
-        return ResultFactory.create(BookmarkListResult.class, list);
+        Iterable<BookmarkDomain> topBookmark = this.service.findTopBookmark(all);
+        return ResultFactory.create(BookmarkListResult.class, StreamSupport.stream(topBookmark.spliterator(), false).map(bookmarkConvertor::toResponse).toList());
     }
 
     @PostMapping("tree")

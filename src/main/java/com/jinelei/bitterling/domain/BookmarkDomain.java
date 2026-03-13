@@ -3,6 +3,8 @@ package com.jinelei.bitterling.domain;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.jinelei.bitterling.domain.base.RecordDomain;
 import com.jinelei.bitterling.domain.base.TreeRecordDomain;
 import com.jinelei.bitterling.domain.view.TreeView;
@@ -36,9 +38,11 @@ public class BookmarkDomain extends RecordDomain<Long> implements TreeView<Bookm
     @Column(name = "color")
     @Schema(name = "color", description = "书签颜色")
     private String color;
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "parent_id", nullable = true)
     private BookmarkDomain parent;
+    @JsonManagedReference
     @OneToMany(mappedBy = "parent",
             fetch = FetchType.LAZY,
             cascade = CascadeType.PERSIST,

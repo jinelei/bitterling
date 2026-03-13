@@ -13,6 +13,8 @@ public record BookmarkListRequest(
         @Schema(name = "type", description = "书签类型")
         BookmarkType type,
         @Schema(name = "url", description = "书签地址")
-        String url
+        String url,
+        @Schema(name = "keywords", description = "关键字")
+        String keywords
 ) {
 }
