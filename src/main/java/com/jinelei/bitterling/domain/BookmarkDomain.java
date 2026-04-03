@@ -29,9 +29,11 @@ public class BookmarkDomain extends RecordDomain<Long> implements TreeView<Bookm
     @Column(name = "type")
     @Schema(name = "type", description = "书签类型")
     private BookmarkType type;
+    @Lob
     @Column(name = "url")
     @Schema(name = "url", description = "书签地址")
     private String url;
+    @Lob
     @Column(name = "icon")
     @Schema(name = "icon", description = "书签图标")
     private String icon;

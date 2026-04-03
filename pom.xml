@@ -38,6 +38,12 @@
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
         <dependency>
@@ -158,6 +164,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <!-- 开启热更新，必须加这个配置 -->
+                    <excludeDevtools>false</excludeDevtools>
                     <mainClass>com.jinelei.bitterling.BitterlingApplication</mainClass>
                     <layers>
                         <enabled>true</enabled>
